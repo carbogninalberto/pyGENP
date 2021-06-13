@@ -1,0 +1,5 @@
+# environment
+venv/*
+
+# misc
+misc/*
