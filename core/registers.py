@@ -1,5 +1,12 @@
 
 
+class Variable:
+
+    def __init__(self, name, tp):
+        self.name = name
+        self.tp = tp
+
+
 class VariableRegistry:
 
     def __init__(self, variables):        
