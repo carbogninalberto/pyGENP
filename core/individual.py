@@ -9,6 +9,7 @@ class Individual:
         self.max_depth = max_depth
         self.max_width = max_width
         self.lang = "c++"
+        self.fitness = 0
 
     def add_variable(self, variables=None):
         if variables:
@@ -23,3 +24,7 @@ class Individual:
             else:
                 exclude = False
         return lines
+
+    def max_fitness(self, fitness_function):
+        self.fitness = fitness_function(lines=self.render_code())
+        return self.fitness

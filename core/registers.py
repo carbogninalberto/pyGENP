@@ -33,7 +33,7 @@ class VariableRegistry:
             if len(self.variables) > 0:
                 return self.variables[np.random.randint(0, len(self.variables))]
             else:
-                self.variables
+                return self.variables
         else:
             return self.variables
     

@@ -2,4 +2,8 @@
 venv/*
 
 # misc
-misc/*
+misc
+
+*.cpp
+
+a.out

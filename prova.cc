@@ -1,51 +1,29 @@
-int lpdte = (int) (13.78*(7.92)*(-10.97)*(lpdte));
-lpdte = (int) (lpdte)/(-1.05);
-lpdte = (int) (-13.74)/(lpdte);
+if (false) {
+	tcb->m_segmentSize = (float) (-14.04-(-18.74));
+
+} else {
+	tcb->m_segmentSize = (float) (7.9-(-6.4)-(-13.95)-(-19.14));
+
+}
 if (true) {
-	lpdte = (int) (lpdte)/(-1.05);
+	tcb->m_segmentSize = (float) (18.26-(9.88));
 
 } else {
-	lpdte = (int) (-13.74)/(lpdte);
+	tcb->m_segmentSize = (float) (1.0*(0.43)*(-12.13));
 
 }
-lpdte = (int) (lpdte*(8.22)*(-4.19));
-lpdte = (int) (3.63*(-14.47)*(-0.82)*(3.69));
+tcb->m_segmentSize = (float) (-4.35*(7.83));
 if (false) {
-	lpdte = (int) (lpdte*(8.22)*(-4.19));
+	tcb->m_segmentSize = (float) (4.79*(13.45)*(6.75));
 
 } else {
-	lpdte = (int) (3.63*(-14.47)*(-0.82)*(3.69));
+	tcb->m_segmentSize = (float) (5.68)/(9.43);
 
 }
-float xzdby = (float) (9.46-(lpdte)-(9.51)-(3.52));
-lpdte = (int) (-11.21)/(19.36);
-lpdte = (int) (-3.62)/(-1.37);
 if (false) {
-	lpdte = (int) (-11.21)/(19.36);
+	tcb->m_segmentSize = (float) (-6.61)/(-10.48);
 
 } else {
-	lpdte = (int) (-3.62)/(-1.37);
+	tcb->m_segmentSize = (float) (tcb->m_segmentSize*(-12.64));
 
 }
-xzdby = (float) (2.09*(-10.91));
-xzdby = (float) (5.09)/(-12.65);
-if (false) {
-	xzdby = (float) (2.09*(-10.91));
-
-} else {
-	xzdby = (float) (5.09)/(-12.65);
-
-}
-lpdte = (int) (3.18*(xzdby)*(16.53));
-int ftnex = (int) (-18.72*(-3.76)*(-8.26));
-xzdby = (float) (ftnex+(-11.37)+(14.89)+(13.52));
-xzdby = (float) (8.99)/(0.12);
-if (true) {
-	xzdby = (float) (ftnex+(-11.37)+(14.89)+(13.52));
-
-} else {
-	xzdby = (float) (8.99)/(0.12);
-
-}
-ftnex = (int) (lpdte*(17.42)*(3.56)*(lpdte));
-lpdte = (int) (xzdby+(1.72));

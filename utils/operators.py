@@ -93,8 +93,8 @@ class BaseAssignment:
         self.declare = declare
 
     def render_cpp(self):
-        print("---------> BaseAssignment var {}, exp {}, declare {}".format(str(self.var), str(self.exp), self.declare))
-        print("\t\t\t\t\tTP", self.var.tp if self.var else "empty var")
+        #print("---------> BaseAssignment var {}, exp {}, declare {}".format(str(self.var), str(self.exp), self.declare))
+        #print("\t\t\t\t\tTP", self.var.tp if self.var else "empty var")
         tp = self.var.tp if self.var else ""
         return "{}{} = ({}) {};\n".format(tp + " " if self.declare else "", str(self.var), tp, self.exp)
 

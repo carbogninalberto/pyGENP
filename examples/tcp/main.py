@@ -2,32 +2,16 @@ import os
 import sys
 from anytree import Node, RenderTree, PostOrderIter, PreOrderIter, NodeMixin
 from anytree.exporter import DotExporter
-#from utils.operators import Assignment, IfThenElse, WildcardCode, Termination
-#import utils.parser as up
-import genp
-#import generators.tree as gentree
+
+import core.registers
+
+import generators.tree as gentree
 
 
 if __name__ == "__main__":
     print("LIBRARY TEST")
 
-    variables = genp.registers.VariableRegistry([
-        genp.registers.Variable("tcb->m_segmentSize", genp.types.Types.float)
-    ])
-
-    # initialize Incubator
-    incubator = genp.Incubator(
-        fitness=genp.tcp_variant_fitness_wrapped
-    )
-    # init population giving a generator
-    incubator.init_population(genp.tree)
-
-    # for individual in incubator.population:
-    #     print(individual.render_code()[:3])
-
-    incubator.calculate_fitness()
-
-    individual = genp.tree.generate_individual_from_seed(variables=variables)
+    individual = gentree.generate_individual_from_seed()
 
     DotExporter(individual.root).to_picture("root.png")
 
@@ -40,7 +24,7 @@ if __name__ == "__main__":
     #out = up.parser(file="a.cpp", substitute_lines=lines)
     #up.output_parsed_file(file="a1.cpp", lines=out)
 
-    genp.parser.parser_wrapper(file="examples/tcp/tcp-congestion.cc", lines=lines)
+    up.parser_wrapper(file="a1.cpp", lines=lines)
 
     # print("TEST")
 

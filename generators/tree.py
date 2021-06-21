@@ -23,7 +23,7 @@ def generate_individual_from_seed(
                                     max_width=12,
                                     operators=OperatorRegistry(DefaultConfig.OPERATORS),
                                     variables=VariableRegistry([]),
-                                    alpha_var_gen=25.0
+                                    alpha_var_gen=0.0
                                     ):
     '''
     this function generate a tree individual 
@@ -44,34 +44,25 @@ def generate_individual_from_seed(
     for i in range(rand_width):
         # try to generate a new variable with probability alpha_var_gen
         if generate_new_variable(alpha_var_gen):
-
-            print("GENERATE NEW VAR")
-
             # generate new varianlr name
             var_name = generate_var_name(variables.variables_name())
             # generate a random expression by using Variables and Operator Registry
             exp = generate_random_expression(variables)
             # generate a new variable    
-            var = Variable(var_name, Types.get_all()[np.random.randint(0, len(Types.get_all()))], scope=i)            
+            var = Variable(var_name, Types.get_all()[np.random.randint(0, len(Types.get_all()))], scope=i)       
             # add variable to registry
             variables.register(var)
             # generate an assignment
             var_node = Assignment(var, exp, parent=pending_nodes[i])
 
-            print("\t -> name: {} | exp: {}".format(var_name, exp))
-            
-            #print("var node", str(var_node))
+            #print("\t -> name: {} | exp: {}".format(var_name, exp))
 
             # add new created node to queue for validation
             pending_nodes.append(var_node)
-            
-            #print("pending nodes: ", pending_nodes)
         else:
             # random operator
             op_keys = list(DefaultConfig.OPERATORS.keys())
             rand_operator = op_keys[np.random.randint(0, len(op_keys))]
-
-            #print("keys: {} \t\trand_op: {}\t\tops[rand_op]: {}".format(op_keys, rand_operator, ops[rand_operator]))
 
             if isinstance(ops[rand_operator](), IfThenElse):
                 # generate condition
@@ -83,33 +74,31 @@ def generate_individual_from_seed(
 
                 if len(variables.variables) > 0:
                     # some vars in the register 
-                    print("\t\t<<<<<<<<<<<<<<<<<<<<<<NOT EMPTY REGISTER")
                     tmp_vars = variables.get_random_var()
                     var_t = tmp_vars[np.random.randint(0, len(tmp_vars))] if isinstance(tmp_vars, list) else tmp_vars
                     var_f = tmp_vars[np.random.randint(0, len(tmp_vars))] if isinstance(tmp_vars, list) else tmp_vars
-                    print("\t\t<<<<<<<<<<<<<<<<<<<<<<", var_t.name)
 
-                    var_t_node = Assignment(var_t, exp_t, declare=False, parent=pending_nodes[i])
-                    var_f_node = Assignment(var_f, exp_f, declare=False, parent=pending_nodes[i])
+                    var_t_node = Assignment(var_t, exp_t, declare=False)
+                    var_f_node = Assignment(var_f, exp_f, declare=False)
 
                     node = ops[rand_operator](condition, var_t_node, var_f_node, parent=pending_nodes[i])
                     pending_nodes.append(node)
                 else:
-                    # empty register      
+                    # empty register 
                     var_t_name = generate_var_name(variables.variables_name())
-                    var_t = Assignment(var_t_name, Types.get_all()[np.random.randint(0, len(Types.get_all()))])
+                    var_t = Variable(var_t_name, Types.get_all()[np.random.randint(0, len(Types.get_all()))])
                     variables.register(var_t)
 
                     var_f_name = generate_var_name(variables.variables_name())
-                    var_f = Assignment(var_f_name, Types.get_all()[np.random.randint(0, len(Types.get_all()))])
+                    var_f = Variable(var_f_name, Types.get_all()[np.random.randint(0, len(Types.get_all()))])
                     variables.register(var_f)
+
+                    var_t_node = Assignment(var_t, exp_t, declare=True)
+                    var_f_node = Assignment(var_f, exp_f, declare=True) # , parent=pending_nodes[i]
                     
-                    node = ops[rand_operator](condition, var_t, var_f, parent=pending_nodes[i])
+                    node = ops[rand_operator](condition, var_t_node, var_f_node, parent=pending_nodes[i])
                     pending_nodes.append(node)
 
-                # node = ops[rand_operator](condition, exp_t, exp_f, parent=pending_nodes[i])
-                # pending_nodes.append(node)
-                #print("if then else", node)
             elif isinstance(ops[rand_operator](), Assignment):
                 # generate expression
                 # choose valid var
@@ -118,7 +107,6 @@ def generate_individual_from_seed(
                     var = tmp_vars[np.random.randint(0, len(tmp_vars))] if isinstance(tmp_vars, list) else tmp_vars
                     exp = generate_random_expression(variables)
                      # update of existing variable
-                    print("\t\t\t\t\t\t\t\t\tVAR TRUE", str(var))
                     node = ops[rand_operator](var, exp, declare=False, parent=pending_nodes[i])
                     pending_nodes.append(node)
                 else:                    
@@ -128,9 +116,7 @@ def generate_individual_from_seed(
                     # add variable to registry
                     variables.register(var)
                     exp = generate_random_expression(variables)
-                    print("\t\t\t\t\t\t\t\t\tVAR FALSE", str(var))
                     node = ops[rand_operator](var, exp, parent=pending_nodes[i])
-                #print("assignment", node)
             
                     pending_nodes.append(node)
 
@@ -183,11 +169,9 @@ def create_random_op(op_id):
     '''
     # generate new operator with empty values
     op_keys = list(DefaultConfig.MATH_OPERATORS.keys())
-    #print("op", op_keys, "op id", op_id)
     key = op_keys[op_id]
 
     ops = DefaultConfig.MATH_OPERATORS
-    print("\t", ops[key], key)
     return ops[key], key
 
 
@@ -196,38 +180,23 @@ def generate_random_expression(variables, operators=DefaultConfig.MATH_OPERATORS
     this function generates a random expression tree using variables
     '''
     # having random depth generate tree with expression and termination points (constants)
-    print("GENERATING RANDOM EXPRESSION")
     rand_op_id = np.random.randint(0, len(operators.keys()))
     root_op, root_key = create_random_op(rand_op_id)
     root = root_op([]) if root_key != 'div' else root_op([], [])
 
     rand_width = np.random.randint(0, max_width)
-
-    print("ROOT GENERATED", str(root))
-
     pending_nodes = [root]
 
     if not generate_termination():
         # take operator as root
         
         rand_op_id = np.random.randint(0, len(operators))
-
         op, key = create_random_op(rand_op_id)
 
-        print("NOT GENERATING", op, key)
-
-        node = op([]) if key != 'div' else op([], [])
-
-        print(op, key)
-        
+        node = op([]) if key != 'div' else op([], [])        
         rand_depth = np.random.randint(0, max_depth)
 
-        print("KEY NODE", key, node, rand_depth)
-
-        #pending_nodes = [root, node]
-
         pending_nodes.append(node)
-
         tmp_nodes = [node]
         
         for j in range(rand_depth):
@@ -236,7 +205,6 @@ def generate_random_expression(variables, operators=DefaultConfig.MATH_OPERATORS
                 sub_op, sub_key = create_random_op(rand_op_id)
                 sub_node = sub_op([]) if sub_key != 'div' else sub_op([], [])
 
-                print("\t\tsub_node", str(sub_node))
                 tmp_nodes.append(sub_node)
                 pending_nodes.append(sub_node)
                 #pending_nodes.append(node)
@@ -261,11 +229,13 @@ def take_care_of_termination(root, variables, width=5):
     '''
     this function appends termination Nodes (constants or variables) to a certain expression parent node.
     '''
+    
     if isinstance(root, Mul) or \
         isinstance(root, Sum) or \
         isinstance(root, Sub):
         for i in range(np.random.randint(2, width)):
             use, var = use_variable(variables)
+
             children = [child for child in root.children] if root.children is not None else []
             if use and var is not None:
                 children.append(Termination(var.name, var.tp))
@@ -273,9 +243,11 @@ def take_care_of_termination(root, variables, width=5):
                 children.append(Termination(np.random.randint(-2000, 2001)/100.0, Types.float))
             root.children = children
             root.nums = children
+
     elif isinstance(root, Div):
         for i in range(2-len(root.children)):
             use, var = use_variable(variables)
+
             children = [child for child in root.children] if root.children is not None else []
             if use and var is not None:
                 children.append(Termination(var.name, var.tp))
