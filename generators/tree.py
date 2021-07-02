@@ -20,7 +20,7 @@ variable found elsewhere
 def generate_individual_from_seed(
                                     seed=42,
                                     max_depth=1,
-                                    max_width=12,
+                                    max_width=5,
                                     operators=OperatorRegistry(DefaultConfig.OPERATORS),
                                     variables=VariableRegistry([]),
                                     alpha_var_gen=0.0

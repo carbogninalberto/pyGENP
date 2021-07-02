@@ -9,13 +9,20 @@ def tcp_variant_fitness():
     #print(out, type(out))
     #os.system('CXXFLAGS="-Wall -g -O0" ./waf configure')
     #out = subprocess.check_output('CXXFLAGS="-Wno-error" ./waf --run "scratch/wifi-tcp --payloadSize={} --simulationTime=2" | tail -10 | grep -P \'(?<=: \\t)(.*)(?= Mbit\/s)\' -o'.format(payload), shell=True)
-    out = subprocess.check_output('./run.sh', shell=True)
+    out = b''
+    try:
+        out = subprocess.check_output('./run.sh', shell=True)
+    except:
+        print("exception")
     values = out.decode("utf-8").replace("\n", " ").split()
     values = [float(value) for value in values]
-    #print(values)
-    #average = sum(values) / len(values)
-    print("values")
-    return sum(values) / len(values)
+    if len(values) > 0:
+        #print(values)
+        #average = sum(values) / len(values)
+        # print("out", out, "values", values)
+        return sum(values) / len(values)
+    else:
+        return 0
 
 def tcp_variant_fitness_wrapped(lines=[]):
     parser_wrapper(file='/home/alberto/ns-allinone-3.32/ns-3.32/src/internet/model/tcp-congestion-ops.cc', lines=lines)

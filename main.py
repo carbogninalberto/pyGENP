@@ -17,7 +17,9 @@ if __name__ == "__main__":
 
     # initialize Incubator
     incubator = genp.Incubator(
-        fitness=genp.tcp_variant_fitness_wrapped
+        fitness=genp.tcp_variant_fitness_wrapped,
+        variables=variables,
+        pop_size=50
     )
     # init population giving a generator
     incubator.init_population(genp.tree)
@@ -27,36 +29,38 @@ if __name__ == "__main__":
 
     incubator.calculate_fitness()
 
-    individual = genp.tree.generate_individual_from_seed(variables=variables)
+    if False:
 
-    DotExporter(individual.root).to_picture("root.png")
+        individual = genp.tree.generate_individual_from_seed(variables=variables)
 
-    lines = individual.render_code()
+        DotExporter(individual.root).to_picture("root.png")
 
-    with open(os.path.join(sys.path[0], "prova.cc"), 'w') as f:
-        f.writelines(lines)
-    f.close()
+        lines = individual.render_code()
 
-    #out = up.parser(file="a.cpp", substitute_lines=lines)
-    #up.output_parsed_file(file="a1.cpp", lines=out)
+        with open(os.path.join(sys.path[0], "prova.cc"), 'w') as f:
+            f.writelines(lines)
+        f.close()
 
-    genp.parser.parser_wrapper(file="examples/tcp/tcp-congestion.cc", lines=lines)
+        #out = up.parser(file="a.cpp", substitute_lines=lines)
+        #up.output_parsed_file(file="a1.cpp", lines=out)
 
-    # print("TEST")
+        genp.parser.parser_wrapper(file="examples/tcp/tcp-congestion.cc", lines=lines)
 
-    # root = WildcardCode("int main(){\n")
-    # line1 = Assignment("a", "10", parent=root)
-    # line2 = IfThenElse("a == 10", Assignment("a", "11", False), Assignment("a", "12", False), parent=root)
-    # line3 = Assignment("b", "12", parent=root)
-    # end = WildcardCode("}", parent=root)
+        # print("TEST")
 
-    # DotExporter(root).to_picture("root.png")
+        # root = WildcardCode("int main(){\n")
+        # line1 = Assignment("a", "10", parent=root)
+        # line2 = IfThenElse("a == 10", Assignment("a", "11", False), Assignment("a", "12", False), parent=root)
+        # line3 = Assignment("b", "12", parent=root)
+        # end = WildcardCode("}", parent=root)
 
-    # lines = render_code(root)
+        # DotExporter(root).to_picture("root.png")
 
-    # with open(os.path.join(sys.path[0], "prova.cc"), 'w') as f:
-    #     f.writelines(lines)
-    # f.close()
+        # lines = render_code(root)
+
+        # with open(os.path.join(sys.path[0], "prova.cc"), 'w') as f:
+        #     f.writelines(lines)
+        # f.close()
 
     
     
