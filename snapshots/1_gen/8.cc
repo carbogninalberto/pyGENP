@@ -1,1 +1,1 @@
-int ogcxx = (int) (-4.82-(-12.39));
+tcb->m_segmentSize = (int) (-4.22)/(-19.77);

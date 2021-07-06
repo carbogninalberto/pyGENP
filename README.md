@@ -38,3 +38,9 @@ Different mutations are performed:
 
 ### Fitness Calculation
 Is possible to provide a custom fitness function and also specify if maximize or minimize it.
+
+### COMPILE
+
+```
+CXXFLAGS="-Wno-error" ./waf configure
+```

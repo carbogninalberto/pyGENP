@@ -143,7 +143,7 @@ class Incubator:
                 random_node = random.sample(individual.root.children, 1)[0]
                 # random operator
                 if isinstance(random_node, IfThenElse):
-                    tmp_vars = variables.get_random_var()
+                    tmp_vars = individual.variables.get_random_var()
                     var_t = tmp_vars[np.random.randint(0, len(tmp_vars))] if isinstance(tmp_vars, list) else tmp_vars
                     var_f = tmp_vars[np.random.randint(0, len(tmp_vars))] if isinstance(tmp_vars, list) else tmp_vars
 

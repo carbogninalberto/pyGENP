@@ -19,8 +19,8 @@ variable found elsewhere
 
 def generate_individual_from_seed(
                                     seed=42,
-                                    max_depth=1,
-                                    max_width=10,
+                                    max_depth=3,
+                                    max_width=4,
                                     operators=OperatorRegistry(DefaultConfig.OPERATORS),
                                     variables=VariableRegistry([]),
                                     alpha_var_gen=25.0

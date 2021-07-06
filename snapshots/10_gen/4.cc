@@ -1,0 +1,9 @@
+tcb->m_segmentSize = (int) (10.29+(13.85)+(-6.17));
+tcb->m_segmentSize = (int) (5.66+(tcb->m_segmentSize)+(-6.74)+(tcb->m_segmentSize));
+tcb->m_segmentSize = (int) (0.18+(5.77)+(5.43)+(6.77));
+tcb->m_segmentSize = (int) (tcb->m_segmentSize-(-2.25)-(-16.62));
+tcb->m_segmentSize = (int) (tcb->m_segmentSize)/(-15.14);
+tcb->m_segmentSize = (int) (-10.07)/(18.35);
+tcb->m_segmentSize = (int) (1.75-(-5.36)-(8.39)-(19.28));
+float cpmok = (float) (2.31+(1.54));
+float sorqj = (float) (1.28)/(-5.15);

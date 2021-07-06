@@ -4,7 +4,7 @@ from .parser import parser_wrapper
 
 def tcp_variant_fitness():
     payload = 1500
-    os.chdir('/home/alberto/ns-allinone-3.32/ns-3.32/')
+    os.chdir('/mnt/c/Users/carbo/Desktop/Unitn/tesi/ns-allinone-3.32.2/ns-allinone-3.32/ns-3.32/')
     #out = os.popen('./waf --run "scratch/wifi-tcp --tcpVariant=TcpHighSpeed --payloadSize={} --simulationTime=2"| tail -10 | grep -P \'(?<=: \t)(.*)(?= Mbit\/s)\' -o'.format(payload))
     #print(out, type(out))
     #os.system('CXXFLAGS="-Wall -g -O0" ./waf configure')
@@ -25,5 +25,5 @@ def tcp_variant_fitness():
         return 0
 
 def tcp_variant_fitness_wrapped(lines=[]):
-    parser_wrapper(file='/home/alberto/ns-allinone-3.32/ns-3.32/src/internet/model/tcp-congestion-ops.cc', lines=lines)
+    parser_wrapper(file='/mnt/c/Users/carbo/Desktop/Unitn/tesi/ns-allinone-3.32.2/ns-allinone-3.32/ns-3.32/src/internet/model/tcp-congestion-ops.cc', lines=lines)
     return tcp_variant_fitness()
