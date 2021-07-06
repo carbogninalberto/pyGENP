@@ -20,10 +20,10 @@ variable found elsewhere
 def generate_individual_from_seed(
                                     seed=42,
                                     max_depth=1,
-                                    max_width=5,
+                                    max_width=10,
                                     operators=OperatorRegistry(DefaultConfig.OPERATORS),
                                     variables=VariableRegistry([]),
-                                    alpha_var_gen=0.0
+                                    alpha_var_gen=25.0
                                     ):
     '''
     this function generate a tree individual 
@@ -32,7 +32,7 @@ def generate_individual_from_seed(
     root = Node("main")    
 
     # generate random number of code instruction
-    rand_width = np.random.randint(0, max_width)
+    rand_width = np.random.randint(1, max_width)
 
     # queue nodes that require validity check to be approved
     pending_nodes = [root]

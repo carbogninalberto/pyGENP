@@ -1,5 +1,6 @@
 from anytree import PreOrderIter
-
+from anytree.exporter import JsonExporter
+import os
 
 class Individual:
 
@@ -28,3 +29,14 @@ class Individual:
     def max_fitness(self, fitness_function):
         self.fitness = fitness_function(lines=self.render_code())
         return self.fitness
+
+    def save_to_file(self, folder="snapshot", file="file.cc"):
+        #exporter = JsonExporter(indent=2, sort_keys=True)
+        #print(exporter.export(root))
+        path = os.path.join(folder, file)
+        lines = self.render_code()
+        with open(path, 'w') as f:
+            f.writelines(lines)
+        f.close()
+
+        

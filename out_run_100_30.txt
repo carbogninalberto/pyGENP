@@ -1,0 +1,322 @@
+LIBRARY TEST
+snapshot /home/alberto/repos/pyGENP/snapshots/1_gen {}.cc
+[0] has fitness 37.67999999999999
+[1] has fitness 2.182656
+[2] has fitness 51.51
+[3] has fitness 52.27499999999999
+exception
+[4] has fitness 0
+[5] has fitness 3.03432
+[6] has fitness 37.67999999999999
+[7] has fitness 37.67999999999999
+exception
+[8] has fitness 0
+exception
+[9] has fitness 0
+[10] has fitness 37.67999999999999
+exception
+[11] has fitness 0
+[12] has fitness 0.156
+[13] has fitness 22.904490000000003
+[14] has fitness 37.67999999999999
+[15] has fitness 37.67999999999999
+[16] has fitness 6.134688000000001
+[17] has fitness 51.975
+[18] has fitness 37.67999999999999
+exception
+[19] has fitness 0
+exception
+[20] has fitness 0
+exception
+[21] has fitness 0
+exception
+[22] has fitness 0
+exception
+[23] has fitness 0
+exception
+[24] has fitness 0
+exception
+[25] has fitness 0
+exception
+[26] has fitness 0
+exception
+[27] has fitness 0
+exception
+[28] has fitness 0
+exception
+[29] has fitness 0
+exception
+[30] has fitness 0
+exception
+[31] has fitness 0
+exception
+[32] has fitness 0
+exception
+[33] has fitness 0
+exception
+[34] has fitness 0
+exception
+[35] has fitness 0
+exception
+[36] has fitness 0
+exception
+[37] has fitness 0
+exception
+[38] has fitness 0
+exception
+[39] has fitness 0
+exception
+[40] has fitness 0
+exception
+[41] has fitness 0
+exception
+[42] has fitness 0
+exception
+[43] has fitness 0
+exception
+[44] has fitness 0
+exception
+[45] has fitness 0
+exception
+[46] has fitness 0
+exception
+[47] has fitness 0
+exception
+[48] has fitness 0
+exception
+[49] has fitness 0
+exception
+[50] has fitness 0
+exception
+[51] has fitness 0
+exception
+[52] has fitness 0
+exception
+[53] has fitness 0
+exception
+[54] has fitness 0
+exception
+[55] has fitness 0
+exception
+[56] has fitness 0
+exception
+[57] has fitness 0
+exception
+[58] has fitness 0
+exception
+[59] has fitness 0
+exception
+[60] has fitness 0
+exception
+[61] has fitness 0
+exception
+[62] has fitness 0
+exception
+[63] has fitness 0
+exception
+[64] has fitness 0
+exception
+[65] has fitness 0
+exception
+[66] has fitness 0
+exception
+[67] has fitness 0
+exception
+[68] has fitness 0
+exception
+[69] has fitness 0
+exception
+[70] has fitness 0
+exception
+[71] has fitness 0
+exception
+[72] has fitness 0
+exception
+[73] has fitness 0
+exception
+[74] has fitness 0
+exception
+[75] has fitness 0
+exception
+[76] has fitness 0
+exception
+[77] has fitness 0
+exception
+[78] has fitness 0
+exception
+[79] has fitness 0
+exception
+[80] has fitness 0
+exception
+[81] has fitness 0
+exception
+[82] has fitness 0
+exception
+[83] has fitness 0
+exception
+[84] has fitness 0
+exception
+[85] has fitness 0
+exception
+[86] has fitness 0
+exception
+[87] has fitness 0
+exception
+[88] has fitness 0
+exception
+[89] has fitness 0
+exception
+[90] has fitness 0
+exception
+[91] has fitness 0
+exception
+[92] has fitness 0
+exception
+[93] has fitness 0
+exception
+[94] has fitness 0
+exception
+[95] has fitness 0
+exception
+[96] has fitness 0
+exception
+[97] has fitness 0
+exception
+[98] has fitness 0
+exception
+[99] has fitness 0
+offsprings to generate are 85
+LIBRARY TEST
+snapshot /home/alberto/repos/pyGENP/snapshots/1_gen {}.cc
+exception
+[0] has fitness 0
+exception
+[1] has fitness 0
+exception
+[2] has fitness 0
+exception
+[3] has fitness 0
+exception
+[4] has fitness 0
+exception
+[5] has fitness 0
+exception
+[6] has fitness 0
+exception
+[7] has fitness 0
+exception
+[8] has fitness 0
+exception
+[9] has fitness 0
+exception
+[10] has fitness 0
+exception
+[11] has fitness 0
+exception
+[12] has fitness 0
+exception
+[13] has fitness 0
+exception
+[14] has fitness 0
+[GENERATION 1/15] with population fitness: ['##|id:0, fitness:0|##', '##|id:1, fitness:0|##', '##|id:2, fitness:0|##', '##|id:3, fitness:0|##', '##|id:4, fitness:0|##', '##|id:5, fitness:0|##', '##|id:6, fitness:0|##', '##|id:7, fitness:0|##', '##|id:8, fitness:0|##', '##|id:9, fitness:0|##', '##|id:10, fitness:0|##', '##|id:11, fitness:0|##', '##|id:12, fitness:0|##', '##|id:13, fitness:0|##', '##|id:14, fitness:0|##']
+offsprings to generate are 10
+snapshot /home/alberto/repos/pyGENP/snapshots/2_gen {}.cc
+exception
+[0] has fitness 0
+exception
+[1] has fitness 0
+exception
+[2] has fitness 0
+exception
+[3] has fitness 0
+exception
+[4] has fitness 0
+exception
+[5] has fitness 0
+exception
+[6] has fitness 0
+exception
+[7] has fitness 0
+exception
+[8] has fitness 0
+exception
+[9] has fitness 0
+exception
+[10] has fitness 0
+exception
+[11] has fitness 0
+exception
+[12] has fitness 0
+exception
+[13] has fitness 0
+exception
+[14] has fitness 0
+[GENERATION 2/15] with population fitness: ['##|id:0, fitness:0|##', '##|id:1, fitness:0|##', '##|id:2, fitness:0|##', '##|id:3, fitness:0|##', '##|id:4, fitness:0|##', '##|id:5, fitness:0|##', '##|id:6, fitness:0|##', '##|id:7, fitness:0|##', '##|id:8, fitness:0|##', '##|id:9, fitness:0|##', '##|id:10, fitness:0|##', '##|id:11, fitness:0|##', '##|id:12, fitness:0|##', '##|id:13, fitness:0|##', '##|id:14, fitness:0|##']
+offsprings to generate are 10
+snapshot /home/alberto/repos/pyGENP/snapshots/3_gen {}.cc
+exception
+[0] has fitness 0
+exception
+[1] has fitness 0
+exception
+[2] has fitness 0
+exception
+[3] has fitness 0
+exception
+[4] has fitness 0
+exception
+[5] has fitness 0
+exception
+[6] has fitness 0
+exception
+[7] has fitness 0
+exception
+[8] has fitness 0
+exception
+[9] has fitness 0
+exception
+[10] has fitness 0
+exception
+[11] has fitness 0
+exception
+[12] has fitness 0
+exception
+[13] has fitness 0
+exception
+[14] has fitness 0
+[GENERATION 3/15] with population fitness: ['##|id:0, fitness:0|##', '##|id:1, fitness:0|##', '##|id:2, fitness:0|##', '##|id:3, fitness:0|##', '##|id:4, fitness:0|##', '##|id:5, fitness:0|##', '##|id:6, fitness:0|##', '##|id:7, fitness:0|##', '##|id:8, fitness:0|##', '##|id:9, fitness:0|##', '##|id:10, fitness:0|##', '##|id:11, fitness:0|##', '##|id:12, fitness:0|##', '##|id:13, fitness:0|##', '##|id:14, fitness:0|##']
+offsprings to generate are 10
+snapshot /home/alberto/repos/pyGENP/snapshots/4_gen {}.cc
+exception
+[0] has fitness 0
+exception
+[1] has fitness 0
+exception
+[2] has fitness 0
+exception
+[3] has fitness 0
+exception
+[4] has fitness 0
+exception
+[5] has fitness 0
+exception
+[6] has fitness 0
+exception
+[7] has fitness 0
+exception
+[8] has fitness 0
+exception
+[9] has fitness 0
+exception
+[10] has fitness 0
+exception
+[11] has fitness 0
+exception
+[12] has fitness 0
+exception
+[13] has fitness 0
+exception
+[14] has fitness 0
+[GENERATION 4/15] with population fitness: ['##|id:0, fitness:0|##', '##|id:1, fitness:0|##', '##|id:2, fitness:0|##', '##|id:3, fitness:0|##', '##|id:4, fitness:0|##', '##|id:5, fitness:0|##', '##|id:6, fitness:0|##', '##|id:7, fitness:0|##', '##|id:8, fitness:0|##', '##|id:9, fitness:0|##', '##|id:10, fitness:0|##', '##|id:11, fitness:0|##', '##|id:12, fitness:0|##', '##|id:13, fitness:0|##', '##|id:14, fitness:0|##']
+offsprings to generate are 10
+snapshot /home/alberto/repos/pyGENP/snapshots/5_gen {}.cc

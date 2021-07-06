@@ -12,22 +12,53 @@ if __name__ == "__main__":
     print("LIBRARY TEST")
 
     variables = genp.registers.VariableRegistry([
-        genp.registers.Variable("tcb->m_segmentSize", genp.types.Types.float)
+        genp.registers.Variable("tcb->m_segmentSize", genp.types.Types.integer)
     ])
+
+    custom_config = genp.types.DefaultConfig
+    custom_config.TOURNAMENT = {
+        "k": 6,
+        "s": 4
+    }
 
     # initialize Incubator
     incubator = genp.Incubator(
+        config=custom_config,
         fitness=genp.tcp_variant_fitness_wrapped,
         variables=variables,
-        pop_size=50
+        pop_size=10,
+        generations=10
     )
+
+    # evolve population
+    incubator.run(
+        generator=genp.tree
+    )
+
+    
+
     # init population giving a generator
-    incubator.init_population(genp.tree)
+    # incubator.init_population(genp.tree)
+
+    # take snapshot of generated individuals
+    # incubator.take_snapshot()
 
     # for individual in incubator.population:
     #     print(individual.render_code()[:3])
 
-    incubator.calculate_fitness()
+    # incubator.calculate_fitness()
+
+    # selected = incubator.tournament_selection(k=10, s=3)
+    
+    # print([s.fitness for s in selected])    
+
+    # incubator.crossover(selected)
+
+    # incubator.current_generation += 1
+
+    # incubator.take_snapshot()
+
+    
 
     if False:
 

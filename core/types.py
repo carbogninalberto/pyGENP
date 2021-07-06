@@ -21,6 +21,11 @@ class DefaultConfig:
         "div": Div
     }
 
+    TOURNAMENT = {
+        "k": 60,
+        "s": 15
+    }
+
 
 class Types:
     integer = "int"
