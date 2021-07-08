@@ -26,6 +26,15 @@ class DefaultConfig:
         "s": 15
     }
 
+    EQUALITY = {
+        "lt": "<",
+        "lte": "<=",
+        "gt": ">",
+        "gte": ">=",
+        "eq": "==",
+        "neq": "!="
+    }
+
 
 class Types:
     integer = "int"

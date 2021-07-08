@@ -1,1 +1,1 @@
-tcb->m_segmentSize = (int) (tcb->m_segmentSize)/(8.96);
+tcb->m_segmentSize = (int) (-17.43)/(tcb->m_segmentSize);

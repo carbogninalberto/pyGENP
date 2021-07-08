@@ -23,6 +23,7 @@ def generate_individual_from_seed(
                                     max_width=4,
                                     operators=OperatorRegistry(DefaultConfig.OPERATORS),
                                     variables=VariableRegistry([]),
+                                    equality_operators=DefaultConfig.EQUALITY,
                                     alpha_var_gen=25.0
                                     ):
     '''
@@ -72,6 +73,9 @@ def generate_individual_from_seed(
                 exp_t = generate_random_expression(variables)
                 exp_f = generate_random_expression(variables)
 
+                # operator generation
+                eq_type = list(equality_operators.keys())[np.random.randint(0, len(equality_operators.keys()))]
+
                 if len(variables.variables) > 0:
                     # some vars in the register 
                     tmp_vars = variables.get_random_var()
@@ -82,6 +86,7 @@ def generate_individual_from_seed(
                     var_f_node = Assignment(var_f, exp_f, declare=False)
 
                     node = ops[rand_operator](condition, var_t_node, var_f_node, parent=pending_nodes[i])
+                    node.type = eq_type
                     pending_nodes.append(node)
                 else:
                     # empty register 
@@ -97,6 +102,7 @@ def generate_individual_from_seed(
                     var_f_node = Assignment(var_f, exp_f, declare=True) # , parent=pending_nodes[i]
                     
                     node = ops[rand_operator](condition, var_t_node, var_f_node, parent=pending_nodes[i])
+                    node.type = eq_type
                     pending_nodes.append(node)
 
             elif isinstance(ops[rand_operator](), Assignment):

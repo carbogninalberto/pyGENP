@@ -1,15 +1,9 @@
-float issvo = (float) (0.27-(tcb->m_segmentSize));
 if (true) {
-	tcb->m_segmentSize = (int) (16.22*(1.49)*(-0.34)*(-18.64));
+	tcb->m_segmentSize = (int) (tcb->m_segmentSize)/(7.65);
 
 } else {
-	tcb->m_segmentSize = (int) (-17.64+(issvo)+(-17.09)+(-13.52));
+	tcb->m_segmentSize = (int) (-3.9+(-9.96)+(1.14)+(2.26));
 
 }
-if (true) {
-	tcb->m_segmentSize = (int) (-2.78)/(tcb->m_segmentSize);
-
-} else {
-	tcb->m_segmentSize = (int) (-19.01+(11.01)+(11.06)+(issvo));
-
-}
+tcb->m_segmentSize = (int) (12.63-(14.4)-(tcb->m_segmentSize)-(tcb->m_segmentSize));
+float hmwhc = (float) (tcb->m_segmentSize-(-13.55));

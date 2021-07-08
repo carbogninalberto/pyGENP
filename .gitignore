@@ -7,3 +7,5 @@ misc
 *.cpp
 
 a.out
+
+snapshots/*

@@ -66,7 +66,7 @@ class BaseEquality:
     def render_cpp(self):
         if self.type == "bool":
             return "{}".format(self.lf) # TODO: edit this
-        return "{} == {}".format(self.lf, self.rg)
+        return "{} {} {}".format(self.lf, self.type, self.rg)
     
     def __str__(self):
         return self.render_cpp()
