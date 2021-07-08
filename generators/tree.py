@@ -69,12 +69,9 @@ def generate_individual_from_seed(
                 # generate condition
                 # generate branch1 (assignment) -> TODO: subtree generation
                 # generate branch2 (assignment) -> TODO: subtree generation
-                condition = generate_condition()
+                condition = generate_condition(equality_operators, variables)
                 exp_t = generate_random_expression(variables)
-                exp_f = generate_random_expression(variables)
-
-                # operator generation
-                eq_type = list(equality_operators.keys())[np.random.randint(0, len(equality_operators.keys()))]
+                exp_f = generate_random_expression(variables)               
 
                 if len(variables.variables) > 0:
                     # some vars in the register 
@@ -86,7 +83,7 @@ def generate_individual_from_seed(
                     var_f_node = Assignment(var_f, exp_f, declare=False)
 
                     node = ops[rand_operator](condition, var_t_node, var_f_node, parent=pending_nodes[i])
-                    node.type = eq_type
+                    #node.type = eq_type
                     pending_nodes.append(node)
                 else:
                     # empty register 
@@ -102,7 +99,7 @@ def generate_individual_from_seed(
                     var_f_node = Assignment(var_f, exp_f, declare=True) # , parent=pending_nodes[i]
                     
                     node = ops[rand_operator](condition, var_t_node, var_f_node, parent=pending_nodes[i])
-                    node.type = eq_type
+                    
                     pending_nodes.append(node)
 
             elif isinstance(ops[rand_operator](), Assignment):
@@ -149,12 +146,12 @@ def generate_individual_from_seed(
     return individual
 
 
-def take_care_of_individual_termination(root, variables: VariableRegistry, operators):
+def take_care_of_individual_termination(root, variables: VariableRegistry, operators, equality_operators):
     '''
     this function appends termination Nodes () to a certain parent node.
     '''
     if isinstance(root, IfThenElse):
-        root.condition = generate_condition()
+        root.condition = generate_condition(equality_operators, variables)
         root.exp_t = generate_random_expression(variables)
         root.exp_f = generate_random_expression(variables)
     elif isinstance(root, Assignment):
@@ -164,10 +161,15 @@ def take_care_of_individual_termination(root, variables: VariableRegistry, opera
         raise Exception("Unknown Operator {}".format(type(root)))
 
 
-def generate_condition():
+def generate_condition(equality_operators, variables: VariableRegistry):
+    # operator generation
+    eq_type = list(equality_operators.values())[np.random.randint(0, len(equality_operators.values()))]
+    lf = variables.get_random_var()
+    rg = variables.get_random_var()
+    
     # now only boolean -> to implement other kinds
-    return Equality(lf="true") if np.random.randint(0, 1001) > 500 else Equality(lf="false")
-
+    #return Equality(lf="true") if np.random.randint(0, 1001) > 500 else Equality(lf="false")
+    return Equality(lf=lf, rg=rg, tp=eq_type)
 
 def create_random_op(op_id):
     '''

@@ -1,7 +1,6 @@
 from anytree import NodeMixin
 from core.registers import Variable
 
-
 class BaseTermination:
 
     def __init__(self, value, tp):
@@ -58,10 +57,10 @@ class Expression:
 
 class BaseEquality:
 
-    def __init__(self, lf, rg):
+    def __init__(self, lf, rg, tp):
         self.lf = lf
         self.rg = rg
-        self.type = "bool"
+        self.type = tp
 
     def render_cpp(self):
         if self.type == "bool":
@@ -74,8 +73,8 @@ class BaseEquality:
 
 class Equality(BaseEquality, NodeMixin):
 
-    def __init__(self, lf=False, rg=False, parent=None, children=None):
-        super(Equality, self).__init__(lf, rg)
+    def __init__(self, lf=False, rg=False, tp="bool", parent=None, children=None):
+        super(Equality, self).__init__(lf, rg, tp)
         self.name = super(Equality, self).render_cpp()
         self.parent = parent
         if children:
