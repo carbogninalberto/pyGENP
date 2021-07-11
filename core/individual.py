@@ -26,8 +26,8 @@ class Individual:
                 exclude = False
         return lines
 
-    def max_fitness(self, fitness_function):
-        self.fitness = fitness_function(lines=self.render_code())
+    def max_fitness(self, idx, fitness_function):
+        self.fitness = fitness_function(idx, lines=self.render_code())
         return self.fitness
 
     def save_to_file(self, folder="snapshot", file="file.cc"):

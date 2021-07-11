@@ -18,7 +18,7 @@ class DefaultConfig:
         "mul": Mul,
         "sum": Sum,
         "sub": Sub,
-        "div": Div
+        # "div": Div
     }
 
     TOURNAMENT = {

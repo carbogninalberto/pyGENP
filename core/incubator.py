@@ -8,6 +8,10 @@ import copy
 import numpy as np
 from utils.operators import IfThenElse, Assignment
 from generators.tree import generate_random_expression
+from utils.fitness import tcp_variant_fitness_write_switch
+from multiprocessing.pool import ThreadPool as Pool
+
+pool_size = 8
 
 class Incubator:
 
@@ -36,9 +40,40 @@ class Incubator:
             self.population.append(generator.generate_individual_from_seed(variables=variables))
 
     def calculate_fitness(self):
+        codes = []
         for idx, individual in enumerate(self.population):
+            codes.append(individual.render_code())
+        
+        #print("codes", codes)
+
+        switch_case_lines = []
+        for idx, code in enumerate(codes):
+            switch_case_lines.append("case {}:\n{{".format(idx))
+            
+            for line in code:
+                switch_case_lines.append(line)
+
+            switch_case_lines.append("\n\tbreak;}")
+
+        #print("switch", switch_case_lines)
+
+        tcp_variant_fitness_write_switch(switch_case_lines)
+
+        print("[{}] has fitness {}".format(0, self.population[0].max_fitness(0, self.fitness)))
+
+        pool = Pool(pool_size)
+
+        for idx, individual in enumerate(self.population[1:]):
+            pool.apply_async(self.multiprocessing_fitness, (idx, individual))   
+
+        pool.close()
+        pool.join()
+
+
+    def multiprocessing_fitness(self, idx, individual):
+        #for idx, individual in enumerate(self.population):
             # print(">>>>>>>>>>>FITNESS>>>>>>>>>>>")
-            print("[{}] has fitness {}".format(idx, individual.max_fitness(self.fitness)))
+        print("[{}] has fitness {}".format(idx, individual.max_fitness(idx, self.fitness)))
 
     def tournament_selection(self, k=35, s=15):
         '''
@@ -146,6 +181,9 @@ class Incubator:
                     tmp_vars = individual.variables.get_random_var()
                     var_t = tmp_vars[np.random.randint(0, len(tmp_vars))] if isinstance(tmp_vars, list) else tmp_vars
                     var_f = tmp_vars[np.random.randint(0, len(tmp_vars))] if isinstance(tmp_vars, list) else tmp_vars
+                    
+                    exp_t = generate_random_expression(individual.variables)
+                    exp_f = generate_random_expression(individual.variables)  
 
                     random_node.exp_t = Assignment(var_t, exp_t, declare=False)
                     random_node.exp_f = Assignment(var_f, exp_f, declare=False)
