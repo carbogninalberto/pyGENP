@@ -7,6 +7,7 @@ class Variable:
         self.name = name
         self.tp = tp
         self.scope = scope
+        self.recall = 0 #how many times is called
 
     def __str__(self):
         return self.name
@@ -31,10 +32,13 @@ class VariableRegistry:
         #print("vars", self.variables)
         if isinstance(self.variables, list):
             if len(self.variables) > 0:
-                return self.variables[np.random.randint(0, len(self.variables))]
+                random_var = self.variables[np.random.randint(0, len(self.variables))]
+                random_var.recall += 1
+                return random_var
             else:
                 return self.variables
         else:
+            self.variables.recall += 1
             return self.variables
     
     def is_there_compatible(self, types):

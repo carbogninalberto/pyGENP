@@ -1,6 +1,7 @@
 from anytree import PreOrderIter
 from anytree.exporter import JsonExporter
 import os
+from utils.operators import Assignment
 
 class Individual:
 
@@ -21,7 +22,12 @@ class Individual:
         exclude = True
         for node in PreOrderIter(self.root):
             if not exclude:
-                lines.append(str(node))
+                if isinstance(node, Assignment) and node.var.recall == 0 and node.declare == False:
+                    print('this node {} has recall 0'.format(str(node)))
+                if isinstance(node, Assignment) and node.var.recall > 0: # and node.declare == False:
+                    lines.append(str(node))
+                elif not isinstance(node, Assignment):
+                    lines.append(str(node))
             else:
                 exclude = False
         return lines
