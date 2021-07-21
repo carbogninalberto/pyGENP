@@ -11,7 +11,7 @@ from generators.tree import generate_random_expression
 from utils.fitness import tcp_variant_fitness_write_switch
 from multiprocessing.pool import ThreadPool as Pool
 
-pool_size = 8
+pool_size = 16
 
 class Incubator:
 

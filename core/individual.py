@@ -24,7 +24,7 @@ class Individual:
             if not exclude:
                 if isinstance(node, Assignment) and node.var.recall == 0 and node.declare == False:
                     print('this node {} has recall 0'.format(str(node)))
-                if isinstance(node, Assignment) and node.var.recall > 0: # and node.declare == False:
+                if isinstance(node, Assignment):# and node.var.recall > 0: # and node.declare == False:
                     lines.append(str(node))
                 elif not isinstance(node, Assignment):
                     lines.append(str(node))

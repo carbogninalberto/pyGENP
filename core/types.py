@@ -11,13 +11,18 @@ class DefaultConfig:
 
     OPERATORS = {
         "assignment": Assignment,
-        "ifthenelse": IfThenElse,
+        "assignment": Assignment,
+        "assignment": Assignment,
+        "assignment": Assignment,
+        "assignment": Assignment,
+        "assignment": Assignment,
+        #"ifthenelse": IfThenElse,
     }
 
     MATH_OPERATORS = {
         "mul": Mul,
         "sum": Sum,
-        "sub": Sub,
+        #"sub": Sub,
         # "div": Div
     }
 
