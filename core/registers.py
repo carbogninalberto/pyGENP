@@ -33,12 +33,12 @@ class VariableRegistry:
         if isinstance(self.variables, list):
             if len(self.variables) > 0:
                 random_var = self.variables[np.random.randint(0, len(self.variables))]
-                random_var.recall += 1
+                #random_var.recall += 1
                 return random_var
             else:
                 return self.variables
         else:
-            self.variables.recall += 1
+            #self.variables.recall += 1
             return self.variables
     
     def is_there_compatible(self, types):

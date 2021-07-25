@@ -11,7 +11,7 @@ from generators.tree import generate_random_expression
 from utils.fitness import tcp_variant_fitness_write_switch
 from multiprocessing.pool import ThreadPool as Pool
 
-pool_size = 4
+pool_size = 16
 
 class Incubator:
 
@@ -180,6 +180,9 @@ class Incubator:
                     tmp_vars = individual.variables.get_random_var()
                     var_t = tmp_vars[np.random.randint(0, len(tmp_vars))] if isinstance(tmp_vars, list) else tmp_vars
                     var_f = tmp_vars[np.random.randint(0, len(tmp_vars))] if isinstance(tmp_vars, list) else tmp_vars
+
+                    var_t.recall += 1
+                    var_f.recall += 1
                     
                     exp_t = generate_random_expression(individual.variables)
                     exp_f = generate_random_expression(individual.variables)  
@@ -203,18 +206,19 @@ class Incubator:
 
             self.calculate_fitness()
 
-            print("[GENERATION {}/{}] with population fitness: {}".format(
-                                                                            self.current_generation, 
-                                                                            self.pop_size,
-                                                                            ["##|id:{}, fitness:{}|##".format(
-                                                                                idx,
-                                                                                ind.fitness
-                                                                             ) for idx, ind in enumerate(self.population)]
-                                                                        ))
+            print("[GENERATION {}/{}] with population:".format(self.current_generation, self.pop_size))
+
+            for idx, ind in enumerate(self.population):
+                print("id:{}, fitness:{:.2f}, variables".format(idx,ind.fitness, ind.variables))
 
             selected = self.tournament_selection(
                 k=self.DefaultConfig.TOURNAMENT["k"],
-                s=self.DefaultConfig.TOURNAMENT["s"])     
+                s=self.DefaultConfig.TOURNAMENT["s"])
+
+            print("{} SELECTED INDIVIDUALS".format(len(selected)))
+
+            for idx, ind in enumerate(selected):
+                print("id:{}, fitness:{:.2f}".format(idx,ind.fitness))
 
             self.crossover(selected)
 

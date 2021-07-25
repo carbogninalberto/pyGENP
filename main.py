@@ -18,7 +18,7 @@ if __name__ == "__main__":
     custom_config = genp.types.DefaultConfig
     custom_config.TOURNAMENT = {
         "k": 20,
-        "s": 5
+        "s": 20
     }
 
     # initialize Incubator
