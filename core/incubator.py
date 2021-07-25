@@ -11,7 +11,7 @@ from generators.tree import generate_random_expression
 from utils.fitness import tcp_variant_fitness_write_switch
 from multiprocessing.pool import ThreadPool as Pool
 
-pool_size = 16
+pool_size = 4
 
 class Incubator:
 
@@ -112,8 +112,7 @@ class Incubator:
                     max_fitness_individual = individual
 
                 best_individuals.append(individual)
-        
-        return best_individuals
+        return [ind for ind in best_individuals if ind.fitness > 5.0]
 
     def find_min_max_fitness(self, individuals):
         min_fitness = min(individual.fitness for individual in individuals)

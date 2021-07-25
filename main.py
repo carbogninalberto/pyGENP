@@ -17,8 +17,8 @@ if __name__ == "__main__":
 
     custom_config = genp.types.DefaultConfig
     custom_config.TOURNAMENT = {
-        "k": 6,
-        "s": 4
+        "k": 20,
+        "s": 5
     }
 
     # initialize Incubator
@@ -26,7 +26,7 @@ if __name__ == "__main__":
         config=custom_config,
         fitness=genp.tcp_variant_fitness_wrapped,
         variables=variables,
-        pop_size=10,
+        pop_size=20,
         generations=10
     )
 
