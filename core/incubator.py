@@ -11,7 +11,7 @@ from generators.tree import generate_random_expression
 from utils.fitness import tcp_variant_fitness_write_switch
 from multiprocessing.pool import ThreadPool as Pool
 
-pool_size = 16
+pool_size = 8
 
 class Incubator:
 
@@ -112,7 +112,8 @@ class Incubator:
                     max_fitness_individual = individual
 
                 best_individuals.append(individual)
-        return [ind for ind in best_individuals if ind.fitness > 5.0]
+        result = [ind for ind in best_individuals if ind.fitness > 5.0]
+        return result if len(result) else best_individuals
 
     def find_min_max_fitness(self, individuals):
         min_fitness = min(individual.fitness for individual in individuals)
@@ -166,6 +167,28 @@ class Incubator:
             subtree_two.parent = first_child_branch
             # add child to population
             self.population.append(child)
+
+    def fix_not_valid_crossover(self):
+        for idx, ind in enumerate(self.population):
+            lines = []
+            exclude = True
+            seen_variables = []
+            last_node = None
+            for node in PreOrderIter(ind.root):
+                if not exclude:
+                    if isinstance(node, Assignment):
+                        if node.var.name not in seen_variables and node.declare == False:
+                            for child in node.children:
+                                child.parent = node.parent
+                    
+                    # if isinstance(node, Assignment) and node.var.recall == 0 and node.declare == False:
+                    #     print('this node {} has recall 0'.format(str(node)))
+                    # if isinstance(node, Assignment):# and node.var.recall > 0: # and node.declare == False:
+                    #     lines.append(str(node))
+                    # elif not isinstance(node, Assignment):
+                    #     lines.append(str(node))
+                else:
+                    exclude = False
 
     def mutate(self, y_prob=30.0):
         return True if np.random.randint(0, 1000) < y_prob*10 else False 
@@ -221,6 +244,8 @@ class Incubator:
                 print("id:{}, fitness:{:.2f}".format(idx,ind.fitness))
 
             self.crossover(selected)
+
+            self.fix_not_valid_crossover()
 
             self.mutation()
 
