@@ -10,11 +10,17 @@ def tcp_variant_fitness(idx):
     #os.system('CXXFLAGS="-Wall -g -O0" ./waf configure')
     #out = subprocess.check_output('CXXFLAGS="-Wno-error" ./waf --run "scratch/wifi-tcp --payloadSize={} --simulationTime=2" | tail -10 | grep -P \'(?<=: \\t)(.*)(?= Mbit\/s)\' -o'.format(payload), shell=True)
     out = b''
-    try:
-        out = subprocess.check_output('range={} ./run.sh'.format(idx), shell=True, timeout=300)
-    except:
-        print("exception")
-        return 0
+    retry = True
+    counter = 0
+    while retry:
+        try:
+            out = subprocess.check_output('range={} ./run.sh'.format(idx), shell=True, timeout=10)
+            retry = False
+        except:
+            if counter > 2:
+                return 0
+            else:
+                counter += 1
     values = out.decode("utf-8").replace("\n", " ").split()
     values = [float(value) for value in values]
     if len(values) > 0:

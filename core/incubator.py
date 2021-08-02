@@ -3,6 +3,7 @@ import secrets
 import os
 import sys
 import random
+import subprocess
 from anytree import search
 import copy
 import numpy as np
@@ -10,8 +11,10 @@ from utils.operators import IfThenElse, Assignment
 from generators.tree import generate_random_expression
 from utils.fitness import tcp_variant_fitness_write_switch
 from multiprocessing.pool import ThreadPool as Pool
+from anytree import PreOrderIter
+import time
 
-pool_size = 8
+pool_size = 10
 
 class Incubator:
 
@@ -59,11 +62,32 @@ class Incubator:
 
         tcp_variant_fitness_write_switch(switch_case_lines)
 
-        print("[{}] has fitness {}".format(0, self.population[0].max_fitness(0, self.fitness)))
+        os.chdir('/mnt/c/Users/carbo/Desktop/Unitn/tesi/ns-allinone-3.32.2/ns-allinone-3.32/ns-3.32/')
+
+        configure_command = 'CXXFLAGS="-Wno-error -Wno-unused-variable" ./waf configure --disable-python'
+        build_command = 'CXXFLAGS="-Wno-error -Wno-unused-variable" ./waf build'
+
+        try:
+            print('configuring...')
+            start = time.time()
+            out = subprocess.check_output(configure_command, shell=True, timeout=20)
+            end = time.time()
+            print("configured in {:.3f} seconds".format(end - start))
+
+            print('building...')
+            start = time.time()
+            out = subprocess.check_output(build_command, shell=True, timeout=120)
+            end = time.time()
+            print("built in {:.3f} seconds".format(end - start))
+        except:
+            print('error on configuring or building...')
+        
+        print("calculating fitness...")
+        #print("[{}] has fitness {}".format(0, self.population[0].max_fitness(0, self.fitness)))
 
         pool = Pool(pool_size)
 
-        for idx, individual in enumerate(self.population[1:]):
+        for idx, individual in enumerate(self.population):
             pool.apply_async(self.multiprocessing_fitness, (idx, individual))   
 
         pool.close()
@@ -73,7 +97,11 @@ class Incubator:
     def multiprocessing_fitness(self, idx, individual):
         #for idx, individual in enumerate(self.population):
             # print(">>>>>>>>>>>FITNESS>>>>>>>>>>>")
-        print("[{}] has fitness {}".format(idx, individual.max_fitness(idx, self.fitness)))
+        print("[{}] calculating...".format(idx))
+        start = time.time()
+        print("[{}] has fitness {}".format(idx, individual.max_fitness(idx, self.fitness)), end='')        
+        end = time.time()
+        print(print(" calculated in {:.3f} seconds".format(end - start)))
 
     def tournament_selection(self, k=35, s=15):
         '''
@@ -126,13 +154,12 @@ class Incubator:
         path_folder = os.path.join(sys.path[0], "snapshots", "{}_gen".format(self.current_generation))
         path_file = "{}.cc"
 
-        print("snapshot", path_folder, path_file)
-
         # assure folder existence
         if not os.path.exists(path_folder):
             os.makedirs(path_folder)
         
         for idx, individual in enumerate(self.population):
+            print("snapshot", path_folder + "/" + path_file.format(idx))
             individual.save_to_file(folder=path_folder, file=path_file.format(idx))
 
     def crossover(self, best_individuals):
@@ -176,17 +203,9 @@ class Incubator:
             last_node = None
             for node in PreOrderIter(ind.root):
                 if not exclude:
-                    if isinstance(node, Assignment):
-                        if node.var.name not in seen_variables and node.declare == False:
-                            for child in node.children:
-                                child.parent = node.parent
-                    
-                    # if isinstance(node, Assignment) and node.var.recall == 0 and node.declare == False:
-                    #     print('this node {} has recall 0'.format(str(node)))
-                    # if isinstance(node, Assignment):# and node.var.recall > 0: # and node.declare == False:
-                    #     lines.append(str(node))
-                    # elif not isinstance(node, Assignment):
-                    #     lines.append(str(node))
+                    if isinstance(node, Assignment) and node.var.name not in seen_variables and node.declare == False:
+                        for child in node.children:
+                            child.parent = node.parent
                 else:
                     exclude = False
 
@@ -226,6 +245,8 @@ class Incubator:
             #self.mutation()
 
             #break
+
+
 
             self.calculate_fitness()
 

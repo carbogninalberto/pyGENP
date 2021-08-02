@@ -16,7 +16,7 @@ class DefaultConfig:
         "assignment": Assignment,
         "assignment": Assignment,
         "assignment": Assignment,
-        #"ifthenelse": IfThenElse,
+        # "ifthenelse": IfThenElse,
     }
 
     MATH_OPERATORS = {

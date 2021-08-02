@@ -19,12 +19,12 @@ variable found elsewhere
 
 def generate_individual_from_seed(
                                     seed=42,
-                                    max_depth=3,
-                                    max_width=4,
+                                    max_depth=10,
+                                    max_width=2,
                                     operators=OperatorRegistry(DefaultConfig.OPERATORS),
                                     variables=VariableRegistry([]),
                                     equality_operators=DefaultConfig.EQUALITY,
-                                    alpha_var_gen=0.0
+                                    alpha_var_gen=00.0
                                     ):
     '''
     this function generate a tree individual 
@@ -79,6 +79,9 @@ def generate_individual_from_seed(
                     var_t = tmp_vars[np.random.randint(0, len(tmp_vars))] if isinstance(tmp_vars, list) else tmp_vars
                     var_f = tmp_vars[np.random.randint(0, len(tmp_vars))] if isinstance(tmp_vars, list) else tmp_vars
 
+                    var_t.recall += 1
+                    var_f.recall += 1
+
                     var_t_node = Assignment(var_t, exp_t, declare=False)
                     var_f_node = Assignment(var_f, exp_f, declare=False)
 
@@ -108,6 +111,8 @@ def generate_individual_from_seed(
                 if len(variables.variables) > 0:
                     tmp_vars = variables.get_random_var()
                     var = tmp_vars[np.random.randint(0, len(tmp_vars))] if isinstance(tmp_vars, list) else tmp_vars
+                    var.recall += 1
+
                     exp = generate_random_expression(variables)
                      # update of existing variable
                     node = ops[rand_operator](var, exp, declare=False, parent=pending_nodes[i])
@@ -156,6 +161,7 @@ def take_care_of_individual_termination(root, variables: VariableRegistry, opera
         root.exp_f = generate_random_expression(variables)
     elif isinstance(root, Assignment):
         root.var = variables.get_random_var()
+        root.var.recall += 1
         root.exp = generate_random_expression(variables)
     else:
         raise Exception("Unknown Operator {}".format(type(root)))
@@ -294,6 +300,7 @@ def use_variable(variables, y_prob=20.0, types=Types.get_all()):
     if use_variable:
         while not found_compatible and len(variables.variables) > 0 and variables.is_there_compatible(types):
             var = variables.get_random_var()
+            var.recall += 1
             if var is not None and var.tp in types:
                 found_compatible = True
     return use_variable, var
