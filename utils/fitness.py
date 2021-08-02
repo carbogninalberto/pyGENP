@@ -1,10 +1,18 @@
 import os
 import subprocess
 from .parser import parser_wrapper
+from dotenv import load_dotenv
+
+load_dotenv()
+
+BASE_NS3_PATH = os.getenv('BASE_NS3_PATH')
 
 def tcp_variant_fitness(idx):
     payload = 1500
-    os.chdir('/mnt/c/Users/carbo/Desktop/Unitn/tesi/ns-allinone-3.32.2/ns-allinone-3.32/ns-3.32/')
+    dir_to_change = '{}/'.format(BASE_NS3_PATH)
+    os.chdir(dir_to_change)
+    # os.chdir('{}/ns-3.32/'.format(BASE_NS3_PATH))
+    # os.chdir('/mnt/c/Users/carbo/Desktop/Unitn/tesi/ns-allinone-3.32.2/ns-allinone-3.32/ns-3.32/')
     #out = os.popen('./waf --run "scratch/wifi-tcp --tcpVariant=TcpHighSpeed --payloadSize={} --simulationTime=2"| tail -10 | grep -P \'(?<=: \t)(.*)(?= Mbit\/s)\' -o'.format(payload))
     #print(out, type(out))
     #os.system('CXXFLAGS="-Wall -g -O0" ./waf configure')
@@ -37,4 +45,4 @@ def tcp_variant_fitness_wrapped(idx, lines=[]):
 
 
 def tcp_variant_fitness_write_switch(lines=[]):
-    parser_wrapper(file='/mnt/c/Users/carbo/Desktop/Unitn/tesi/ns-allinone-3.32.2/ns-allinone-3.32/ns-3.32/src/internet/model/tcp-congestion-ops.cc', lines=lines)
+    parser_wrapper(file='{}/src/internet/model/tcp-congestion-ops.cc'.format(BASE_NS3_PATH), lines=lines)

@@ -101,7 +101,7 @@ class Incubator:
         start = time.time()
         print("[{}] has fitness {}".format(idx, individual.max_fitness(idx, self.fitness)), end='')        
         end = time.time()
-        print(print(" calculated in {:.3f} seconds".format(end - start)))
+        print(" calculated in {:.3f} seconds".format(end - start))
 
     def tournament_selection(self, k=35, s=15):
         '''
