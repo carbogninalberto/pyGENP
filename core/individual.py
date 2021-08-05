@@ -6,6 +6,7 @@ from utils.operators import Assignment
 class Individual:
 
     def __init__(self, root, variables, max_depth=3, max_width=10):
+        self.id = None
         self.root = root
         self.variables = variables
         self.max_depth = max_depth

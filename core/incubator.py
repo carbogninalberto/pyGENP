@@ -18,8 +18,9 @@ from dotenv import load_dotenv
 load_dotenv()
 
 BASE_NS3_PATH = os.getenv('BASE_NS3_PATH')
+CPUS = os.getenv('CPUS')
 
-pool_size = 4
+pool_size = int(CPUS)
 
 class Incubator:
 
@@ -41,6 +42,7 @@ class Incubator:
         self.fitness = fitness
         self.variables = variables
         self.current_generation = 1
+        self.hall_of_fame = []
     
     def init_population(self, generator):
         for i in range(self.pop_size):
@@ -81,7 +83,10 @@ class Incubator:
 
             print('building...')
             start = time.time()
-            out = subprocess.check_output(build_command, shell=True, timeout=120)
+            try:
+                out = subprocess.check_output(build_command, shell=True, timeout=120)
+            except Exception as e:
+                print("IMPOSSIBLE TO BUILD", e)
             end = time.time()
             print("built in {:.3f} seconds".format(end - start))
         except:
@@ -104,7 +109,7 @@ class Incubator:
             # print(">>>>>>>>>>>FITNESS>>>>>>>>>>>")
         print("[{}] calculating...".format(idx))
         start = time.time()
-        print("[{}] has fitness {}".format(idx, individual.max_fitness(idx, self.fitness)), end='')        
+        print("[{}] has fitness {:.2f}".format(idx, individual.max_fitness(idx, self.fitness)), end='')        
         end = time.time()
         print(" calculated in {:.3f} seconds".format(end - start))
 
@@ -167,9 +172,14 @@ class Incubator:
             print("snapshot", path_folder + "/" + path_file.format(idx))
             individual.save_to_file(folder=path_folder, file=path_file.format(idx))
 
+    def add_hall_of_fame(self):
+        self.population.sort(key=lambda x:x.fitness, reverse=True)
+        if int(self.population[0].fitness) > 0: 
+            self.hall_of_fame.append({"id": self.population[0].id, "fitness": self.population[0].fitness})
+
     def crossover(self, best_individuals):
         # count how many offsprings to generate
-        offsprings = self.pop_size - self.DefaultConfig.TOURNAMENT['s']
+        offsprings = self.DefaultConfig.TOURNAMENT['k'] - len(best_individuals)
         print("offsprings to generate are {}".format(offsprings))
         # reset population to best individuals
         self.population = best_individuals
@@ -255,7 +265,10 @@ class Incubator:
 
             self.calculate_fitness()
 
+            self.add_hall_of_fame()
+
             print("[GENERATION {}/{}] with population:".format(self.current_generation, self.pop_size))
+            print("[GENERATION {}/{}] HALL OF FAME: {}".format(self.current_generation, self.pop_size, [str(ind) for ind in self.hall_of_fame]))
 
             for idx, ind in enumerate(self.population):
                 print("id:{}, fitness:{:.2f}, variables".format(idx,ind.fitness, ind.variables))
@@ -269,6 +282,8 @@ class Incubator:
             for idx, ind in enumerate(selected):
                 print("id:{}, fitness:{:.2f}".format(idx,ind.fitness))
 
+
+
             self.crossover(selected)
 
             self.fix_not_valid_crossover()
@@ -277,7 +292,10 @@ class Incubator:
 
             self.current_generation += 1
 
+        print("FINAL POPULATION")
         print([ind.fitness for ind in self.population])
+        print("HALL OF FAME:")
+        print([str(ind) for ind in self.hall_of_fame])
 
 
 

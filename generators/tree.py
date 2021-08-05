@@ -19,7 +19,7 @@ variable found elsewhere
 
 def generate_individual_from_seed(
                                     seed=42,
-                                    max_depth=10,
+                                    max_depth=2,
                                     max_width=2,
                                     operators=OperatorRegistry(DefaultConfig.OPERATORS),
                                     variables=VariableRegistry([]),
@@ -114,7 +114,8 @@ def generate_individual_from_seed(
                     var.recall += 1
 
                     exp = generate_random_expression(variables)
-                     # update of existing variable
+
+                    # update of existing variable
                     node = ops[rand_operator](var, exp, declare=False, parent=pending_nodes[i])
                     pending_nodes.append(node)
                 else:                    
@@ -254,7 +255,7 @@ def take_care_of_termination(root, variables, width=5):
             if use and var is not None:
                 children.append(Termination(var.name, var.tp))
             else:
-                children.append(Termination(np.random.randint(0, 2001)/100.0, Types.float))
+                children.append(Termination(np.random.randint(10, 2001)/100.0, Types.float))
             root.children = children
             root.nums = children
 
@@ -266,7 +267,7 @@ def take_care_of_termination(root, variables, width=5):
             if use and var is not None:
                 children.append(Termination(var.name, var.tp))
             else:
-                val = np.random.randint(0, 2001)/100.0
+                val = np.random.randint(10, 2001)/100.0
                 children.append(Termination(val if val != 0 else 1, Types.float))
             root.children = children
         root.num = children[0]

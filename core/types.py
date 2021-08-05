@@ -11,11 +11,6 @@ class DefaultConfig:
 
     OPERATORS = {
         "assignment": Assignment,
-        "assignment": Assignment,
-        "assignment": Assignment,
-        "assignment": Assignment,
-        "assignment": Assignment,
-        "assignment": Assignment,
         # "ifthenelse": IfThenElse,
     }
 
