@@ -110,7 +110,7 @@ def generate_individual_from_seed(
                 # choose valid var
                 if len(variables.variables) > 0:
                     tmp_vars = variables.get_random_var()
-                    var = tmp_vars[np.random.randint(0, len(tmp_vars))] if isinstance(tmp_vars, list) else tmp_vars
+                    var = tmp_vars[np.random.randint(1, len(tmp_vars))] if isinstance(tmp_vars, list) else tmp_vars
                     var.recall += 1
 
                     exp = generate_random_expression(variables)
@@ -120,7 +120,7 @@ def generate_individual_from_seed(
                 else:                    
                     # generate a new variable
                     var_name = generate_var_name(variables.variables_name())
-                    var = Variable(var_name, Types.get_all()[np.random.randint(0, len(Types.get_all()))], scope=i)            
+                    var = Variable(var_name, Types.get_all()[np.random.randint(1, len(Types.get_all()))], scope=i)            
                     # add variable to registry
                     variables.register(var)
                     exp = generate_random_expression(variables)
@@ -254,7 +254,7 @@ def take_care_of_termination(root, variables, width=5):
             if use and var is not None:
                 children.append(Termination(var.name, var.tp))
             else:
-                children.append(Termination(np.random.randint(-2000, 2001)/100.0, Types.float))
+                children.append(Termination(np.random.randint(0, 2001)/100.0, Types.float))
             root.children = children
             root.nums = children
 
@@ -266,7 +266,7 @@ def take_care_of_termination(root, variables, width=5):
             if use and var is not None:
                 children.append(Termination(var.name, var.tp))
             else:
-                val = np.random.randint(-2000, 2001)/100.0
+                val = np.random.randint(0, 2001)/100.0
                 children.append(Termination(val if val != 0 else 1, Types.float))
             root.children = children
         root.num = children[0]

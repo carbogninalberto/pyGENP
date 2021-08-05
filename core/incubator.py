@@ -13,8 +13,13 @@ from utils.fitness import tcp_variant_fitness_write_switch
 from multiprocessing.pool import ThreadPool as Pool
 from anytree import PreOrderIter
 import time
+from dotenv import load_dotenv
 
-pool_size = 10
+load_dotenv()
+
+BASE_NS3_PATH = os.getenv('BASE_NS3_PATH')
+
+pool_size = 4
 
 class Incubator:
 
@@ -62,7 +67,7 @@ class Incubator:
 
         tcp_variant_fitness_write_switch(switch_case_lines)
 
-        os.chdir('/mnt/c/Users/carbo/Desktop/Unitn/tesi/ns-allinone-3.32.2/ns-allinone-3.32/ns-3.32/')
+        os.chdir(BASE_NS3_PATH)
 
         configure_command = 'CXXFLAGS="-Wno-error -Wno-unused-variable" ./waf configure --disable-python'
         build_command = 'CXXFLAGS="-Wno-error -Wno-unused-variable" ./waf build'

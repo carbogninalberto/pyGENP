@@ -25,6 +25,7 @@ def tcp_variant_fitness(idx):
             out = subprocess.check_output('range={} ./run.sh'.format(idx), shell=True, timeout=10)
             retry = False
         except:
+            print("EXCEPTION")
             if counter > 2:
                 return 0
             else:
