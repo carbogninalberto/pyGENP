@@ -50,6 +50,9 @@ class Incubator:
         for i in range(self.pop_size):
             variables = copy.deepcopy(self.variables)
             self.population.append(generator.generate_individual_from_seed(variables=variables))
+            indiv = generator.generate_individual_from_seed(variables=variables)
+            indiv.id = i
+            self.population.append(indiv)
 
     # @jit
     def calculate_fitness(self):
@@ -180,7 +183,7 @@ class Incubator:
     def add_hall_of_fame(self):
         self.population.sort(key=lambda x:x.fitness, reverse=True)
         if int(self.population[0].fitness) > 0: 
-            self.hall_of_fame.append({"id": self.population[0].id, "fitness": self.population[0].fitness})
+            self.hall_of_fame.append({"id": self.population[0].id, "fitness": self.population[0].fitness, "gen": self.current_generation})
 
     # @jit
     def crossover(self, best_individuals):
