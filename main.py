@@ -6,10 +6,9 @@ from anytree.exporter import DotExporter
 #import utils.parser as up
 import genp
 #import generators.tree as gentree
-
+from numba import jit
 
 if __name__ == "__main__":
-    print("LIBRARY TEST")
 
     variables = genp.registers.VariableRegistry([
         genp.registers.Variable("tcb->m_segmentSize", genp.types.Types.integer)
@@ -27,13 +26,15 @@ if __name__ == "__main__":
         fitness=genp.tcp_variant_fitness_wrapped,
         variables=variables,
         pop_size=20,
-        generations=10
+        generations=20
     )
 
     # evolve population
     incubator.run(
         generator=genp.tree
     )
+
+    # numba.cuda.profile_stop()
 
     
 

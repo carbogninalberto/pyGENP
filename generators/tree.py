@@ -1,6 +1,8 @@
 import numpy as np
 import random, string
 import random_name_generator as rng
+import random, string
+import uuid
 
 from anytree import Node, PreOrderIter
 
@@ -18,13 +20,13 @@ variable found elsewhere
 
 
 def generate_individual_from_seed(
-                                    seed=42,
-                                    max_depth=2,
-                                    max_width=2,
+                                    seed=4242,
+                                    max_depth=5,
+                                    max_width=10,
                                     operators=OperatorRegistry(DefaultConfig.OPERATORS),
                                     variables=VariableRegistry([]),
                                     equality_operators=DefaultConfig.EQUALITY,
-                                    alpha_var_gen=00.0
+                                    alpha_var_gen=10.0
                                     ):
     '''
     this function generate a tree individual 
@@ -148,6 +150,7 @@ def generate_individual_from_seed(
     # validity check requires => type check and variable scope accessibility
         # generate empty individual
     individual = Individual(root, variables, max_depth=max_depth, max_width=max_width)
+    individual.id = uuid.uuid4().hex
 
     return individual
 
@@ -252,10 +255,11 @@ def take_care_of_termination(root, variables, width=5):
             use, var = use_variable(variables)
 
             children = [child for child in root.children] if root.children is not None else []
-            if use and var is not None:
-                children.append(Termination(var.name, var.tp))
-            else:
-                children.append(Termination(np.random.randint(10, 2001)/100.0, Types.float))
+            # if use and var is not None:
+            #     children.append(Termination(var.name, var.tp))
+            # else:
+            children.append(Termination(np.random.randint(10, 2001)/100.0, Types.float))
+            
             root.children = children
             root.nums = children
 
@@ -264,11 +268,11 @@ def take_care_of_termination(root, variables, width=5):
             use, var = use_variable(variables)
 
             children = [child for child in root.children] if root.children is not None else []
-            if use and var is not None:
-                children.append(Termination(var.name, var.tp))
-            else:
-                val = np.random.randint(10, 2001)/100.0
-                children.append(Termination(val if val != 0 else 1, Types.float))
+            # if use and var is not None:
+            #     children.append(Termination(var.name, var.tp))
+            # else:
+            val = np.random.randint(10, 2001)/100.0
+            children.append(Termination(val if val != 0 else 1, Types.float))
             root.children = children
         root.num = children[0]
         root.den = children[1]
@@ -307,13 +311,13 @@ def use_variable(variables, y_prob=20.0, types=Types.get_all()):
     return use_variable, var
 
 
-def generate_var_name(variables, length=5):
+def generate_var_name(variables, length=10):
     '''
     this function generate a random name
     '''
     alphabet = string.ascii_lowercase
     while True:
-        var_name = ''.join(random.choice(alphabet) for i in range(length))
+        var_name = ''.join(random.choices(string.ascii_letters, k=16)) #''.join(random.choice(alphabet) for i in range(length))
         if var_name not in variables:
            return var_name
 

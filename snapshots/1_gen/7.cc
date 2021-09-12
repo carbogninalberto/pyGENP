@@ -1,21 +1,21 @@
-if (tcb->m_segmentSize < tcb->m_segmentSize) {
-	tcb->m_segmentSize = (int) (tcb->m_segmentSize-(-17.44)-(tcb->m_segmentSize)-(-12.95));
+if (tcb->m_segmentSize > tcb->m_segmentSize) {
+	tcb->m_segmentSize = (int) (13.04+(2.89)+(8.36)+(8.04));
 
 } else {
-	tcb->m_segmentSize = (int) (14.12)/(-8.09);
+	tcb->m_segmentSize = (int) (8.75*(16.09)*(14.19));
 
 }
-if (tcb->m_segmentSize != tcb->m_segmentSize) {
-	tcb->m_segmentSize = (int) (8.88*(tcb->m_segmentSize)*(10.05));
+if (tcb->m_segmentSize > tcb->m_segmentSize) {
+	tcb->m_segmentSize = (int) (13.44*(14.17));
 
 } else {
-	tcb->m_segmentSize = (int) (tcb->m_segmentSize*(-10.52));
+	tcb->m_segmentSize = (int) (4.36+(1.19)+(4.29));
 
 }
-if (tcb->m_segmentSize <= tcb->m_segmentSize) {
-	tcb->m_segmentSize = (int) (tcb->m_segmentSize+(3.73));
+if (tcb->m_segmentSize >= tcb->m_segmentSize) {
+	tcb->m_segmentSize = (int) (8.67*(10.19)*(10.2));
 
 } else {
-	tcb->m_segmentSize = (int) (tcb->m_segmentSize)/(3.86);
+	tcb->m_segmentSize = (int) (11.8*(18.27));
 
 }

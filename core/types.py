@@ -11,7 +11,7 @@ class DefaultConfig:
 
     OPERATORS = {
         "assignment": Assignment,
-        # "ifthenelse": IfThenElse,
+        "ifthenelse": IfThenElse,
     }
 
     MATH_OPERATORS = {

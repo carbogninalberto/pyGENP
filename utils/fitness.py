@@ -2,11 +2,13 @@ import os
 import subprocess
 from .parser import parser_wrapper
 from dotenv import load_dotenv
+from numba import jit
 
 load_dotenv()
 
 BASE_NS3_PATH = os.getenv('BASE_NS3_PATH')
 
+# @jit
 def tcp_variant_fitness(idx):
     payload = 1500
     dir_to_change = '{}/'.format(BASE_NS3_PATH)
@@ -27,7 +29,7 @@ def tcp_variant_fitness(idx):
         except Exception as e:
             print("EXCEPTION", e)
             if counter > -1:
-                return 0
+                return -1
             else:
                 counter += 1
     values = out.decode("utf-8").replace("\n", " ").split()

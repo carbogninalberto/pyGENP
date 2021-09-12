@@ -7,13 +7,14 @@ import subprocess
 from anytree import search
 import copy
 import numpy as np
-from utils.operators import IfThenElse, Assignment
+from utils.operators import IfThenElse, Assignment, Termination
 from generators.tree import generate_random_expression
 from utils.fitness import tcp_variant_fitness_write_switch
 from multiprocessing.pool import ThreadPool as Pool
 from anytree import PreOrderIter
 import time
 from dotenv import load_dotenv
+from numba import jit
 
 load_dotenv()
 
@@ -44,11 +45,13 @@ class Incubator:
         self.current_generation = 1
         self.hall_of_fame = []
     
+    # @jit
     def init_population(self, generator):
         for i in range(self.pop_size):
             variables = copy.deepcopy(self.variables)
             self.population.append(generator.generate_individual_from_seed(variables=variables))
 
+    # @jit
     def calculate_fitness(self):
         codes = []
         for idx, individual in enumerate(self.population):
@@ -103,7 +106,6 @@ class Incubator:
         pool.close()
         pool.join()
 
-
     def multiprocessing_fitness(self, idx, individual):
         #for idx, individual in enumerate(self.population):
             # print(">>>>>>>>>>>FITNESS>>>>>>>>>>>")
@@ -113,6 +115,7 @@ class Incubator:
         end = time.time()
         print(" calculated in {:.3f} seconds".format(end - start))
 
+    # @jit
     def tournament_selection(self, k=35, s=15):
         '''
         modified implementation of tournament selection as described in the referenced link.
@@ -153,6 +156,7 @@ class Incubator:
         result = [ind for ind in best_individuals if ind.fitness > 5.0]
         return result if len(result) else best_individuals
 
+    # @jit
     def find_min_max_fitness(self, individuals):
         min_fitness = min(individual.fitness for individual in individuals)
         max_fitness = max(individual.fitness for individual in individuals)
@@ -160,6 +164,7 @@ class Incubator:
         max_individual = [individual for individual in individuals if individual.fitness == max_fitness][0]
         return min_individual, max_individual
 
+    # @jit
     def take_snapshot(self):
         path_folder = os.path.join(sys.path[0], "snapshots", "{}_gen".format(self.current_generation))
         path_file = "{}.cc"
@@ -177,6 +182,7 @@ class Incubator:
         if int(self.population[0].fitness) > 0: 
             self.hall_of_fame.append({"id": self.population[0].id, "fitness": self.population[0].fitness})
 
+    # @jit
     def crossover(self, best_individuals):
         # count how many offsprings to generate
         offsprings = self.DefaultConfig.TOURNAMENT['k'] - len(best_individuals)
@@ -214,19 +220,50 @@ class Incubator:
         for idx, ind in enumerate(self.population):
             lines = []
             exclude = True
-            seen_variables = []
+            seen_variables = [v for v in self.variables.variables_name()]
+            already_declared = []
             last_node = None
+            looking_nested_if = False
             for node in PreOrderIter(ind.root):
+                # if isinstance(node, Assignment) and node.var.name not in seen_variables and node.declare == True and node.parent == ind.root:
+                if isinstance(node, Assignment) and node.declare == True:
+                    if node.var in already_declared:
+                        children = node.parent.children
+                        node.parent.children = []
+                        for child in children:
+                            if not isinstance(child, Assignment) and child.var.name == node.var.name:
+                                node.parent.children.append(child)
+                    else:
+                        already_declared.append(node.var)
+                    # seen_variables.append(node.var.name)
+
+                    
                 if not exclude:
-                    if isinstance(node, Assignment) and node.var.name not in seen_variables and node.declare == False:
-                        for child in node.children:
-                            child.parent = node.parent
+                    if isinstance(node, Termination) and node.value not in seen_variables: 
+                        print("NODEVALUE", node.value)
+                        # random_var_idx = np.random.randint(0, len(seen_variables))
+                        node.value = 1 # seen_variables[random_var_idx]
+                    if isinstance(node, IfThenElse):
+                        if isinstance(node.exp_t, Assignment) and node.exp_t.var.name not in seen_variables and node.exp_t.declare == False:
+                            node.exp_t = 'std::cout << "true";' 
+                        if isinstance(node.exp_f, Assignment) and node.exp_f.var.name not in seen_variables and node.exp_f.declare == False:
+                            node.exp_f = 'std::cout << "false";'
+                    if isinstance(node, Assignment) and node.var.name not in seen_variables and node.declare == False: 
+                        children = node.parent.children
+                        node.parent.children = []
+                        for child in children:
+                            if not isinstance(child, Assignment) and child.var.name == node.var.name:
+                                node.parent.children.append(child)
+                        # node.declare = True
+                        # for child in node.children:
+                            # child.parent = node.parent
                 else:
                     exclude = False
 
     def mutate(self, y_prob=30.0):
         return True if np.random.randint(0, 1000) < y_prob*10 else False 
 
+    # @jit
     def mutation(self):
         for idx, individual in enumerate(self.population):
             if self.mutate():
@@ -261,8 +298,6 @@ class Incubator:
 
             #break
 
-
-
             self.calculate_fitness()
 
             self.add_hall_of_fame()
@@ -279,16 +314,20 @@ class Incubator:
 
             print("{} SELECTED INDIVIDUALS".format(len(selected)))
 
+
             for idx, ind in enumerate(selected):
                 print("id:{}, fitness:{:.2f}".format(idx,ind.fitness))
 
-
-
-            self.crossover(selected)
-
-            self.fix_not_valid_crossover()
+            if len(selected) >= 2:
+                self.crossover(selected)
+                self.fix_not_valid_crossover()
 
             self.mutation()
+
+            if len(selected) == 0:
+                print("GOT NOT AVAILABLE INDIVIDUALS")
+                self.population = []
+                self.init_population()
 
             self.current_generation += 1
 
