@@ -21,16 +21,17 @@ variable found elsewhere
 
 def generate_individual_from_seed(
                                     seed=4242,
-                                    max_depth=5,
+                                    max_depth=10,
                                     max_width=10,
                                     operators=OperatorRegistry(DefaultConfig.OPERATORS),
                                     variables=VariableRegistry([]),
                                     equality_operators=DefaultConfig.EQUALITY,
-                                    alpha_var_gen=10.0
+                                    alpha_var_gen=25.0
                                     ):
     '''
     this function generate a tree individual 
     '''
+
     # create root node
     root = Node("main")    
 

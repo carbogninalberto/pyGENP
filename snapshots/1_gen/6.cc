@@ -1,29 +1,22 @@
-int ZojUVbEywZnDEFFi = (int) (2.93*(14.57)*(1.15)*(9.82));
-if (tcb->m_segmentSize == ZojUVbEywZnDEFFi) {
-	ZojUVbEywZnDEFFi = (int) (6.45+(17.97)+(11.76));
+if (tcb->m_segmentSize == tcb->m_segmentSize) {
+	tcb->m_segmentSize = (int) (6.8+(4.37));
 
 } else {
-	ZojUVbEywZnDEFFi = (int) (16.62*(19.93));
+	tcb->m_segmentSize = (int) (19.9+(8.71)+(6.51)+(16.91));
 
 }
-if (ZojUVbEywZnDEFFi < tcb->m_segmentSize) {
-	ZojUVbEywZnDEFFi = (int) (4.96+(12.02)+(4.33)+(9.14));
+int GyajDsEQRBNorEEO = (int) (0.62*(8.72)*(10.33));
+if (GyajDsEQRBNorEEO <= tcb->m_segmentSize) {
+	GyajDsEQRBNorEEO = (int) (6.55+(9.4)+(10.72)+(19.64));
 
 } else {
-	ZojUVbEywZnDEFFi = (int) (7.96+(6.23)+(10.39));
+	GyajDsEQRBNorEEO = (int) (17.1+(14.44)+(0.13));
 
 }
-if (tcb->m_segmentSize > ZojUVbEywZnDEFFi) {
-	ZojUVbEywZnDEFFi = (int) (16.38+(17.79)+(19.02));
+if (tcb->m_segmentSize < tcb->m_segmentSize) {
+	GyajDsEQRBNorEEO = (int) (5.77*(10.39)*(11.93)*(17.09));
 
 } else {
-	ZojUVbEywZnDEFFi = (int) (0.5+(4.15)+(10.43));
-
-}
-if (tcb->m_segmentSize == ZojUVbEywZnDEFFi) {
-	tcb->m_segmentSize = (int) (15.38+(9.97)+(8.88)+(8.28));
-
-} else {
-	tcb->m_segmentSize = (int) (6.13*(0.95));
+	GyajDsEQRBNorEEO = (int) (1.25*(14.9)*(12.44));
 
 }

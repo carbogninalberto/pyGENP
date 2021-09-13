@@ -34,6 +34,7 @@ class Incubator:
                     alfa_var_gen=12.0,
                     const_termination_range=[-20, 20],
                     fitness=None,
+                    generator=generate_random_expression
                 ):
         
         self.DefaultConfig = DefaultConfig
@@ -44,12 +45,13 @@ class Incubator:
         self.variables = variables
         self.current_generation = 1
         self.hall_of_fame = []
+        self.generator = generator
     
     # @jit
     def init_population(self, generator):
         for i in range(self.pop_size):
             variables = copy.deepcopy(self.variables)
-            self.population.append(generator.generate_individual_from_seed(variables=variables))
+            # self.population.append(generator.generate_individual_from_seed(variables=variables))
             indiv = generator.generate_individual_from_seed(variables=variables)
             indiv.id = i
             self.population.append(indiv)
@@ -98,7 +100,7 @@ class Incubator:
         except:
             print('error on configuring or building...')
         
-        print("calculating fitness...")
+        # print("calculating fitness...")
         #print("[{}] has fitness {}".format(0, self.population[0].max_fitness(0, self.fitness)))
 
         pool = Pool(pool_size)
@@ -112,7 +114,7 @@ class Incubator:
     def multiprocessing_fitness(self, idx, individual):
         #for idx, individual in enumerate(self.population):
             # print(">>>>>>>>>>>FITNESS>>>>>>>>>>>")
-        print("[{}] calculating...".format(idx))
+        # print("[{}] calculating...".format(idx))
         start = time.time()
         print("[{}] has fitness {:.2f}".format(idx, individual.max_fitness(idx, self.fitness)), end='')        
         end = time.time()
@@ -194,30 +196,45 @@ class Incubator:
         self.population = best_individuals
         # create parent pool set
         parent_pool = set(best_individuals)
+        counter_idx = len(self.population)+1
         # generate new offsprings by
         while len(self.population) < self.pop_size:
+            variables = copy.deepcopy(self.variables)
+            # self.population.append(generator.generate_individual_from_seed(variables=variables))
+            indiv = self.generator(variables=variables)
+            indiv.id = counter_idx
+            counter_idx += 1
+
             # pick 2 random parents
-            parents = random.sample(parent_pool, 2)
+            parents = random.sample(parent_pool, 1)
             # convert nodes to sets
             parent_one_nodes = set(parents[0].root.children)
-            parent_two_nodes = set(parents[1].root.children)
+            parent_two_nodes = set(indiv.root.children)
             # parent_two_nodes = search.findall(parents[1].root)
             # init new individual
             child = copy.deepcopy(parents[0])
+            # child = copy.deepcopy(indiv)
             # pick random part of the tree
-            subtree_one = copy.deepcopy(random.sample(parent_one_nodes, 1)[0])
-            subtree_two = copy.deepcopy(random.sample(parent_two_nodes, 1)[0])
-            # perform crossover
-            # first operation
-            first_child_branch = random.sample(child.root.children, 1)[0]
-            first_child_branch.children = []
-            subtree_one.parent = first_child_branch
-            # second operation
-            second_child_branch = random.sample(child.root.children, 1)[0]
-            second_child_branch.children = []
-            subtree_two.parent = first_child_branch
+            if len(parent_one_nodes) > 1:
+                subtree_one = copy.deepcopy(random.sample(parent_one_nodes, 1)[0])
+                # perform crossover
+                # first operation
+                first_child_branch = random.sample(child.root.children, 1)[0]
+                first_child_branch.children = []
+                subtree_one.parent = first_child_branch
+
+            if len(parent_two_nodes) > 1:
+                subtree_two = copy.deepcopy(random.sample(parent_two_nodes, 1)[0])
+                # perform crossover            
+                # second operation
+                second_child_branch = random.sample(child.root.children, 1)[0]
+                second_child_branch.children = []
+                subtree_two.parent = first_child_branch
             # add child to population
             self.population.append(child)
+            # indiv.children.append(child)
+            # child.parent = indiv
+            # self.population.append(indiv)
 
     def fix_not_valid_crossover(self):
         for idx, ind in enumerate(self.population):
@@ -241,29 +258,51 @@ class Incubator:
                     # seen_variables.append(node.var.name)
 
                     
-                if not exclude:
+                if True: #not exclude:
                     if isinstance(node, Termination) and node.value not in seen_variables: 
-                        print("NODEVALUE", node.value)
-                        # random_var_idx = np.random.randint(0, len(seen_variables))
-                        node.value = 1 # seen_variables[random_var_idx]
+                        if node.parent is not None:
+                            node.parent.children = []
+
+                        # print("NODEVALUE", node.value)
+                        # # random_var_idx = np.random.randint(0, len(seen_variables))
+                        # node.value = 1 # seen_variables[random_var_idx]
                     if isinstance(node, IfThenElse):
-                        if isinstance(node.exp_t, Assignment) and node.exp_t.var.name not in seen_variables and node.exp_t.declare == False:
-                            node.exp_t = 'std::cout << "true";' 
-                        if isinstance(node.exp_f, Assignment) and node.exp_f.var.name not in seen_variables and node.exp_f.declare == False:
-                            node.exp_f = 'std::cout << "false";'
-                    if isinstance(node, Assignment) and node.var.name not in seen_variables and node.declare == False: 
-                        children = node.parent.children
                         node.parent.children = []
-                        for child in children:
-                            if not isinstance(child, Assignment) and child.var.name == node.var.name:
-                                node.parent.children.append(child)
+
+                        # if isinstance(node.exp_t, Assignment) and node.exp_t.var.name not in seen_variables and node.exp_t.declare == False:
+                        #     node.exp_t = 'std::cout << "true";' 
+                        # if isinstance(node.exp_f, Assignment) and node.exp_f.var.name not in seen_variables and node.exp_f.declare == False:
+                        #     node.exp_f = 'std::cout << "false";'
+
+                    if isinstance(node, Assignment) and node.var.name not in seen_variables and node.declare == False: 
+
+                        if node.parent is not None:
+                            node.parent.children = []
+
+
+                        # node.declare = True
+                        # if not isinstance(node.parent, IfThenElse):
+                        #     seen_variables.append(node.var.name)
+
+
+                        
+                        # children = node.parent.children
+                        # node.parent.children = []
+                        # for child in children:
+                        #     if not isinstance(child, Assignment) and child.var.name == node.var.name:
+                        #         node.parent.children.append(child)
+                        
                         # node.declare = True
                         # for child in node.children:
                             # child.parent = node.parent
+                    if isinstance(node, Assignment) and node.var.name in seen_variables and node.declare == True: 
+                        if node.parent is not None:
+                            node.parent.children = []
+                        # node.declare = False
                 else:
                     exclude = False
 
-    def mutate(self, y_prob=30.0):
+    def mutate(self, y_prob=60.0):
         return True if np.random.randint(0, 1000) < y_prob*10 else False 
 
     # @jit
@@ -271,23 +310,24 @@ class Incubator:
         for idx, individual in enumerate(self.population):
             if self.mutate():
                 # operator flipping
-                random_node = random.sample(individual.root.children, 1)[0]
-                # random operator
-                if isinstance(random_node, IfThenElse):
-                    tmp_vars = individual.variables.get_random_var()
-                    var_t = tmp_vars[np.random.randint(0, len(tmp_vars))] if isinstance(tmp_vars, list) else tmp_vars
-                    var_f = tmp_vars[np.random.randint(0, len(tmp_vars))] if isinstance(tmp_vars, list) else tmp_vars
+                if (len(individual.root.children) >= 1):
+                    random_node = random.sample(individual.root.children, 1)[0]
+                    # random operator
+                    if isinstance(random_node, IfThenElse):
+                        tmp_vars = individual.variables.get_random_var()
+                        var_t = tmp_vars[np.random.randint(0, len(tmp_vars))] if isinstance(tmp_vars, list) else tmp_vars
+                        var_f = tmp_vars[np.random.randint(0, len(tmp_vars))] if isinstance(tmp_vars, list) else tmp_vars
 
-                    var_t.recall += 1
-                    var_f.recall += 1
-                    
-                    exp_t = generate_random_expression(individual.variables)
-                    exp_f = generate_random_expression(individual.variables)  
+                        var_t.recall += 1
+                        var_f.recall += 1
+                        
+                        exp_t = generate_random_expression(individual.variables)
+                        exp_f = generate_random_expression(individual.variables)  
 
-                    random_node.exp_t = Assignment(var_t, exp_t, declare=False)
-                    random_node.exp_f = Assignment(var_f, exp_f, declare=False)
-                elif isinstance(random_node, Assignment):
-                    random_node.exp = generate_random_expression(individual.variables)
+                        random_node.exp_t = Assignment(var_t, exp_t, declare=False)
+                        random_node.exp_f = Assignment(var_f, exp_f, declare=False)
+                    elif isinstance(random_node, Assignment):
+                        random_node.exp = generate_random_expression(individual.variables)
 
     def run(self, generator):
         # init population giving a generator
@@ -309,7 +349,7 @@ class Incubator:
             print("[GENERATION {}/{}] HALL OF FAME: {}".format(self.current_generation, self.pop_size, [str(ind) for ind in self.hall_of_fame]))
 
             for idx, ind in enumerate(self.population):
-                print("id:{}, fitness:{:.2f}, variables".format(idx,ind.fitness, ind.variables))
+                print("id:{}, fitness:{:.2f}, variables: {}".format(idx,ind.fitness, ind.variables))
 
             selected = self.tournament_selection(
                 k=self.DefaultConfig.TOURNAMENT["k"],
