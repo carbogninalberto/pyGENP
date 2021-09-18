@@ -1,9 +1,4 @@
-int YotFHrUZRBvDHWhR = (int) (8.15+(15.44)+(11.72));
-if (YotFHrUZRBvDHWhR != YotFHrUZRBvDHWhR) {
-	YotFHrUZRBvDHWhR = (int) (19.68*(11.73)*(2.7));
-
-} else {
-	YotFHrUZRBvDHWhR = (int) (13.31+(15.26));
-
-}
-tcb->m_segmentSize = (int) (14.79*(4.0));
+int mKqCQCXUFUAgTQLC = (int) (4.16*(13.65)*(10.32)*(12.8));
+float UxwUkLQVYVnObTSQ = (float) (10.84*(0.74));
+UxwUkLQVYVnObTSQ = (float) (0.17*(18.67));
+mKqCQCXUFUAgTQLC = (int) (7.0*(10.77)*(15.19));

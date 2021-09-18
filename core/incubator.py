@@ -227,9 +227,9 @@ class Incubator:
                 subtree_two = copy.deepcopy(random.sample(parent_two_nodes, 1)[0])
                 # perform crossover            
                 # second operation
-                second_child_branch = random.sample(child.root.children, 1)[0]
+                second_child_branch = random.sample(indiv.root.children, 1)[0]
                 second_child_branch.children = []
-                subtree_two.parent = first_child_branch
+                subtree_two.parent = second_child_branch
             # add child to population
             self.population.append(child)
             # indiv.children.append(child)
@@ -302,7 +302,7 @@ class Incubator:
                 else:
                     exclude = False
 
-    def mutate(self, y_prob=60.0):
+    def mutate(self, y_prob=50.0):
         return True if np.random.randint(0, 1000) < y_prob*10 else False 
 
     # @jit
@@ -363,7 +363,7 @@ class Incubator:
 
             if len(selected) >= 2:
                 self.crossover(selected)
-                self.fix_not_valid_crossover()
+                # self.fix_not_valid_crossover()
 
             self.mutation()
 

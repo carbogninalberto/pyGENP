@@ -20,13 +20,13 @@ variable found elsewhere
 
 
 def generate_individual_from_seed(
-                                    seed=4242,
-                                    max_depth=10,
-                                    max_width=10,
+                                    seed=42422019,
+                                    max_depth=20,
+                                    max_width=20,
                                     operators=OperatorRegistry(DefaultConfig.OPERATORS),
                                     variables=VariableRegistry([]),
                                     equality_operators=DefaultConfig.EQUALITY,
-                                    alpha_var_gen=25.0
+                                    alpha_var_gen=50.0
                                     ):
     '''
     this function generate a tree individual 
@@ -213,7 +213,7 @@ def generate_random_expression(variables, operators=DefaultConfig.MATH_OPERATORS
         op, key = create_random_op(rand_op_id)
 
         node = op([]) if key != 'div' else op([], [])        
-        rand_depth = np.random.randint(0, max_depth)
+        rand_depth = np.random.randint(3, max_depth)
 
         pending_nodes.append(node)
         tmp_nodes = [node]
