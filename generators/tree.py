@@ -26,7 +26,7 @@ def generate_individual_from_seed(
                                     operators=OperatorRegistry(DefaultConfig.OPERATORS),
                                     variables=VariableRegistry([]),
                                     equality_operators=DefaultConfig.EQUALITY,
-                                    alpha_var_gen=50.0
+                                    alpha_var_gen=35.0
                                     ):
     '''
     this function generate a tree individual 

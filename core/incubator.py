@@ -230,6 +230,10 @@ class Incubator:
                 second_child_branch = random.sample(indiv.root.children, 1)[0]
                 second_child_branch.children = []
                 subtree_two.parent = second_child_branch
+            
+            # updating variables
+            child.update_variable_registry(generate_random_expression)
+
             # add child to population
             self.population.append(child)
             # indiv.children.append(child)
