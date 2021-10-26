@@ -3,6 +3,7 @@ import secrets
 import os
 import sys
 import random
+import pickle
 import subprocess
 from anytree import search
 import copy
@@ -31,10 +32,10 @@ class Incubator:
                     variables=None,
                     pop_size=2,
                     generations=20,
-                    alfa_var_gen=12.0,
                     const_termination_range=[-20, 20],
                     fitness=None,
-                    generator=generate_random_expression
+                    generator=generate_random_expression,
+                    save_individual=False
                 ):
         
         self.DefaultConfig = DefaultConfig
@@ -46,6 +47,7 @@ class Incubator:
         self.current_generation = 1
         self.hall_of_fame = []
         self.generator = generator
+        self.save_individual=False
     
     # @jit
     def init_population(self, generator):

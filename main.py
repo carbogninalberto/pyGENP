@@ -13,21 +13,25 @@ if __name__ == "__main__":
     variables = genp.registers.VariableRegistry([
         genp.registers.Variable("tcb->m_segmentSize", genp.types.Types.integer),
         genp.registers.Variable("tcb->m_cWnd", genp.types.Types.integer),
-        genp.registers.Variable("tcb->m_ssThresh", genp.types.Types.integer)
+        genp.registers.Variable("segmentsAcked", genp.types.Types.integer)        
     ])
 
     custom_config = genp.types.DefaultConfig
     custom_config.TOURNAMENT = {
-        "k": 25,
-        "s": 5
+        "k": 10,
+        "s": 10
     }
+    custom_config.WILD_CARD_CODE = [
+        "segmentsAcked = SlowStart (tcb, segmentsAcked);",
+        "CongestionAvoidance (tcb, segmentsAcked);"
+    ]
 
     # initialize Incubator
     incubator = genp.Incubator(
         config=custom_config,
         fitness=genp.tcp_variant_fitness_wrapped,
         variables=variables,
-        pop_size=25,
+        pop_size=10,
         generations=15
     )
 

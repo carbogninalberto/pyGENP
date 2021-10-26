@@ -256,10 +256,11 @@ def take_care_of_termination(root, variables, width=5):
             use, var = use_variable(variables)
 
             children = [child for child in root.children] if root.children is not None else []
-            # if use and var is not None:
-            #     children.append(Termination(var.name, var.tp))
-            # else:
-            children.append(Termination(np.random.randint(10, 2001)/100.0, Types.float))
+            # can broke
+            if use and var is not None:
+                children.append(Termination(var.name, var.tp))
+            else:
+                children.append(Termination(np.random.randint(10, 2001)/100.0, Types.float))
             
             root.children = children
             root.nums = children
