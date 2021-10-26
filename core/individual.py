@@ -26,71 +26,67 @@ class Individual:
         vars = []
         already_declared = [] #self.variables.variables_name()
         print("[{}] checking for program issues".format(self.id))
-        # finding undeclared variables
-        exclude = True
+        # finding undeclared variables        
         for node in PreOrderIter(self.root):
-            if not exclude:
-                for n in node.children:
-                    if isinstance(n, Termination):
-                        print(node.value)
-                        if node.value not in self.variables.variables_name():
-                            new_var = Variable(node.value, node.tp)
-                            self.variables.register(new_var)
-                            updated = True
-                            vars.append(new_var)
-                # print("[{}] node => \n{} \nis ass: {}, ifThenElse: {}".format(self.id, node, isinstance(node, Assignment), isinstance(node, IfThenElse)))
-                # if isinstance(node, Assignment):
-                #     if node.declare == False and node.var.name not in self.variables.variables_name():
-                #         self.variables.register(node.var)
-                #         updated = True
-                #         vars.append(node.var)
-                #         already_declared.append(node.var.name)
-                #     else:
-                #         if node.declare == True:
-                #             for c in node.children:
-                #                 c.parent = node.parent
-                            
-                #             if node.var.name in already_declared:
-                #                 node.parent.children = []
-                #             else:
-                #                 already_declared.append(node.var.name)
-                #                 node.parent = self.root
-                            
-                #             node.parent = None
+            for n in node.children:
+                if isinstance(n, Termination):
+                    print(node.value)
+                    if node.value not in self.variables.variables_name():
+                        new_var = Variable(node.value, node.tp)
+                        self.variables.register(new_var)
+                        updated = True
+                        vars.append(new_var)
+            # print("[{}] node => \n{} \nis ass: {}, ifThenElse: {}".format(self.id, node, isinstance(node, Assignment), isinstance(node, IfThenElse)))
+            # if isinstance(node, Assignment):
+            #     if node.declare == False and node.var.name not in self.variables.variables_name():
+            #         self.variables.register(node.var)
+            #         updated = True
+            #         vars.append(node.var)
+            #         already_declared.append(node.var.name)
+            #     else:
+            #         if node.declare == True:
+            #             for c in node.children:
+            #                 c.parent = node.parent
                         
+            #             if node.var.name in already_declared:
+            #                 node.parent.children = []
+            #             else:
+            #                 already_declared.append(node.var.name)
+            #                 node.parent = self.root
+                        
+            #             node.parent = None
+                    
 
-                # elif isinstance(node, IfThenElse):
-                #     # print("[{}] lf.name => {} rg.name => {} exp_t => {} {} exp_f => {} {} | {}".format(
-                #     #     self.id, 
-                #     #     node.condition.lf.name,
-                #     #     node.condition.rg.name,
-                #     #     isinstance(node.exp_t, Assignment),
-                #     #     node.exp_t.var.name,
-                #     #     isinstance(node.exp_f, Assignment),
-                #     #     node.exp_f.var.name,
-                #     #     self.variables.variables_name()
-                #     # ))
-                #     if node.condition.lf.name not in self.variables.variables_name():
-                #         self.variables.register(node.condition.lf.name)
-                #         updated = True
-                #         vars.append(node.condition.lf.name)
-                #     if node.condition.rg.name not in self.variables.variables_name():
-                #         self.variables.register(node.condition.rg.name)
-                #         updated = True
-                #         vars.append(node.condition.rg.name)
-                #     if isinstance(node.exp_t, Assignment):
-                #         if node.exp_t.declare == False and node.exp_t.var.name not in self.variables.variables_name():
-                #             self.variables.register(node.exp_t.var)
-                #             updated = True
-                #             vars.append(node.exp_t.var)
-                #     if isinstance(node.exp_f, Assignment):
-                #         if node.exp_f.declare == False and node.exp_f.var.name not in self.variables.variables_name():
-                #             self.variables.register(node.exp_f.var)
-                #             updated = True
-                #             vars.append(node.exp_f.var)
-            
-            else:
-                exclude = False
+            # elif isinstance(node, IfThenElse):
+            #     # print("[{}] lf.name => {} rg.name => {} exp_t => {} {} exp_f => {} {} | {}".format(
+            #     #     self.id, 
+            #     #     node.condition.lf.name,
+            #     #     node.condition.rg.name,
+            #     #     isinstance(node.exp_t, Assignment),
+            #     #     node.exp_t.var.name,
+            #     #     isinstance(node.exp_f, Assignment),
+            #     #     node.exp_f.var.name,
+            #     #     self.variables.variables_name()
+            #     # ))
+            #     if node.condition.lf.name not in self.variables.variables_name():
+            #         self.variables.register(node.condition.lf.name)
+            #         updated = True
+            #         vars.append(node.condition.lf.name)
+            #     if node.condition.rg.name not in self.variables.variables_name():
+            #         self.variables.register(node.condition.rg.name)
+            #         updated = True
+            #         vars.append(node.condition.rg.name)
+            #     if isinstance(node.exp_t, Assignment):
+            #         if node.exp_t.declare == False and node.exp_t.var.name not in self.variables.variables_name():
+            #             self.variables.register(node.exp_t.var)
+            #             updated = True
+            #             vars.append(node.exp_t.var)
+            #     if isinstance(node.exp_f, Assignment):
+            #         if node.exp_f.declare == False and node.exp_f.var.name not in self.variables.variables_name():
+            #             self.variables.register(node.exp_f.var)
+            #             updated = True
+            #             vars.append(node.exp_f.var)
+
         
         print("[{}] VARS NOT DECLARED {}".format(self.id, [v.name for v in vars]))
         # declaring variables
