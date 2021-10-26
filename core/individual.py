@@ -28,7 +28,9 @@ class Individual:
         print("[{}] checking for program issues".format(self.id))
         # finding undeclared variables        
         for node in PreOrderIter(self.root):
-            for n in node.children:
+            print(node.children)
+            for n in PreOrderIter(node):
+                print('\t {}'.format(node.children))
                 if isinstance(n, Termination):
                     print(node.value)
                     if node.value not in self.variables.variables_name():
