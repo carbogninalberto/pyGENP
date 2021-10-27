@@ -71,17 +71,19 @@ class Individual:
                                 vars.append(new_var)
                 if isinstance(node.exp_f, Assignment):
                     if node.exp_f.declare == False and node.exp_f.var.name not in self.variables.variables_name():
+                        print("\t\t {} not in {}".format(node.exp_f.var.name, self.variables.variables_name()))
                         self.variables.register(node.exp_f.var)
                         updated = True
                         vars.append(node.exp_f.var)
-                        for n_exp in node.exp_t.exp.nums:
-                            if isinstance(n_exp, Termination):
-                                print("\t\t\t {} vars è {}".format(n_exp, self.variables.variables_name()))
-                                if self.is_var(n_exp.value) and str(n_exp.value) not in self.variables.variables_name():
-                                    new_var = Variable(n_exp.value, n_exp.tp)
-                                    self.variables.register(new_var)
-                                    updated = True
-                                    vars.append(new_var)
+                
+                    for n_exp in node.exp_f.exp.nums:
+                        if isinstance(n_exp, Termination):
+                            print("\t\t\t {} vars è {}".format(n_exp, self.variables.variables_name()))
+                            if self.is_var(n_exp.value) and str(n_exp.value) not in self.variables.variables_name():
+                                new_var = Variable(n_exp.value, n_exp.tp)
+                                self.variables.register(new_var)
+                                updated = True
+                                vars.append(new_var)
 
             # for n in PreOrderIter(n_exp):
             #     print('\t {}'.format(n.children))
