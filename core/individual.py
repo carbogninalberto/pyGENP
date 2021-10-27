@@ -28,16 +28,70 @@ class Individual:
         print("[{}] checking for program issues".format(self.id))
         # finding undeclared variables        
         for node in PreOrderIter(self.root):
-            print(node.children)
-            for n in PreOrderIter(node):
-                print('\t {}'.format(node.children))
-                if isinstance(n, Termination):
-                    print(node.value)
-                    if node.value not in self.variables.variables_name():
-                        new_var = Variable(node.value, node.tp)
-                        self.variables.register(new_var)
+            # print(node.children)
+            if isinstance(node, Assignment):
+                print("\t {}".format(node.var.name))
+                if node.declare == False and node.var.name not in self.variables.variables_name():
+                    print("\t\t {} not in {}".format(node.var.name, self.variables.variables_name()))
+                    self.variables.register(node.var)
+                    updated = True
+                    vars.append(node.var)
+                
+                for n_exp in node.exp.nums:
+                    if isinstance(n_exp, Termination):
+                        print("\t\t\t {} vars è {}".format(n_exp, self.variables.variables_name()))
+                        if self.is_var(n_exp.value) and str(n_exp.value) not in self.variables.variables_name():
+                            new_var = Variable(n_exp.value, n_exp.tp)
+                            self.variables.register(new_var)
+                            updated = True
+                            vars.append(new_var)
+
+            elif isinstance(node, IfThenElse):
+                if node.condition.lf.name not in self.variables.variables_name():
+                    self.variables.register(node.condition.lf.name)
+                    updated = True
+                    vars.append(node.condition.lf.name)
+                if node.condition.rg.name not in self.variables.variables_name():
+                    self.variables.register(node.condition.rg.name)
+                    updated = True
+                    vars.append(node.condition.rg.name)
+                if isinstance(node.exp_t, Assignment):
+                    if node.exp_t.declare == False and node.exp_t.var.name not in self.variables.variables_name():
+                        self.variables.register(node.exp_t.var)
                         updated = True
-                        vars.append(new_var)
+                        vars.append(node.exp_t.var)
+                        
+                    for n_exp in node.exp_t.exp.nums:
+                        if isinstance(n_exp, Termination):
+                            print("\t\t\t {} vars è {}".format(n_exp, self.variables.variables_name()))
+                            if self.is_var(n_exp.value) and str(n_exp.value) not in self.variables.variables_name():
+                                new_var = Variable(n_exp.value, n_exp.tp)
+                                self.variables.register(new_var)
+                                updated = True
+                                vars.append(new_var)
+                if isinstance(node.exp_f, Assignment):
+                    if node.exp_f.declare == False and node.exp_f.var.name not in self.variables.variables_name():
+                        self.variables.register(node.exp_f.var)
+                        updated = True
+                        vars.append(node.exp_f.var)
+                        for n_exp in node.exp_t.exp.nums:
+                            if isinstance(n_exp, Termination):
+                                print("\t\t\t {} vars è {}".format(n_exp, self.variables.variables_name()))
+                                if self.is_var(n_exp.value) and str(n_exp.value) not in self.variables.variables_name():
+                                    new_var = Variable(n_exp.value, n_exp.tp)
+                                    self.variables.register(new_var)
+                                    updated = True
+                                    vars.append(new_var)
+
+            # for n in PreOrderIter(n_exp):
+            #     print('\t {}'.format(n.children))
+            #     if isinstance(n, Termination):
+            #         print(node.value)
+            #         if node.value not in self.variables.variables_name():
+            #             new_var = Variable(node.value, node.tp)
+            #             self.variables.register(new_var)
+            #             updated = True
+            #             vars.append(new_var)
             # print("[{}] node => \n{} \nis ass: {}, ifThenElse: {}".format(self.id, node, isinstance(node, Assignment), isinstance(node, IfThenElse)))
             # if isinstance(node, Assignment):
             #     if node.declare == False and node.var.name not in self.variables.variables_name():
@@ -95,6 +149,7 @@ class Individual:
         for var in vars:
             exp = Termination(np.random.randint(10, 2001)/100.0, Types.float) #generate_random_expression(self.variables)
             var_node = Assignment(var, exp, parent=self.root)
+            print(self.root.children)
             # self.root.children.insert(0, var_node)
 
         # self.root.children
@@ -116,6 +171,15 @@ class Individual:
             else:
                 exclude = False
         return lines
+
+    def is_var(self, value):
+        value = "{}".format(value)
+        try:
+            if not value.isdigit():
+                float(value)
+            return False
+        except Exception as e:
+            return True
 
     def max_fitness(self, idx, fitness_function):
         self.fitness = fitness_function(idx, lines=self.render_code())
