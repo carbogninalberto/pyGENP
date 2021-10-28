@@ -21,8 +21,8 @@ variable found elsewhere
 
 def generate_individual_from_seed(
                                     seed=42422019,
-                                    max_depth=20,
-                                    max_width=20,
+                                    max_depth=35,
+                                    max_width=35,
                                     operators=OperatorRegistry(DefaultConfig.OPERATORS),
                                     variables=VariableRegistry([]),
                                     equality_operators=DefaultConfig.EQUALITY,
@@ -36,7 +36,7 @@ def generate_individual_from_seed(
     root = Node("main")    
 
     # generate random number of code instruction
-    rand_width = np.random.randint(1, max_width)
+    rand_width = np.random.randint(5, max_width)
 
     # queue nodes that require validity check to be approved
     pending_nodes = [root]
@@ -194,7 +194,7 @@ def create_random_op(op_id):
     return ops[key], key
 
 
-def generate_random_expression(variables, operators=DefaultConfig.MATH_OPERATORS, max_depth=5, max_width=10):
+def generate_random_expression(variables, operators=DefaultConfig.MATH_OPERATORS, max_depth=35, max_width=35):
     '''
     this function generates a random expression tree using variables
     '''
@@ -213,7 +213,7 @@ def generate_random_expression(variables, operators=DefaultConfig.MATH_OPERATORS
         op, key = create_random_op(rand_op_id)
 
         node = op([]) if key != 'div' else op([], [])        
-        rand_depth = np.random.randint(3, max_depth)
+        rand_depth = np.random.randint(1, max_depth)
 
         pending_nodes.append(node)
         tmp_nodes = [node]

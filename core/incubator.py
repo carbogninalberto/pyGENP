@@ -35,7 +35,8 @@ class Incubator:
                     const_termination_range=[-20, 20],
                     fitness=None,
                     generator=generate_random_expression,
-                    save_individual=False
+                    save_individual=False,
+                    max_mutations=5
                 ):
         
         self.DefaultConfig = DefaultConfig
@@ -48,6 +49,7 @@ class Incubator:
         self.hall_of_fame = []
         self.generator = generator
         self.save_individual=False
+        self.max_mutations = max_mutations
     
     # @jit
     def init_population(self, generator):
@@ -314,23 +316,27 @@ class Incubator:
             if self.mutate():
                 # operator flipping
                 if (len(individual.root.children) >= 1):
-                    random_node = random.sample(individual.root.children, 1)[0]
-                    # random operator
-                    if isinstance(random_node, IfThenElse):
-                        tmp_vars = individual.variables.get_random_var()
-                        var_t = tmp_vars[np.random.randint(0, len(tmp_vars))] if isinstance(tmp_vars, list) else tmp_vars
-                        var_f = tmp_vars[np.random.randint(0, len(tmp_vars))] if isinstance(tmp_vars, list) else tmp_vars
+                    
+                    counter = np.random.randint(1, self.max_mutations)
+                    while counter > 0:
+                        random_node = random.sample(individual.root.children, 1)[0]
+                        # random operator
+                        if isinstance(random_node, IfThenElse):
+                            tmp_vars = individual.variables.get_random_var()
+                            var_t = tmp_vars[np.random.randint(0, len(tmp_vars))] if isinstance(tmp_vars, list) else tmp_vars
+                            var_f = tmp_vars[np.random.randint(0, len(tmp_vars))] if isinstance(tmp_vars, list) else tmp_vars
 
-                        var_t.recall += 1
-                        var_f.recall += 1
-                        
-                        exp_t = generate_random_expression(individual.variables)
-                        exp_f = generate_random_expression(individual.variables)  
+                            var_t.recall += 1
+                            var_f.recall += 1
+                            
+                            exp_t = generate_random_expression(individual.variables)
+                            exp_f = generate_random_expression(individual.variables)  
 
-                        random_node.exp_t = Assignment(var_t, exp_t, declare=False)
-                        random_node.exp_f = Assignment(var_f, exp_f, declare=False)
-                    elif isinstance(random_node, Assignment):
-                        random_node.exp = generate_random_expression(individual.variables)
+                            random_node.exp_t = Assignment(var_t, exp_t, declare=False)
+                            random_node.exp_f = Assignment(var_f, exp_f, declare=False)
+                        elif isinstance(random_node, Assignment):
+                            random_node.exp = generate_random_expression(individual.variables)
+                        counter -= 1
 
     def run(self, generator):
         # init population giving a generator
