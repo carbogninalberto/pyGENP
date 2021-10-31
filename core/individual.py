@@ -26,7 +26,7 @@ class Individual:
         updated = False
         vars = []
         already_declared = [] #self.variables.variables_name()
-        print("\033[92m[{}] checking for program issues".format(self.id))
+        # print("\033[92m[{}] checking for program issues".format(self.id))
         # finding undeclared variables        
         for node in PreOrderIter(self.root):
             # print(node.children)
@@ -34,7 +34,7 @@ class Individual:
                 # vars.append(node.var)
                 # to_move_up = []
 
-                print("\033[92m\t {}".format(node.var.name))
+                # print("\033[92m\t {}".format(node.var.name))
                 # if node.declare == True:
                 #     print("\033[92m\t\t >changing also parent")
                 #     for c in node.children:
@@ -56,7 +56,7 @@ class Individual:
                         if n_exp.value == node.var.name \
                             or n_exp.value not in self.variables.variables_name() \
                             or (node.declare == True and self.is_var(n_exp.value)):
-                            n_exp.value = 1
+                            n_exp.value = np.random.randint(-20, 20)
                         elif self.is_var(n_exp.value) and str(n_exp.value) not in self.variables.variables_name():
                             new_var = Variable(n_exp.value, n_exp.tp)
                             self.variables.register(new_var)
@@ -120,7 +120,7 @@ class Individual:
                                 updated = True
                                 vars.append(new_var)
         
-        print("[{}] VARS NOT DECLARED {}".format(self.id, [v.name for v in vars]))
+        # print("[{}] VARS NOT DECLARED {}".format(self.id, [v.name for v in vars]))
         # declaring variables
         for var in vars:
             exp = Termination(np.random.randint(10, 2001)/100.0, Types.float) #generate_random_expression(self.variables)
@@ -201,8 +201,8 @@ class Individual:
                 # fixing not already declare vars
                 for n_exp in node.exp.nums:
                     if isinstance(n_exp, Termination):
-                        if n_exp.value  not in seen_declarations:
-                            n_exp.value = 1
+                        if self.is_var(n_exp.value) and str(n_exp.value) not in seen_declarations:
+                            n_exp.value = np.random.randint(-20, 20)
             
             elif isinstance(node, IfThenElse):
                 if node.condition.lf.name not in seen_declarations:
@@ -212,9 +212,17 @@ class Individual:
                 if isinstance(node.exp_t, Assignment):
                     if node.exp_t.var.name not in seen_declarations:
                         to_remove.append(node)
+                    for n_exp in node.exp_t.exp.nums:
+                        if isinstance(n_exp, Termination):
+                            if self.is_var(n_exp.value) and str(n_exp.value) not in seen_declarations:
+                                n_exp.value = np.random.randint(-20, 20)
                 if isinstance(node.exp_f, Assignment):
                     if node.exp_f.var.name not in seen_declarations:
                         to_remove.append(node)
+                    for n_exp in node.exp_f.exp.nums:
+                        if isinstance(n_exp, Termination):
+                            if self.is_var(n_exp.value) and str(n_exp.value) not in seen_declarations:
+                                n_exp.value = np.random.randint(-20, 20)
         
         # remove items
         for node in to_remove:
@@ -258,7 +266,7 @@ class Individual:
         #                 c.parent = node
 
 
-        print("\n\n\n\033[94m{}\n\n\n".format(RenderTree(self.root)))
+        # print("\n\n\n\033[94m{}\n\n\n".format(RenderTree(self.root)))
         print("##############################################################")
 
         return updated

@@ -22,7 +22,7 @@ class DefaultConfig:
     MATH_OPERATORS = {
         "mul": Mul,
         "sum": Sum,
-        #"sub": Sub,
+        "sub": Sub,
         # "div": Div
     }
 

@@ -21,12 +21,12 @@ variable found elsewhere
 
 def generate_individual_from_seed(
                                     seed=42422019,
-                                    max_depth=35,
-                                    max_width=35,
+                                    max_depth=10,
+                                    max_width=10,
                                     operators=OperatorRegistry(DefaultConfig.OPERATORS),
                                     variables=VariableRegistry([]),
                                     equality_operators=DefaultConfig.EQUALITY,
-                                    alpha_var_gen=35.0
+                                    alpha_var_gen=15.0
                                     ):
     '''
     this function generate a tree individual 
@@ -194,7 +194,7 @@ def create_random_op(op_id):
     return ops[key], key
 
 
-def generate_random_expression(variables, operators=DefaultConfig.MATH_OPERATORS, max_depth=35, max_width=35):
+def generate_random_expression(variables, operators=DefaultConfig.MATH_OPERATORS, max_depth=10, max_width=10):
     '''
     this function generates a random expression tree using variables
     '''
@@ -203,7 +203,7 @@ def generate_random_expression(variables, operators=DefaultConfig.MATH_OPERATORS
     root_op, root_key = create_random_op(rand_op_id)
     root = root_op([]) if root_key != 'div' else root_op([], [])
 
-    rand_width = np.random.randint(0, max_width)
+    rand_width = np.random.randint(2, max_width)
     pending_nodes = [root]
 
     if not generate_termination():
@@ -213,7 +213,7 @@ def generate_random_expression(variables, operators=DefaultConfig.MATH_OPERATORS
         op, key = create_random_op(rand_op_id)
 
         node = op([]) if key != 'div' else op([], [])        
-        rand_depth = np.random.randint(1, max_depth)
+        rand_depth = np.random.randint(3, max_depth)
 
         pending_nodes.append(node)
         tmp_nodes = [node]
@@ -282,7 +282,7 @@ def take_care_of_termination(root, variables, width=5):
         raise Exception("Unknown Math Operator {}".format(type(root)))
 
 
-def generate_termination(y_prob=30.0):
+def generate_termination(y_prob=80.0):
     '''
     Bernoulli Probability Distribution
     ''' 

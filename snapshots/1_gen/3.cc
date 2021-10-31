@@ -1,20 +1,32 @@
-int mNrFFPopJrREMTAA = (int) (18.51+(4.28)+(16.25));
-mNrFFPopJrREMTAA = (int) (12.83+(6.39));
-int RrRCOicajYwIvOQS = (int) (16.62+(7.51)+(7.06)+(6.52));
-RrRCOicajYwIvOQS = (int) (4.15*(9.35));
-if (mNrFFPopJrREMTAA == RrRCOicajYwIvOQS) {
-	tcb->m_segmentSize = (int) (0.44*(7.81)*(16.27));
+segmentsAcked = (int) (17.78-(1.21)-(8.04)-(5.31));
+segmentsAcked = (int) (12.87+(12.01)+(14.87));
+if (segmentsAcked > tcb->m_segmentSize) {
+	tcb->m_cWnd = (int) (19.96*(5.1)*(18.36));
 
 } else {
-	tcb->m_segmentSize = (int) (8.39+(2.0)+(7.52)+(19.61));
+	tcb->m_cWnd = (int) (0.53*(15.76)*(18.58)*(segmentsAcked));
 
 }
-float THMHRDDaIUDwXUQo = (float) (13.04*(6.59)*(1.27));
-RrRCOicajYwIvOQS = (int) (3.44+(16.53)+(5.38)+(11.97));
-if (tcb->m_segmentSize != THMHRDDaIUDwXUQo) {
-	tcb->m_segmentSize = (int) (19.7+(11.5)+(14.66)+(2.86));
+segmentsAcked = (int) (6.56+(13.05)+(5.28));
+tcb->m_segmentSize = (int) (1.06+(3.49)+(3.64)+(10.0));
+if (tcb->m_segmentSize != tcb->m_cWnd) {
+	tcb->m_segmentSize = (int) (7.43-(16.29)-(12.94));
 
 } else {
-	tcb->m_segmentSize = (int) (16.35*(8.61)*(12.68));
+	tcb->m_segmentSize = (int) (11.61+(10.43));
+
+}
+if (segmentsAcked > tcb->m_cWnd) {
+	tcb->m_cWnd = (int) (14.63-(18.61)-(tcb->m_segmentSize));
+
+} else {
+	tcb->m_cWnd = (int) (2.95*(6.07)*(tcb->m_cWnd));
+
+}
+if (tcb->m_cWnd == segmentsAcked) {
+	segmentsAcked = (int) (10.38-(10.48)-(segmentsAcked));
+
+} else {
+	segmentsAcked = (int) (5.53+(tcb->m_cWnd)+(0.22)+(11.31));
 
 }

@@ -1,23 +1,27 @@
-if (tcb->m_segmentSize >= tcb->m_segmentSize) {
-	tcb->m_segmentSize = (int) (9.97+(13.03));
+if (tcb->m_segmentSize != segmentsAcked) {
+	segmentsAcked = (int) (6.92+(0.19)+(0.56)+(6.99));
 
 } else {
-	tcb->m_segmentSize = (int) (0.47*(3.63)*(2.58)*(1.06));
+	segmentsAcked = (int) (14.41*(6.75)*(13.26));
 
 }
-if (tcb->m_segmentSize == tcb->m_segmentSize) {
-	tcb->m_segmentSize = (int) (18.15*(13.3)*(16.5));
+tcb->m_segmentSize = (int) (4.09-(segmentsAcked)-(segmentsAcked));
+if (segmentsAcked >= segmentsAcked) {
+	tcb->m_segmentSize = (int) (1.8-(13.69)-(segmentsAcked));
 
 } else {
-	tcb->m_segmentSize = (int) (17.89+(1.62)+(13.49));
+	tcb->m_segmentSize = (int) (9.53+(14.71)+(1.93));
 
 }
-if (tcb->m_segmentSize >= tcb->m_segmentSize) {
-	tcb->m_segmentSize = (int) (4.58*(7.3));
+if (tcb->m_segmentSize <= segmentsAcked) {
+	tcb->m_cWnd = (int) (13.56*(7.25)*(8.39));
 
 } else {
-	tcb->m_segmentSize = (int) (2.09+(17.61)+(19.24));
+	tcb->m_cWnd = (int) (15.75+(7.21));
 
 }
-tcb->m_segmentSize = (int) (11.97+(12.64));
-int xtRkQIulLWyJAanz = (int) (15.92+(6.67)+(5.12));
+tcb->m_cWnd = (int) (4.35-(8.12)-(2.3)-(tcb->m_cWnd));
+segmentsAcked = (int) (1.91-(15.92)-(16.13));
+int hyEMVZjQtesmfcSr = (int) (15.48+(segmentsAcked));
+hyEMVZjQtesmfcSr = (int) (14.42+(4.93)+(12.26)+(16.38));
+tcb->m_cWnd = (int) (16.33+(6.73)+(tcb->m_segmentSize));

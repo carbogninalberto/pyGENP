@@ -1,16 +1,19 @@
-tcb->m_segmentSize = (int) (8.2+(12.24)+(11.42)+(8.3));
-if (tcb->m_segmentSize >= tcb->m_segmentSize) {
-	tcb->m_segmentSize = (int) (7.23*(3.17));
+tcb->m_segmentSize = (int) (18.2-(4.33)-(7.49));
+if (tcb->m_segmentSize == tcb->m_cWnd) {
+	tcb->m_cWnd = (int) (13.51*(3.03)*(3.27));
 
 } else {
-	tcb->m_segmentSize = (int) (17.35*(15.95)*(12.71)*(17.86));
+	tcb->m_cWnd = (int) (1.14*(15.18));
 
 }
-tcb->m_segmentSize = (int) (1.79+(11.74)+(2.04));
-if (tcb->m_segmentSize > tcb->m_segmentSize) {
-	tcb->m_segmentSize = (int) (19.42*(15.47)*(18.1)*(16.32));
+float FLEfjRbsLdtjfjoo = (float) (18.18-(1.5));
+if (tcb->m_segmentSize < FLEfjRbsLdtjfjoo) {
+	tcb->m_segmentSize = (int) (6.07-(12.9));
 
 } else {
-	tcb->m_segmentSize = (int) (16.79+(8.04)+(16.1));
+	tcb->m_segmentSize = (int) (11.16*(6.72)*(16.27)*(15.25));
 
 }
+float PhKfuhOdYAGdiMyP = (float) (5.04+(15.74));
+FLEfjRbsLdtjfjoo = (float) (14.83-(3.57)-(10.04)-(17.24));
+PhKfuhOdYAGdiMyP = (float) (15.62*(FLEfjRbsLdtjfjoo));

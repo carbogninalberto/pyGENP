@@ -1,30 +1,38 @@
-int wTEAKBFRNbXwvDAE = (int) (0.7*(3.7)*(4.27));
-if (wTEAKBFRNbXwvDAE > tcb->m_segmentSize) {
-	tcb->m_segmentSize = (int) (2.07+(9.83)+(18.18));
+tcb->m_segmentSize = (int) (4.69*(1.02)*(13.44)*(13.3));
+float uAvzhUmuLkmJVSVI = (float) (14.4+(17.01)+(tcb->m_cWnd));
+if (tcb->m_cWnd < uAvzhUmuLkmJVSVI) {
+	uAvzhUmuLkmJVSVI = (float) (7.95*(tcb->m_cWnd)*(13.88));
 
 } else {
-	tcb->m_segmentSize = (int) (6.52*(10.54)*(11.79)*(4.28));
+	uAvzhUmuLkmJVSVI = (float) (6.97+(2.94)+(segmentsAcked)+(uAvzhUmuLkmJVSVI));
 
 }
-float eTMPHXEjfMsScOUa = (float) (17.93+(7.56));
-float IeBvGnqgQQkWBqCY = (float) (0.45*(1.76)*(13.6)*(15.4));
-int nLdnrNIBohEfSver = (int) (12.28*(12.02)*(3.47)*(9.69));
-float wrGMhpHSmhQYhoXG = (float) (13.78*(2.19)*(4.9));
-eTMPHXEjfMsScOUa = (float) (5.9*(0.4));
-if (wrGMhpHSmhQYhoXG != IeBvGnqgQQkWBqCY) {
-	wTEAKBFRNbXwvDAE = (int) (10.16*(19.26));
+if (tcb->m_segmentSize != tcb->m_cWnd) {
+	segmentsAcked = (int) (10.24-(7.36)-(17.14)-(19.45));
 
 } else {
-	wTEAKBFRNbXwvDAE = (int) (18.03+(7.02)+(0.45));
+	segmentsAcked = (int) (segmentsAcked+(tcb->m_segmentSize));
 
 }
-int iLBoPfdKOrrUwemq = (int) (19.62+(5.15));
-int WEuXrGpYlstYRXUZ = (int) (6.59*(14.06)*(14.33));
-if (iLBoPfdKOrrUwemq > wrGMhpHSmhQYhoXG) {
-	WEuXrGpYlstYRXUZ = (int) (14.71+(17.45));
+if (tcb->m_cWnd >= segmentsAcked) {
+	uAvzhUmuLkmJVSVI = (float) (17.37*(15.83)*(18.07)*(10.87));
 
 } else {
-	WEuXrGpYlstYRXUZ = (int) (7.47*(14.18)*(0.66)*(19.2));
+	uAvzhUmuLkmJVSVI = (float) (13.83-(19.43));
 
 }
-float JrlgGvOrIcOuUGzs = (float) (18.47*(3.72)*(5.64)*(10.91));
+if (segmentsAcked > segmentsAcked) {
+	tcb->m_cWnd = (int) (0.13+(tcb->m_cWnd)+(5.39)+(8.83));
+
+} else {
+	tcb->m_cWnd = (int) (6.58+(18.74)+(10.29)+(9.62));
+
+}
+if (tcb->m_cWnd < uAvzhUmuLkmJVSVI) {
+	tcb->m_segmentSize = (int) (tcb->m_cWnd-(1.2)-(tcb->m_cWnd)-(12.33));
+
+} else {
+	tcb->m_segmentSize = (int) (0.94+(15.82)+(16.65));
+
+}
+tcb->m_segmentSize = (int) (uAvzhUmuLkmJVSVI*(uAvzhUmuLkmJVSVI)*(uAvzhUmuLkmJVSVI));

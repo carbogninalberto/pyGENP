@@ -18,8 +18,8 @@ if __name__ == "__main__":
 
     custom_config = genp.types.DefaultConfig
     custom_config.TOURNAMENT = {
-        "k": 10,
-        "s": 8
+        "k": 50,
+        "s": 35
     }
     custom_config.WILD_CARD_CODE = [
         "segmentsAcked = SlowStart (tcb, segmentsAcked);",
@@ -31,8 +31,8 @@ if __name__ == "__main__":
         config=custom_config,
         fitness=genp.tcp_variant_fitness_wrapped,
         variables=variables,
-        pop_size=12,
-        generations=15
+        pop_size=50,
+        generations=20
     )
 
     # evolve population

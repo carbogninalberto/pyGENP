@@ -36,7 +36,7 @@ class Incubator:
                     fitness=None,
                     generator=generate_random_expression,
                     save_individual=False,
-                    max_mutations=5
+                    max_mutations=3
                 ):
         
         self.DefaultConfig = DefaultConfig
@@ -212,8 +212,8 @@ class Incubator:
             # pick 2 random parents
             parents = random.sample(parent_pool, 1)
             # convert nodes to sets
-            parent_one_nodes = set(parents[0].root.children)
-            parent_two_nodes = set(indiv.root.children)
+            parent_one_nodes = [n for n in PreOrderIter(parents[0].root.children[0])]
+            parent_two_nodes = [n for n in PreOrderIter(indiv.root.children[0])]
             # parent_two_nodes = search.findall(parents[1].root)
             # init new individual
             child = copy.deepcopy(parents[0])
@@ -221,18 +221,22 @@ class Incubator:
             # pick random part of the tree
             if len(parent_one_nodes) > 1:
                 subtree_one = copy.deepcopy(random.sample(parent_one_nodes, 1)[0])
+                subtree_one.parent = None
                 # perform crossover
                 # first operation
-                first_child_branch = random.sample(child.root.children, 1)[0]
-                first_child_branch.children = []
+                first_child_branch = random.sample([n for n in PreOrderIter(child.root.children[0])], 1)[0]
+                # first_child_branch.children = [subtree_one]
                 subtree_one.parent = first_child_branch
+
+                print("--\1/--{}".format(type(first_child_branch)))
 
             if len(parent_two_nodes) > 1:
                 subtree_two = copy.deepcopy(random.sample(parent_two_nodes, 1)[0])
+                subtree_two.parent = None
                 # perform crossover            
                 # second operation
-                second_child_branch = random.sample(indiv.root.children, 1)[0]
-                second_child_branch.children = []
+                second_child_branch = random.sample([n for n in PreOrderIter(indiv.root.children[0])], 1)[0]
+                # second_child_branch.children = [subtree_two]
                 subtree_two.parent = second_child_branch
 
             # add child to population
@@ -347,7 +351,6 @@ class Incubator:
             self.take_snapshot()
 
             #self.mutation()
-
             #break
 
             self.calculate_fitness()
@@ -358,7 +361,7 @@ class Incubator:
             print("[GENERATION {}/{}] HALL OF FAME: {}".format(self.current_generation, self.pop_size, [str(ind) for ind in self.hall_of_fame]))
 
             for idx, ind in enumerate(self.population):
-                print("id:{}, fitness:{:.2f}, variables: {}".format(idx,ind.fitness, ind.variables))
+                print("id:{}, fitness:{:.2f}, variables: {}".format(idx,ind.fitness, ind.variables.variables_name()))
 
             selected = self.tournament_selection(
                 k=self.DefaultConfig.TOURNAMENT["k"],
