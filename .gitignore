@@ -11,3 +11,7 @@ a.out
 snapshots/*
 
 *.pyc
+
+core/__pycache__
+utils/__pycache__
+generators/__pycache__
