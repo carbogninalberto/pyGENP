@@ -9,3 +9,5 @@ misc
 a.out
 
 snapshots/*
+
+*.pyc
