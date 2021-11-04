@@ -1,7 +1,0 @@
-PARENT SELECTION
-
-choose k (the tournament size) individuals from the population at random
-choose the best individual from the tournament with probability p
-choose the second best individual with probability p*(1-p)
-choose the third best individual with probability p*((1-p)^2)
-and so on
