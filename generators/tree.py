@@ -25,6 +25,7 @@ def generate_individual_from_seed(
                                     max_width=10,
                                     operators=OperatorRegistry(DefaultConfig.OPERATORS),
                                     variables=VariableRegistry([]),
+                                    wildcard_codes=['cout << "OK" << endl;'],
                                     equality_operators=DefaultConfig.EQUALITY,
                                     alpha_var_gen=15.0
                                     ):
@@ -88,6 +89,7 @@ def generate_individual_from_seed(
                     var_t_node = Assignment(var_t, exp_t, declare=False)
                     var_f_node = Assignment(var_f, exp_f, declare=False)
 
+                    # print("ops {} rand_operator {} pending_nodes {} <- getting {} index".format(ops, rand_operator, len(pending_nodes), i))
                     node = ops[rand_operator](condition, var_t_node, var_f_node, parent=pending_nodes[i])
                     #node.type = eq_type
                     pending_nodes.append(node)
@@ -131,6 +133,12 @@ def generate_individual_from_seed(
                     node = ops[rand_operator](var, exp, parent=pending_nodes[i])
             
                     pending_nodes.append(node)
+
+            elif isinstance(ops[rand_operator](), WildcardCode):
+                rand_code = np.random.randint(0, len(wildcard_codes))
+                node = ops[rand_operator](code=wildcard_codes[rand_code], parent=pending_nodes[i])
+
+                pending_nodes.append(node)
 
             #print("pending nodes: ", pending_nodes)
             # if isinstance(ops[rand_operator], IfThenElse):

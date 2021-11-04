@@ -56,7 +56,7 @@ class Incubator:
         for i in range(self.pop_size):
             variables = copy.deepcopy(self.variables)
             # self.population.append(generator.generate_individual_from_seed(variables=variables))
-            indiv = generator.generate_individual_from_seed(variables=variables)
+            indiv = generator.generate_individual_from_seed(variables=variables, wildcard_codes=self.DefaultConfig.WILD_CARD_CODE)
             indiv.id = i
             self.population.append(indiv)
 

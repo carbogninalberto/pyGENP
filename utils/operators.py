@@ -147,7 +147,7 @@ class BaseWildcardCode:
         self.code = code
     
     def render_cpp(self):
-        return self.code
+        return "{}\n".format(self.code)
     
     def __str__(self):
         return self.render_cpp()
@@ -155,7 +155,7 @@ class BaseWildcardCode:
 
 class WildcardCode(BaseWildcardCode, NodeMixin):
 
-    def __init__(self, code, parent=None, children=None):
+    def __init__(self, code=None, parent=None, children=None):
         super(WildcardCode, self).__init__(code)
         self.name = super(WildcardCode, self).render_cpp()
         self.parent = parent

@@ -1,0 +1,28 @@
+INITIAL VARS IN REGISTRY
+---------------------------------------------------------------------------------
+genp.registers.Variable("tcb->m_segmentSize", genp.types.Types.integer)
+genp.registers.Variable("tcb->m_cWnd", genp.types.Types.integer)
+genp.registers.Variable("segmentsAcked", genp.types.Types.integer)
+---------------------------------------------------------------------------------
+CROSSOVER AND MUTATION
+---------------------------------------------------------------------------------
+tournament size k -> 15
+selection size k -> 15
+mutation prob -> 50% (probability of and individual get a mutation)
+max_mutation -> 3 (number of nodes in the tree affected by a mutation)
+---------------------------------------------------------------------------------
+OTHERS
+---------------------------------------------------------------------------------
+population size -> 15
+generations -> 30
+---------------------------------------------------------------------------------
+INJECTED CODE
+---------------------------------------------------------------------------------
+"segmentsAcked = SlowStart (tcb, segmentsAcked);",
+"CongestionAvoidance (tcb, segmentsAcked);",
+"TcpLinuxCongestionAvoidance (tcb, segmentsAcked);"
+---------------------------------------------------------------------------------
+NOTES
+---------------------------------------------------------------------------------
+Congestion Avoidance function has been added as injectable code to provide a better
+exploring of the feature space.

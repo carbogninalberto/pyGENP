@@ -12,7 +12,7 @@ class DefaultConfig:
     OPERATORS = {
         "assignment": Assignment,
         "ifthenelse": IfThenElse,
-        # "wildcardCode": WildcardCode
+        "wildcardCode": WildcardCode
     }
 
     WILD_CARD_CODE = [

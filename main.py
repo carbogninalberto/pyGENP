@@ -8,6 +8,23 @@ import genp
 #import generators.tree as gentree
 from numba import jit
 
+TCP_LINUX_RENO_CONGESTION_AVOIDANCE = r"""uint32_t w = tcb->m_cWnd / tcb->m_segmentSize;
+if (m_cWndCnt >= w)
+{
+  m_cWndCnt = 0;
+  tcb->m_cWnd += tcb->m_segmentSize;
+}
+
+m_cWndCnt += segmentsAcked;
+if (m_cWndCnt >= w)
+{
+  uint32_t delta = m_cWndCnt / w;
+
+  m_cWndCnt -= delta * w;
+  tcb->m_cWnd += delta * tcb->m_segmentSize;
+}""";
+
+
 if __name__ == "__main__":
 
     variables = genp.registers.VariableRegistry([
@@ -18,12 +35,13 @@ if __name__ == "__main__":
 
     custom_config = genp.types.DefaultConfig
     custom_config.TOURNAMENT = {
-        "k": 50,
-        "s": 35
+        "k": 15,
+        "s": 15
     }
     custom_config.WILD_CARD_CODE = [
         "segmentsAcked = SlowStart (tcb, segmentsAcked);",
-        "CongestionAvoidance (tcb, segmentsAcked);"
+        "CongestionAvoidance (tcb, segmentsAcked);",
+        "TcpLinuxCongestionAvoidance (tcb, segmentsAcked);"
     ]
 
     # initialize Incubator
@@ -31,8 +49,8 @@ if __name__ == "__main__":
         config=custom_config,
         fitness=genp.tcp_variant_fitness_wrapped,
         variables=variables,
-        pop_size=50,
-        generations=20
+        pop_size=15,
+        generations=30
     )
 
     # evolve population
