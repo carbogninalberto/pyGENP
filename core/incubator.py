@@ -178,13 +178,28 @@ class Incubator:
         path_folder = os.path.join(sys.path[0], "snapshots", "{}_gen".format(self.current_generation))
         path_file = "{}.cc"
 
+        path_pickles = os.path.join(sys.path[0], "snapshots_pickles", "{}_gen".format(self.current_generation))
+        path_file_pickles = "{}.pickle"
+
         # assure folder existence
         if not os.path.exists(path_folder):
             os.makedirs(path_folder)
         
+        if not os.path.exists(path_pickles):
+            os.makedirs(path_pickles)
+        
+        # output individuals
         for idx, individual in enumerate(self.population):
             print("snapshot", path_folder + "/" + path_file.format(idx))
             individual.save_to_file(folder=path_folder, file=path_file.format(idx))
+
+        # output pickles
+        for idx, individual in enumerate(self.population):
+            print("pickle", path_pickles + "/" + path_file_pickles.format(idx))
+            path = os.path.join(path_pickles, path_file_pickles.format(idx))
+            with open(path, 'wb') as f:
+                pickle.dump(individual, f, protocol=pickle.HIGHEST_PROTOCOL)
+            f.close()
 
     def add_hall_of_fame(self):
         self.population.sort(key=lambda x:x.fitness, reverse=True)

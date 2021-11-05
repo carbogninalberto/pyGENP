@@ -309,4 +309,5 @@ class Individual:
             f.writelines(lines)
         f.close()
 
+
         
