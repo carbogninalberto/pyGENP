@@ -201,15 +201,19 @@ class Incubator:
                 pickle.dump(individual, f, protocol=pickle.HIGHEST_PROTOCOL)
             f.close()
 
-    def add_hall_of_fame(self):
+    def add_hall_of_fame(self, add_to_elite=False):
         self.population.sort(key=lambda x:x.fitness, reverse=True)
         if int(self.population[0].fitness) > 0: 
             self.hall_of_fame.append({"id": self.population[0].id, "fitness": self.population[0].fitness, "gen": self.current_generation})
+            if add_to_elite == True:
+                self.population[0].is_elite = True
+            return self.population[0] # return best individual
+        return None
 
     # @jit
     def crossover(self, best_individuals):
         # count how many offsprings to generate
-        offsprings = self.DefaultConfig.TOURNAMENT['k'] - len(best_individuals)
+        offsprings = self.DefaultConfig.TOURNAMENT['k'] - len(best_individuals)-1
         print("offsprings to generate are {}".format(offsprings))
         # reset population to best individuals
         self.population = best_individuals
@@ -243,7 +247,7 @@ class Incubator:
                 # first_child_branch.children = [subtree_one]
                 subtree_one.parent = first_child_branch
 
-                print("--\1/--{}".format(type(first_child_branch)))
+                # print("--\1/--{}".format(type(first_child_branch)))
 
             if len(parent_two_nodes) > 1:
                 subtree_two = copy.deepcopy(random.sample(parent_two_nodes, 1)[0])
@@ -332,7 +336,7 @@ class Incubator:
     # @jit
     def mutation(self):
         for idx, individual in enumerate(self.population):
-            if self.mutate():
+            if self.mutate() and not individual.is_elite:
                 # operator flipping
                 if (len(individual.root.children) >= 1):
                     
@@ -370,7 +374,7 @@ class Incubator:
 
             self.calculate_fitness()
 
-            self.add_hall_of_fame()
+            elite_individual = self.add_hall_of_fame(add_to_elite=True)
 
             print("[GENERATION {}/{}] with population:".format(self.current_generation, self.pop_size))
             print("[GENERATION {}/{}] HALL OF FAME: {}".format(self.current_generation, self.pop_size, [str(ind) for ind in self.hall_of_fame]))
@@ -382,8 +386,11 @@ class Incubator:
                 k=self.DefaultConfig.TOURNAMENT["k"],
                 s=self.DefaultConfig.TOURNAMENT["s"])
 
-            print("{} SELECTED INDIVIDUALS".format(len(selected)))
+            if elite_individual is not None:
+                print("[ELITE INDIVIDUAL] id:{}, fitness:{}".format(elite_individual.id, elite_individual.fitness))
+                selected.append(elite_individual)
 
+            print("{} SELECTED INDIVIDUALS".format(len(selected)))
 
             for idx, ind in enumerate(selected):
                 print("id:{}, fitness:{:.2f}".format(idx,ind.fitness))

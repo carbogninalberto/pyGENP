@@ -35,8 +35,8 @@ if __name__ == "__main__":
 
     custom_config = genp.types.DefaultConfig
     custom_config.TOURNAMENT = {
-        "k": 15,
-        "s": 15
+        "k": 20, # how many individual to randomly select from population 
+        "s": 15 # how many to select if minimum fitness requirement is met
     }
     custom_config.WILD_CARD_CODE = [
         "segmentsAcked = SlowStart (tcb, segmentsAcked);",
@@ -49,7 +49,7 @@ if __name__ == "__main__":
         config=custom_config,
         fitness=genp.tcp_variant_fitness_wrapped,
         variables=variables,
-        pop_size=15,
+        pop_size=30,
         generations=30
     )
 

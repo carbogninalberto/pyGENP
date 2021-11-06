@@ -35,6 +35,8 @@ Different mutations are performed:
 - Constant Add: a random value is added to constants
 - Operator Flip: a operator is flipped with another
 
+### Elitism
+The best individual of the current generation has a reserved place in the next one. It doesn't undergo mutation and it can be used as a parent in crossover to generate next generation's offsprings.
 
 ### Fitness Calculation
 Is possible to provide a custom fitness function and also specify if maximize or minimize it.
