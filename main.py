@@ -38,6 +38,9 @@ if __name__ == "__main__":
         "k": 20, # how many individual to randomly select from population 
         "s": 15 # how many to select if minimum fitness requirement is met
     }
+
+    # custom_config.WILD_CARD_CODE = ['//empty line',]
+
     custom_config.WILD_CARD_CODE = [
         "segmentsAcked = SlowStart (tcb, segmentsAcked);",
         "CongestionAvoidance (tcb, segmentsAcked);",

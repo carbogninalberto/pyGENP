@@ -36,7 +36,7 @@ class Incubator:
                     fitness=None,
                     generator=generate_random_expression,
                     save_individual=False,
-                    max_mutations=3
+                    max_mutations=5
                 ):
         
         self.DefaultConfig = DefaultConfig
@@ -213,7 +213,7 @@ class Incubator:
     # @jit
     def crossover(self, best_individuals):
         # count how many offsprings to generate
-        offsprings = self.DefaultConfig.TOURNAMENT['k'] - len(best_individuals)-1
+        offsprings = self.DefaultConfig.TOURNAMENT['k'] - len(best_individuals)
         print("offsprings to generate are {}".format(offsprings))
         # reset population to best individuals
         self.population = best_individuals
@@ -377,7 +377,6 @@ class Incubator:
             elite_individual = self.add_hall_of_fame(add_to_elite=True)
 
             print("[GENERATION {}/{}] with population:".format(self.current_generation, self.pop_size))
-            print("[GENERATION {}/{}] HALL OF FAME: {}".format(self.current_generation, self.pop_size, [str(ind) for ind in self.hall_of_fame]))
 
             for idx, ind in enumerate(self.population):
                 print("id:{}, fitness:{:.2f}, variables: {}".format(idx,ind.fitness, ind.variables.variables_name()))
@@ -385,10 +384,12 @@ class Incubator:
             selected = self.tournament_selection(
                 k=self.DefaultConfig.TOURNAMENT["k"],
                 s=self.DefaultConfig.TOURNAMENT["s"])
+            
+            print("[GENERATION {}/{}] HALL OF FAME: {}".format(self.current_generation, self.pop_size, [str(ind) for ind in self.hall_of_fame]))
 
             if elite_individual is not None:
                 print("[ELITE INDIVIDUAL] id:{}, fitness:{}".format(elite_individual.id, elite_individual.fitness))
-                selected.append(elite_individual)
+                selected.append(copy.deepcopy(elite_individual))
 
             print("{} SELECTED INDIVIDUALS".format(len(selected)))
 
