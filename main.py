@@ -35,8 +35,8 @@ if __name__ == "__main__":
 
     custom_config = genp.types.DefaultConfig
     custom_config.TOURNAMENT = {
-        "k": 20, # how many individual to randomly select from population 
-        "s": 15 # how many to select if minimum fitness requirement is met
+        "k": 7, # how many individual to randomly select from population 
+        "s": 4 # how many to select if minimum fitness requirement is met
     }
 
     # custom_config.WILD_CARD_CODE = ['//empty line',]
@@ -52,8 +52,8 @@ if __name__ == "__main__":
         config=custom_config,
         fitness=genp.tcp_variant_fitness_wrapped,
         variables=variables,
-        pop_size=30,
-        generations=30
+        pop_size=7,
+        generations=10
     )
 
     # evolve population

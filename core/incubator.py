@@ -1,3 +1,4 @@
+from core.individual import Individual
 from .types import DefaultConfig
 import secrets
 import os
@@ -221,7 +222,7 @@ class Incubator:
         parent_pool = set(best_individuals)
         counter_idx = len(self.population)+1
         # generate new offsprings by
-        while len(self.population) < self.pop_size:
+        while len(self.population) < self.pop_size-1: # -1 because elite individual is added afterwards
             variables = copy.deepcopy(self.variables)
             # self.population.append(generator.generate_individual_from_seed(variables=variables))
             indiv = self.generator(variables=variables)
@@ -336,6 +337,9 @@ class Incubator:
     # @jit
     def mutation(self):
         for idx, individual in enumerate(self.population):
+            if not isinstance(individual, Individual):
+                print("ERROR added something different as individual")
+                quit()
             if self.mutate() and not individual.is_elite:
                 # operator flipping
                 if (len(individual.root.children) >= 1):
@@ -387,9 +391,6 @@ class Incubator:
             
             print("[GENERATION {}/{}] HALL OF FAME: {}".format(self.current_generation, self.pop_size, [str(ind) for ind in self.hall_of_fame]))
 
-            if elite_individual is not None:
-                print("[ELITE INDIVIDUAL] id:{}, fitness:{}".format(elite_individual.id, elite_individual.fitness))
-                selected.append(copy.deepcopy(elite_individual))
 
             print("{} SELECTED INDIVIDUALS".format(len(selected)))
 
@@ -402,6 +403,10 @@ class Incubator:
 
             self.mutation()
 
+            if elite_individual is not None:
+                print("[ELITE INDIVIDUAL] id:{}, fitness:{}".format(elite_individual.id, elite_individual.fitness))
+                selected.append(copy.deepcopy(elite_individual))
+            
             for ind in self.population:
                 # updating variables
                 ind.update_variable_registry(generate_random_expression)
