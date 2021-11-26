@@ -254,17 +254,43 @@ class Sub(BaseSub, NodeMixin):
 
 class BaseDiv:
     
-    def __init__(self, num, den):
-        self.num = num
-        self.den = den
+    def __init__(self, nums, ndiv):
+        self.nums = nums
+        self.ndiv = ndiv
     
     def render_cpp(self):
-        return "({})/({})".format(str(self.num), str(self.den) if self.den != 0 else 1)
+        code_line = ""
+        # print("self.ndiv {}".format(self.ndiv))
+        # print(self.nums)
+
+        if len(self.nums) == 0:
+            return "1"
+
+        if self.ndiv > 2:
+            code_line = "(("
+            for idx, num in enumerate(self.nums):
+                
+                    if idx < self.ndiv-1:
+                        if idx > 0:
+                            code_line += "+"
+                        code_line += "({})".format(str(num))
+                    elif idx == self.ndiv:
+                        code_line += "+({}))/(".format(str(num))
+                    else:
+                        if idx > self.ndiv+1:
+                            code_line += "+"
+                        code_line += "({})".format(str(num))
+            code_line + "))"
+        else:
+            code_line = "({}/{})".format(str(self.nums[0]), str(self.nums[1]))
+        return code_line
+        # return "({})/({})".format(str(self.num), str(self.den) if self.den != 0 else 1)
 
 
 class Div(BaseDiv, NodeMixin):
-    def __init__(self, num, den, parent=None, children=None):
-        super(Div, self).__init__(num, den)
+    # ndiv stands from which number divide
+    def __init__(self, nums, ndiv=2, parent=None, children=None):
+        super(Div, self).__init__(nums, ndiv)
         self.name = super(Div, self).render_cpp()
         self.parent = parent
         if children:

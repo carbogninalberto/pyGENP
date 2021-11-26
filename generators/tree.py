@@ -209,7 +209,7 @@ def generate_random_expression(variables, operators=DefaultConfig.MATH_OPERATORS
     # having random depth generate tree with expression and termination points (constants)
     rand_op_id = np.random.randint(0, len(operators.keys()))
     root_op, root_key = create_random_op(rand_op_id)
-    root = root_op([]) if root_key != 'div' else root_op([], [])
+    root = root_op([])
 
     rand_width = np.random.randint(2, max_width)
     pending_nodes = [root]
@@ -220,7 +220,7 @@ def generate_random_expression(variables, operators=DefaultConfig.MATH_OPERATORS
         rand_op_id = np.random.randint(0, len(operators))
         op, key = create_random_op(rand_op_id)
 
-        node = op([]) if key != 'div' else op([], [])        
+        node = op([])
         rand_depth = np.random.randint(3, max_depth)
 
         pending_nodes.append(node)
@@ -230,7 +230,7 @@ def generate_random_expression(variables, operators=DefaultConfig.MATH_OPERATORS
             if not generate_termination():
                 rand_op_id = np.random.randint(0, len(operators))
                 sub_op, sub_key = create_random_op(rand_op_id)
-                sub_node = sub_op([]) if sub_key != 'div' else sub_op([], [])
+                sub_node = sub_op([])
 
                 tmp_nodes.append(sub_node)
                 pending_nodes.append(sub_node)
@@ -239,6 +239,7 @@ def generate_random_expression(variables, operators=DefaultConfig.MATH_OPERATORS
                 break
         
         updated_nodes = []
+
         # adding termination
         for i in range(len(pending_nodes)):
             take_care_of_termination(pending_nodes[i], variables)
@@ -252,15 +253,19 @@ def generate_random_expression(variables, operators=DefaultConfig.MATH_OPERATORS
     return root
 
 
-def take_care_of_termination(root, variables, width=5):
+def take_care_of_termination(root, variables, width=5, must_terminate=False):
     '''
     this function appends termination Nodes (constants or variables) to a certain expression parent node.
     '''
-    
+
+    operators = DefaultConfig.MATH_OPERATORS
+    # print("MUL: {} SUM: {} SUB: {} DIV: {}".format(isinstance(root, Mul), isinstance(root, Sum), isinstance(root, Sub), isinstance(root, Div)))
     if isinstance(root, Mul) or \
         isinstance(root, Sum) or \
-        isinstance(root, Sub):
-        for i in range(np.random.randint(2, width)):
+        isinstance(root, Sub) or \
+        must_terminate: # case is Div
+        for i in range(np.random.randint(2, width)):            
+            # print("ok")
             use, var = use_variable(variables)
 
             children = [child for child in root.children] if root.children is not None else []
@@ -274,18 +279,28 @@ def take_care_of_termination(root, variables, width=5):
             root.nums = children
 
     elif isinstance(root, Div):
-        for i in range(2-len(root.children)):
+        total = np.random.randint(2, width)
+        ndiv = np.random.randint(1, total-1) if total > 2 else 1
+        root.ndiv = ndiv
+        for i in range(total):
             use, var = use_variable(variables)
 
             children = [child for child in root.children] if root.children is not None else []
-            # if use and var is not None:
-            #     children.append(Termination(var.name, var.tp))
-            # else:
-            val = np.random.randint(10, 2001)/100.0
-            children.append(Termination(val if val != 0 else 1, Types.float))
+            if use and var is not None and i < ndiv:
+                rand_op_id = np.random.randint(0, len(operators)-1) # TODO: replace -1 with div replace, it just assumes that the last operator is div
+                sub_op, sub_key = create_random_op(rand_op_id)
+                sub_node = sub_op([])
+                take_care_of_termination(sub_node, variables, must_terminate=True)
+                children.append(sub_node)
+            else:
+                val = np.random.randint(10, 2001)/100.0
+                children.append(Termination(val if int(val) != 0 else 1, Types.float))
             root.children = children
-        root.num = children[0]
-        root.den = children[1]
+            root.nums = children
+        # root.num = children[0]
+        # root.den = children[1]
+
+        # print("root.ndiv {} | root.nums {}".format(root.ndiv, root.nums))
     else:
         raise Exception("Unknown Math Operator {}".format(type(root)))
 

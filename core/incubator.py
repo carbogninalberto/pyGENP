@@ -9,7 +9,7 @@ import subprocess
 from anytree import search
 import copy
 import numpy as np
-from utils.operators import IfThenElse, Assignment, Termination
+from utils.operators import IfThenElse, Assignment, Mul, Sub, Sum, Termination
 from generators.tree import generate_random_expression
 from utils.fitness import tcp_variant_fitness_write_switch
 from multiprocessing.pool import ThreadPool as Pool
@@ -17,6 +17,7 @@ from anytree import PreOrderIter
 import time
 from dotenv import load_dotenv
 from numba import jit
+from prompt_toolkit import print_formatted_text, HTML
 
 load_dotenv()
 
@@ -37,7 +38,7 @@ class Incubator:
                     fitness=None,
                     generator=generate_random_expression,
                     save_individual=False,
-                    max_mutations=5
+                    max_mutations=10
                 ):
         
         self.DefaultConfig = DefaultConfig
@@ -121,9 +122,9 @@ class Incubator:
             # print(">>>>>>>>>>>FITNESS>>>>>>>>>>>")
         # print("[{}] calculating...".format(idx))
         start = time.time()
-        print("[{}] has fitness {:.2f}".format(idx, individual.max_fitness(idx, self.fitness)), end='')        
+        print("[{}] \thas fitness\t {:.2f}".format(idx, individual.max_fitness(idx, self.fitness)), end='')        
         end = time.time()
-        print(" calculated in {:.3f} seconds".format(end - start))
+        print(" \tcalculated in {:.1f} \tseconds".format(end - start))
 
     # @jit
     def tournament_selection(self, k=35, s=15):
@@ -191,16 +192,18 @@ class Incubator:
         
         # output individuals
         for idx, individual in enumerate(self.population):
-            print("snapshot", path_folder + "/" + path_file.format(idx))
+            # print("snapshot", path_folder + "/" + path_file.format(idx))
             individual.save_to_file(folder=path_folder, file=path_file.format(idx))
+        print_formatted_text(HTML('<aaa fg="black" bg="ansigreen"><b>{} SNAPSHOTS EXPORTED TO: {}</b></aaa>'.format(len(self.population), path_folder)))
 
         # output pickles
         for idx, individual in enumerate(self.population):
-            print("pickle", path_pickles + "/" + path_file_pickles.format(idx))
+            # print("pickle", path_pickles + "/" + path_file_pickles.format(idx))
             path = os.path.join(path_pickles, path_file_pickles.format(idx))
             with open(path, 'wb') as f:
                 pickle.dump(individual, f, protocol=pickle.HIGHEST_PROTOCOL)
             f.close()
+        print_formatted_text(HTML('<aaa fg="black" bg="ansigreen"><b>{} PICKLES EXPORTED TO: {}</b></aaa>'.format(len(self.population), path_pickles)))
 
     def add_hall_of_fame(self, add_to_elite=False):
         self.population.sort(key=lambda x:x.fitness, reverse=True)
@@ -334,13 +337,16 @@ class Incubator:
     def mutate(self, y_prob=50.0):
         return True if np.random.randint(0, 1000) < y_prob*10 else False 
 
+    def mutate_switch_branches(self, y_prob=30):
+        return True if np.random.randint(0, 1000) < y_prob*10 else False
+
     # @jit
     def mutation(self):
         for idx, individual in enumerate(self.population):
             if not isinstance(individual, Individual):
                 print("ERROR added something different as individual")
                 quit()
-            if self.mutate() and not individual.is_elite:
+            if self.mutate(y_prob=60) and not individual.is_elite:
                 # operator flipping
                 if (len(individual.root.children) >= 1):
                     
@@ -364,6 +370,40 @@ class Incubator:
                         elif isinstance(random_node, Assignment):
                             random_node.exp = generate_random_expression(individual.variables)
                         counter -= 1
+                # switch branches
+                if self.mutate_switch_branches():
+                    for node in PreOrderIter(individual.root):
+                        if isinstance(node, IfThenElse):
+                            tmp = copy.deepcopy(node.exp_f)
+                            node.exp_f = copy.deepcopy(node.exp_t)
+                            node.exp_t = tmp
+                            break
+                # switch compatible operators
+                # for instance sum with multiplication
+                if self.mutate(y_prob=70):
+                    for node in PreOrderIter(individual.root):
+                        if isinstance(node, Assignment):
+                            for oper in PreOrderIter(node.exp):
+                                if self.mutate(y_prob=20):
+                                    if isinstance(oper, Mul):
+                                        new_oper = Sum(oper.nums)
+                                        new_oper.parent = oper.parent
+                                        for child in new_oper.children:
+                                            child.parent = new_oper
+                                    elif isinstance(oper, Sum):
+                                        new_oper = Mul(oper.nums)
+                                        new_oper.parent = oper.parent
+                                        for child in new_oper.children:
+                                            child.parent = new_oper                                    
+                                    elif isinstance(oper, Sub):
+                                        new_oper = Mul(oper.nums)
+                                        new_oper.parent = oper.parent
+                                        for child in new_oper.children:
+                                            child.parent = new_oper
+                                    break
+                        
+                            
+                    
 
     def run(self, generator):
         # init population giving a generator
@@ -389,7 +429,10 @@ class Incubator:
                 k=self.DefaultConfig.TOURNAMENT["k"],
                 s=self.DefaultConfig.TOURNAMENT["s"])
             
-            print("[GENERATION {}/{}] HALL OF FAME: {}".format(self.current_generation, self.pop_size, [str(ind) for ind in self.hall_of_fame]))
+            # print("[GENERATION {}/{}] HALL OF FAME: {}".format(self.current_generation, self.pop_size, [str(ind) for ind in self.hall_of_fame]))
+            print_formatted_text(HTML(
+                "<aaa fg=\"white\" bg=\"red\"><b>[GENERATION {}/{}] HALL OF FAME: {}</b></aaa>".format(self.current_generation, self.pop_size, [str(ind) for ind in self.hall_of_fame])
+            ))
 
 
             print("{} SELECTED INDIVIDUALS".format(len(selected)))
@@ -404,7 +447,10 @@ class Incubator:
             self.mutation()
 
             if elite_individual is not None:
-                print("[ELITE INDIVIDUAL] id:{}, fitness:{}".format(elite_individual.id, elite_individual.fitness))
+                # print("[ELITE INDIVIDUAL] id:{}, fitness:{}".format(elite_individual.id, elite_individual.fitness))
+                print_formatted_text(HTML(
+                    "<aaa fg=\"black\" bg=\"yellow\"><b>[ELITE INDIVIDUAL] id:{}, fitness:{}</b></aaa>".format(elite_individual.id, elite_individual.fitness)
+                ))
                 selected.append(copy.deepcopy(elite_individual))
             
             for ind in self.population:

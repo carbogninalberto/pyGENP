@@ -58,6 +58,8 @@ class Individual:
                             or n_exp.value not in self.variables.variables_name() \
                             or (node.declare == True and self.is_var(n_exp.value)):
                             n_exp.value = np.random.randint(-20, 20)
+                            if n_exp.value == 0:
+                                n_exp.value = 1
                         elif self.is_var(n_exp.value) and str(n_exp.value) not in self.variables.variables_name():
                             new_var = Variable(n_exp.value, n_exp.tp)
                             self.variables.register(new_var)
@@ -126,7 +128,7 @@ class Individual:
         for var in vars:
             exp = Termination(np.random.randint(10, 2001)/100.0, Types.float) #generate_random_expression(self.variables)
             Assignment(var, exp, parent=self.root)
-            print(self.root.children)
+            # print(self.root.children)
             
             # children = list(self.root.children)
             # try:
@@ -141,7 +143,7 @@ class Individual:
         
         for node in PreOrderIter(self.root):
             if isinstance(node, Assignment) and node.declare == True:
-                print("moving top {}".format(node.var.name))
+                # print("moving top {}".format(node.var.name))
                 to_move_up.append(node)
  
         
@@ -202,8 +204,10 @@ class Individual:
                 # fixing not already declare vars
                 for n_exp in node.exp.nums:
                     if isinstance(n_exp, Termination):
-                        if self.is_var(n_exp.value) and str(n_exp.value) not in seen_declarations:
+                        if (self.is_var(n_exp.value) and str(n_exp.value) not in seen_declarations) or node.declare == True:
                             n_exp.value = np.random.randint(-20, 20)
+                            if n_exp.value == 0:
+                                n_exp.value = 1
             
             elif isinstance(node, IfThenElse):
                 if node.condition.lf.name not in seen_declarations:
@@ -217,6 +221,8 @@ class Individual:
                         if isinstance(n_exp, Termination):
                             if self.is_var(n_exp.value) and str(n_exp.value) not in seen_declarations:
                                 n_exp.value = np.random.randint(-20, 20)
+                                if n_exp.value == 0:
+                                    n_exp.value = 1
                 if isinstance(node.exp_f, Assignment):
                     if node.exp_f.var.name not in seen_declarations:
                         to_remove.append(node)
@@ -224,6 +230,8 @@ class Individual:
                         if isinstance(n_exp, Termination):
                             if self.is_var(n_exp.value) and str(n_exp.value) not in seen_declarations:
                                 n_exp.value = np.random.randint(-20, 20)
+                                if n_exp.value == 0:
+                                    n_exp.value = 1
         
         # remove items
         for node in to_remove:
@@ -268,7 +276,7 @@ class Individual:
 
 
         # print("\n\n\n\033[94m{}\n\n\n".format(RenderTree(self.root)))
-        print("##############################################################")
+        # print("##############################################################")
 
         return updated
 
