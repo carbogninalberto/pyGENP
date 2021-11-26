@@ -7,6 +7,7 @@ from anytree.exporter import DotExporter
 import genp
 #import generators.tree as gentree
 from numba import jit
+from prompt_toolkit.shortcuts import message_dialog, yes_no_dialog, input_dialog
 
 TCP_LINUX_RENO_CONGESTION_AVOIDANCE = r"""uint32_t w = tcb->m_cWnd / tcb->m_segmentSize;
 if (m_cWndCnt >= w)
@@ -26,7 +27,24 @@ if (m_cWndCnt >= w)
 
 
 if __name__ == "__main__":
+    k = 25
+    s = 20
 
+    yes_default = yes_no_dialog(
+        title='Default Settings',
+        text='Do you want to continue with default settings?\nPress ENTER.').run()
+
+    if not yes_default:
+        k = text = input_dialog(
+            title='Settings',
+            text='Number of individual to randomly select from population').run()
+        k = int(k)
+        s = text = input_dialog(
+            title='Settings',
+            text='Number of individual to to select if minimum fitness requirement is met').run()
+        s = int(s)
+
+   
     variables = genp.registers.VariableRegistry([
         genp.registers.Variable("tcb->m_segmentSize", genp.types.Types.integer),
         genp.registers.Variable("tcb->m_cWnd", genp.types.Types.integer),
@@ -35,8 +53,8 @@ if __name__ == "__main__":
 
     custom_config = genp.types.DefaultConfig
     custom_config.TOURNAMENT = {
-        "k": 7, # how many individual to randomly select from population 
-        "s": 4 # how many to select if minimum fitness requirement is met
+        "k": k, # how many individual to randomly select from population 
+        "s": s # how many to select if minimum fitness requirement is met
     }
 
     # custom_config.WILD_CARD_CODE = ['//empty line',]
@@ -52,8 +70,8 @@ if __name__ == "__main__":
         config=custom_config,
         fitness=genp.tcp_variant_fitness_wrapped,
         variables=variables,
-        pop_size=7,
-        generations=10
+        pop_size=30,
+        generations=30
     )
 
     # evolve population
