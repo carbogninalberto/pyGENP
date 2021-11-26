@@ -9,6 +9,7 @@ misc
 a.out
 
 snapshots/*
+snapshots_pickles/*
 
 *.pyc
 
