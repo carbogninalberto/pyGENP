@@ -124,7 +124,7 @@ class Incubator:
         start = time.time()
         print("[{}] \thas fitness\t {:.2f}".format(idx, individual.max_fitness(idx, self.fitness)), end='')        
         end = time.time()
-        print(" \tcalculated in {:.1f} \tseconds".format(end - start))
+        print(" calculated in {:.1f} \tseconds".format(end - start))
 
     # @jit
     def tournament_selection(self, k=35, s=15):
@@ -346,6 +346,12 @@ class Incubator:
             if not isinstance(individual, Individual):
                 print("ERROR added something different as individual")
                 quit()
+            if self.mutate(y_prob=25) and not individual.is_elite:
+                # truncate mutation
+                nodes = [node for node in PreOrderIter(individual.root)]
+                selected_node = nodes[secrets.randbelow(len(nodes))]
+                # selected_node.parent.children = []
+                selected_node.parent = None
             if self.mutate(y_prob=60) and not individual.is_elite:
                 # operator flipping
                 if (len(individual.root.children) >= 1):
@@ -440,28 +446,32 @@ class Incubator:
             for idx, ind in enumerate(selected):
                 print("id:{}, fitness:{:.2f}".format(idx,ind.fitness))
 
+            # self.population = []
+
             if len(selected) >= 2:
                 self.crossover(selected)
                 # self.fix_not_valid_crossover()
 
             self.mutation()
 
-            if elite_individual is not None:
-                # print("[ELITE INDIVIDUAL] id:{}, fitness:{}".format(elite_individual.id, elite_individual.fitness))
-                print_formatted_text(HTML(
-                    "<aaa fg=\"black\" bg=\"yellow\"><b>[ELITE INDIVIDUAL] id:{}, fitness:{}</b></aaa>".format(elite_individual.id, elite_individual.fitness)
-                ))
-                selected.append(copy.deepcopy(elite_individual))
             
             for ind in self.population:
                 # updating variables
                 ind.update_variable_registry(generate_random_expression)
+            
 
             if len(selected) == 0:
                 print("GOT NOT AVAILABLE INDIVIDUALS")
                 self.population = []
                 self.init_population()
 
+            if elite_individual is not None:
+                # print("[ELITE INDIVIDUAL] id:{}, fitness:{}".format(elite_individual.id, elite_individual.fitness))
+                print_formatted_text(HTML(
+                    "<aaa fg=\"black\" bg=\"yellow\"><b>[ELITE INDIVIDUAL] id:{}, fitness:{}</b></aaa>".format(elite_individual.id, elite_individual.fitness)
+                ))
+                self.population.append(copy.deepcopy(elite_individual))
+            
             self.current_generation += 1
 
         print("FINAL POPULATION")

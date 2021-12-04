@@ -5,7 +5,7 @@ import os
 import copy
 from core.registers import Variable
 from core.types import Types
-from utils.operators import Assignment, IfThenElse, Termination
+from utils.operators import Assignment, Div, IfThenElse, Termination
 
 class Individual:
 
@@ -175,9 +175,6 @@ class Individual:
                     else:
                         c.parent = node
 
-       
-
-
         for node in PreOrderIter(self.root):
 
             # fixing case more than one child
@@ -188,8 +185,6 @@ class Individual:
                         c.parent = children_root[idx-1]
                     else:
                         c.parent = node
-
-
                     
         seen_declarations = ['tcb->m_segmentSize', 'tcb->m_cWnd', 'segmentsAcked']
         to_remove = []
@@ -203,6 +198,13 @@ class Individual:
                     to_remove.append(node)
                 # fixing not already declare vars
                 for n_exp in node.exp.nums:
+                    if isinstance(n_exp, Div):
+                        for n_exp_div in n_exp.nums:
+                            if isinstance(n_exp_div, Termination):
+                                if (self.is_var(n_exp_div.value) and str(n_exp_div.value) not in seen_declarations) or node.declare == True:
+                                    n_exp_div.value = np.random.randint(-20, 20)
+                                    if n_exp_div.value == 0:
+                                        n_exp_div.value = 1
                     if isinstance(n_exp, Termination):
                         if (self.is_var(n_exp.value) and str(n_exp.value) not in seen_declarations) or node.declare == True:
                             n_exp.value = np.random.randint(-20, 20)
@@ -223,6 +225,16 @@ class Individual:
                                 n_exp.value = np.random.randint(-20, 20)
                                 if n_exp.value == 0:
                                     n_exp.value = 1
+                    for n_to_check in PreOrderIter(node.exp_t):
+                        if n_to_check.var.name not in seen_declarations:
+                            to_remove.append(node)
+                        for n_exp in n_to_check.exp.nums:
+                            if isinstance(n_exp, Termination):
+                                if self.is_var(n_exp.value) and str(n_exp.value) not in seen_declarations:
+                                    n_exp.value = np.random.randint(-20, 20)
+                                    if n_exp.value == 0:
+                                        n_exp.value = 1
+
                 if isinstance(node.exp_f, Assignment):
                     if node.exp_f.var.name not in seen_declarations:
                         to_remove.append(node)
@@ -232,6 +244,15 @@ class Individual:
                                 n_exp.value = np.random.randint(-20, 20)
                                 if n_exp.value == 0:
                                     n_exp.value = 1
+                    for n_to_check in PreOrderIter(node.exp_f):
+                        if n_to_check.var.name not in seen_declarations:
+                            to_remove.append(node)
+                        for n_exp in n_to_check.exp.nums:
+                            if isinstance(n_exp, Termination):
+                                if self.is_var(n_exp.value) and str(n_exp.value) not in seen_declarations:
+                                    n_exp.value = np.random.randint(-20, 20)
+                                    if n_exp.value == 0:
+                                        n_exp.value = 1
         
         # remove items
         for node in to_remove:

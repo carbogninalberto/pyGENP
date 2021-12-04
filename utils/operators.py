@@ -1,4 +1,4 @@
-from anytree import NodeMixin
+from anytree import NodeMixin, PreOrderIter
 from core.registers import Variable
 
 class BaseTermination:
@@ -122,7 +122,9 @@ class BaseIfThenElse:
         self.exp_f = exp_f
     
     def render_cpp(self):
-        return "if ({}) {{\n\t{}\n}} else {{\n\t{}\n}}\n".format(self.condition, self.exp_t, self.exp_f)
+        return "if ({}) {{\n{}\n}} else {{\n{}\n}}\n".format(self.condition, 
+                                                                ''.join(['\t{}'.format(str(node)) for node in PreOrderIter(self.exp_t)]) if self.exp_t is not None else self.exp_t, 
+                                                                ''.join(['\t{}'.format(str(node)) for node in PreOrderIter(self.exp_f)]) if self.exp_f is not None else self.exp_f)
 
     def __str__(self):
         return self.render_cpp()

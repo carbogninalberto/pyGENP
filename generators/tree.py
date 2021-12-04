@@ -74,8 +74,9 @@ def generate_individual_from_seed(
                 # generate branch1 (assignment) -> TODO: subtree generation
                 # generate branch2 (assignment) -> TODO: subtree generation
                 condition = generate_condition(equality_operators, variables)
+
                 exp_t = generate_random_expression(variables)
-                exp_f = generate_random_expression(variables)               
+                exp_f = generate_random_expression(variables)                      
 
                 if len(variables.variables) > 0:
                     # some vars in the register 
@@ -88,6 +89,32 @@ def generate_individual_from_seed(
 
                     var_t_node = Assignment(var_t, exp_t, declare=False)
                     var_f_node = Assignment(var_f, exp_f, declare=False)
+                    
+                    last_node_t = var_t_node
+                    last_node_f = var_f_node
+
+                    for j in range(np.random.randint(0, 3)):
+                        tmp_vars_tmp = variables.get_random_var()
+                        
+                        # true branch subtree                        
+                        var_t_tmp = tmp_vars_tmp[np.random.randint(0, len(tmp_vars_tmp))] if isinstance(tmp_vars_tmp, list) else tmp_vars_tmp
+                        var_t_tmp.recall += 1
+                        node_exp_t = generate_random_expression(variables)
+                        var_t_node_tmp = Assignment(var_t_tmp, node_exp_t, declare=False)
+                        var_t_node_tmp.parent = last_node_t
+                        # last_node_t.children = var_t_node
+                        last_node_t = var_t_node_tmp
+                    
+                    for j in range(np.random.randint(0, 3)):
+                        tmp_vars_tmp = variables.get_random_var()
+
+                        # false branch subtree
+                        var_f_tmp = tmp_vars_tmp[np.random.randint(0, len(tmp_vars_tmp))] if isinstance(tmp_vars_tmp, list) else tmp_vars_tmp
+                        var_f_tmp.recall += 1
+                        node_exp_f = generate_random_expression(variables)
+                        var_f_node_tmp = Assignment(var_f_tmp, node_exp_f, declare=False)
+                        var_f_node_tmp.parent = last_node_f   
+                        last_node_f = var_f_node_tmp
 
                     # print("ops {} rand_operator {} pending_nodes {} <- getting {} index".format(ops, rand_operator, len(pending_nodes), i))
                     node = ops[rand_operator](condition, var_t_node, var_f_node, parent=pending_nodes[i])
