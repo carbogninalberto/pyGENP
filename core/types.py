@@ -31,6 +31,13 @@ class DefaultConfig:
         "s": 15
     }
 
+    MUTATION = {
+        "operator_flip": 60,
+        "switch_branches": 30,
+        "switch_exp": 70,
+        "truncate_node": 25, 
+    }
+
     EQUALITY = {
         "lt": "<",
         "lte": "<=",

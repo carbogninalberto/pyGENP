@@ -27,22 +27,22 @@ if (m_cWndCnt >= w)
 
 
 if __name__ == "__main__":
-    k = 25
-    s = 20
+    k = 16
+    s = 8
 
-    yes_default = yes_no_dialog(
-        title='Default Settings',
-        text='Do you want to continue with default settings?\nPress ENTER.').run()
+    # yes_default = yes_no_dialog(
+    #     title='Default Settings',
+    #     text='Do you want to continue with default settings?\nPress ENTER.').run()
 
-    if not yes_default:
-        k = text = input_dialog(
-            title='Settings',
-            text='Number of individual to randomly select from population').run()
-        k = int(k)
-        s = text = input_dialog(
-            title='Settings',
-            text='Number of individual to to select if minimum fitness requirement is met').run()
-        s = int(s)
+    # if not yes_default:
+    #     k = text = input_dialog(
+    #         title='Settings',
+    #         text='Number of individual to randomly select from population').run()
+    #     k = int(k)
+    #     s = text = input_dialog(
+    #         title='Settings',
+    #         text='Number of individual to to select if minimum fitness requirement is met').run()
+    #     s = int(s)
 
    
     variables = genp.registers.VariableRegistry([
@@ -70,7 +70,7 @@ if __name__ == "__main__":
         config=custom_config,
         fitness=genp.tcp_variant_fitness_wrapped,
         variables=variables,
-        pop_size=30,
+        pop_size=20,
         generations=30
     )
 
