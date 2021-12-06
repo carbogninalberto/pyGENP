@@ -491,7 +491,7 @@
 					document.getElementById('cons-container').style.height = "3rem";
 					fullScreenTerminal = false;
 				} else {
-					document.getElementById('cons-container').style.height = "25rem";
+					document.getElementById('cons-container').style.height = "26rem";
 					fullScreenTerminal = true;
 				}
 			}}>
@@ -525,7 +525,7 @@
 		background-color: #3c3c3c;
 		border-radius: 1rem;
 		height: .4rem;
-		margin-right: 2.5rem;
+		margin-right: 1rem;
 		overflow: hidden;
 	}
 	.progress-bar-thumb {
@@ -603,7 +603,7 @@
 		padding: 1rem;
 		margin: 1rem;
 		margin-left: 0rem;
-		margin-right: 2.5rem;
+		/* margin-right: 2.5rem; */
 		height: 20rem;
 		overflow-y: auto;
 	}

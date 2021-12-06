@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 # import threading
 from multiprocessing import Process
 from sim import SimThread
+from utils.fitness import tcp_variant_fitness_write_switch
 
 load_dotenv()
 
@@ -38,9 +39,11 @@ def hello():
 @app.route("/clean")
 def clean():
     try:
-        subprocess.call('rm *.out', shell=True)
-        subprocess.call('rm snapshots/current_gen.json', shell=True)
-        subprocess.call('rm snapshots/hall_of_fame.json', shell=True)
+        # empty switch case
+        tcp_variant_fitness_write_switch([''])
+        subprocess.call('rm -rf *.out', shell=True)
+        subprocess.call('rm -rf ./snapshots/current_gen.json', shell=True)
+        subprocess.call('rm -rf ./snapshots/hall_of_fame.json', shell=True)
         # print(worker.is_alive())
         # print(worker.native_id)
         # if worker.is_alive():
@@ -65,8 +68,8 @@ def clean():
             if str(pid) not in pids_not_to_kill:
                 subprocess.call(['kill', '-9', str(pid)])
         subprocess.call(['pkill' ,'-f', 'wifi-tcp'])
-        subprocess.call(['rm' ,'-rf', 'snapshots/*'])        
-        subprocess.call(['rm' ,'-rf', 'snapshots_pickles/*'])
+        subprocess.call('rm -rf ./snapshots/*', shell=True)        
+        subprocess.call('rm -rf ./snapshots_pickles/*', shell=True)
         return {'msg': 'completed!'}
     except Exception as e:
         return {'mgs': 'Exception {} occured.'.format(e)}

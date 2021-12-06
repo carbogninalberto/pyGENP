@@ -201,12 +201,14 @@ class Individual:
                     if isinstance(n_exp, Div):
                         for n_exp_div in n_exp.nums:
                             if isinstance(n_exp_div, Termination):
-                                if (self.is_var(n_exp_div.value) and str(n_exp_div.value) not in seen_declarations) or node.declare == True:
+                                # and str(n_exp_div.value) not in seen_declarations
+                                if (self.is_var(n_exp_div.value)) or node.declare == True:
                                     n_exp_div.value = np.random.randint(-20, 20)
                                     if n_exp_div.value == 0:
                                         n_exp_div.value = 1
                     if isinstance(n_exp, Termination):
-                        if (self.is_var(n_exp.value) and str(n_exp.value) not in seen_declarations) or node.declare == True:
+                        # and str(n_exp.value) not in seen_declarations
+                        if (self.is_var(n_exp.value)) or node.declare == True:
                             n_exp.value = np.random.randint(-20, 20)
                             if n_exp.value == 0:
                                 n_exp.value = 1
