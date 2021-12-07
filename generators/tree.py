@@ -11,12 +11,19 @@ from core.types import DefaultConfig, Types
 from core.registers import Variable, OperatorRegistry, VariableRegistry
 from utils.operators import Assignment, WildcardCode, Equality, \
     IfThenElse, Termination, Mul, Sum, Sub, Div
-
+import quantumrandom
 
 '''
 Append to every node the registry of suitable variables, where in the sub registry are also included
 variable found elsewhere
 '''
+
+
+
+def rand_int(start, end):
+    # return int(quantumrandom.randint(start, end))
+    # return np.random.randint(start, end)
+    return random.randint(start, end-1)
 
 
 def generate_individual_from_seed(
@@ -32,12 +39,14 @@ def generate_individual_from_seed(
     '''
     this function generate a tree individual 
     '''
+    
+    random.seed(seed)#int(quantumrandom.randint(0, 999999999)))
 
     # create root node
     root = Node("main")    
 
     # generate random number of code instruction
-    rand_width = np.random.randint(5, max_width)
+    rand_width = rand_int(5, max_width)
 
     # queue nodes that require validity check to be approved
     pending_nodes = [root]
@@ -53,8 +62,8 @@ def generate_individual_from_seed(
             var_name = generate_var_name(variables.variables_name())
             # generate a random expression by using Variables and Operator Registry
             exp = generate_random_expression(variables)
-            # generate a new variable    
-            var = Variable(var_name, Types.get_all()[np.random.randint(0, len(Types.get_all()))], scope=i)       
+            # generate a new variable
+            var = Variable(var_name, Types.get_all()[rand_int(0, len(Types.get_all()))], scope=i)
             # add variable to registry
             variables.register(var)
             # generate an assignment
@@ -67,7 +76,7 @@ def generate_individual_from_seed(
         else:
             # random operator
             op_keys = list(DefaultConfig.OPERATORS.keys())
-            rand_operator = op_keys[np.random.randint(0, len(op_keys))]
+            rand_operator = op_keys[rand_int(0, len(op_keys))]
 
             if isinstance(ops[rand_operator](), IfThenElse):
                 # generate condition
@@ -81,8 +90,8 @@ def generate_individual_from_seed(
                 if len(variables.variables) > 0:
                     # some vars in the register 
                     tmp_vars = variables.get_random_var()
-                    var_t = tmp_vars[np.random.randint(0, len(tmp_vars))] if isinstance(tmp_vars, list) else tmp_vars
-                    var_f = tmp_vars[np.random.randint(0, len(tmp_vars))] if isinstance(tmp_vars, list) else tmp_vars
+                    var_t = tmp_vars[rand_int(0, len(tmp_vars))] if isinstance(tmp_vars, list) else tmp_vars
+                    var_f = tmp_vars[rand_int(0, len(tmp_vars))] if isinstance(tmp_vars, list) else tmp_vars
 
                     var_t.recall += 1
                     var_f.recall += 1
@@ -93,11 +102,11 @@ def generate_individual_from_seed(
                     last_node_t = var_t_node
                     last_node_f = var_f_node
 
-                    for j in range(np.random.randint(0, 3)):
+                    for j in range(rand_int(0, 3)):
                         tmp_vars_tmp = variables.get_random_var()
                         
                         # true branch subtree                        
-                        var_t_tmp = tmp_vars_tmp[np.random.randint(0, len(tmp_vars_tmp))] if isinstance(tmp_vars_tmp, list) else tmp_vars_tmp
+                        var_t_tmp = tmp_vars_tmp[rand_int(0, len(tmp_vars_tmp))] if isinstance(tmp_vars_tmp, list) else tmp_vars_tmp
                         var_t_tmp.recall += 1
                         node_exp_t = generate_random_expression(variables)
                         var_t_node_tmp = Assignment(var_t_tmp, node_exp_t, declare=False)
@@ -105,11 +114,11 @@ def generate_individual_from_seed(
                         # last_node_t.children = var_t_node
                         last_node_t = var_t_node_tmp
                     
-                    for j in range(np.random.randint(0, 3)):
+                    for j in range(rand_int(0, 3)):
                         tmp_vars_tmp = variables.get_random_var()
 
                         # false branch subtree
-                        var_f_tmp = tmp_vars_tmp[np.random.randint(0, len(tmp_vars_tmp))] if isinstance(tmp_vars_tmp, list) else tmp_vars_tmp
+                        var_f_tmp = tmp_vars_tmp[rand_int(0, len(tmp_vars_tmp))] if isinstance(tmp_vars_tmp, list) else tmp_vars_tmp
                         var_f_tmp.recall += 1
                         node_exp_f = generate_random_expression(variables)
                         var_f_node_tmp = Assignment(var_f_tmp, node_exp_f, declare=False)
@@ -123,11 +132,11 @@ def generate_individual_from_seed(
                 else:
                     # empty register 
                     var_t_name = generate_var_name(variables.variables_name())
-                    var_t = Variable(var_t_name, Types.get_all()[np.random.randint(0, len(Types.get_all()))])
+                    var_t = Variable(var_t_name, Types.get_all()[rand_int(0, len(Types.get_all()))])
                     variables.register(var_t)
 
                     var_f_name = generate_var_name(variables.variables_name())
-                    var_f = Variable(var_f_name, Types.get_all()[np.random.randint(0, len(Types.get_all()))])
+                    var_f = Variable(var_f_name, Types.get_all()[rand_int(0, len(Types.get_all()))])
                     variables.register(var_f)
 
                     var_t_node = Assignment(var_t, exp_t, declare=True)
@@ -142,7 +151,7 @@ def generate_individual_from_seed(
                 # choose valid var
                 if len(variables.variables) > 0:
                     tmp_vars = variables.get_random_var()
-                    var = tmp_vars[np.random.randint(1, len(tmp_vars))] if isinstance(tmp_vars, list) else tmp_vars
+                    var = tmp_vars[rand_int(1, len(tmp_vars))] if isinstance(tmp_vars, list) else tmp_vars
                     var.recall += 1
 
                     exp = generate_random_expression(variables)
@@ -153,7 +162,7 @@ def generate_individual_from_seed(
                 else:                    
                     # generate a new variable
                     var_name = generate_var_name(variables.variables_name())
-                    var = Variable(var_name, Types.get_all()[np.random.randint(1, len(Types.get_all()))], scope=i)            
+                    var = Variable(var_name, Types.get_all()[rand_int(1, len(Types.get_all()))], scope=i)            
                     # add variable to registry
                     variables.register(var)
                     exp = generate_random_expression(variables)
@@ -162,7 +171,7 @@ def generate_individual_from_seed(
                     pending_nodes.append(node)
 
             elif isinstance(ops[rand_operator](), WildcardCode):
-                rand_code = np.random.randint(0, len(wildcard_codes))
+                rand_code = rand_int(0, len(wildcard_codes))
                 node = ops[rand_operator](code=wildcard_codes[rand_code], parent=pending_nodes[i])
 
                 pending_nodes.append(node)
@@ -209,7 +218,7 @@ def take_care_of_individual_termination(root, variables: VariableRegistry, opera
 
 def generate_condition(equality_operators, variables: VariableRegistry):
     # operator generation
-    eq_type = list(equality_operators.values())[np.random.randint(0, len(equality_operators.values()))]
+    eq_type = list(equality_operators.values())[rand_int(0, len(equality_operators.values()))]
     lf = variables.get_random_var()
     rg = variables.get_random_var()
     
@@ -234,28 +243,28 @@ def generate_random_expression(variables, operators=DefaultConfig.MATH_OPERATORS
     this function generates a random expression tree using variables
     '''
     # having random depth generate tree with expression and termination points (constants)
-    rand_op_id = np.random.randint(0, len(operators.keys()))
+    rand_op_id = rand_int(0, len(operators.keys()))
     root_op, root_key = create_random_op(rand_op_id)
     root = root_op([])
 
-    rand_width = np.random.randint(2, max_width)
+    rand_width = rand_int(2, max_width)
     pending_nodes = [root]
 
-    if not generate_termination():
+    if not generate_termination(y_prob=20):
         # take operator as root
         
-        rand_op_id = np.random.randint(0, len(operators))
+        rand_op_id = rand_int(0, len(operators))
         op, key = create_random_op(rand_op_id)
 
         node = op([])
-        rand_depth = np.random.randint(3, max_depth)
+        rand_depth = rand_int(3, max_depth)
 
         pending_nodes.append(node)
         tmp_nodes = [node]
         
         for j in range(rand_depth):
-            if not generate_termination():
-                rand_op_id = np.random.randint(0, len(operators))
+            if not generate_termination(y_prob=30):
+                rand_op_id = rand_int(0, len(operators))
                 sub_op, sub_key = create_random_op(rand_op_id)
                 sub_node = sub_op([])
 
@@ -291,7 +300,7 @@ def take_care_of_termination(root, variables, width=5, must_terminate=False):
         isinstance(root, Sum) or \
         isinstance(root, Sub) or \
         must_terminate: # case is Div
-        for i in range(np.random.randint(2, width)):            
+        for i in range(rand_int(2, width)):            
             # print("ok")
             use, var = use_variable(variables)
 
@@ -300,27 +309,27 @@ def take_care_of_termination(root, variables, width=5, must_terminate=False):
             if use and var is not None:
                 children.append(Termination(var.name, var.tp))
             else:
-                children.append(Termination(np.random.randint(10, 2001)/100.0, Types.float))
+                children.append(Termination(rand_int(10, 2001)/100.0, Types.float))
             
             root.children = children
             root.nums = children
 
     elif isinstance(root, Div):
-        total = np.random.randint(2, width)
-        ndiv = np.random.randint(1, total-1) if total > 2 else 1
+        total = rand_int(2, width)
+        ndiv = rand_int(1, total-1) if total > 2 else 1
         root.ndiv = ndiv
         for i in range(total):
             use, var = use_variable(variables)
 
             children = [child for child in root.children] if root.children is not None else []
             if use and var is not None and i < ndiv:
-                rand_op_id = np.random.randint(0, len(operators)-1) # TODO: replace -1 with div replace, it just assumes that the last operator is div
+                rand_op_id = rand_int(0, len(operators)-1) # TODO: replace -1 with div replace, it just assumes that the last operator is div
                 sub_op, sub_key = create_random_op(rand_op_id)
                 sub_node = sub_op([])
                 take_care_of_termination(sub_node, variables, must_terminate=True)
                 children.append(sub_node)
             else:
-                val = np.random.randint(10, 2001)/100.0
+                val = rand_int(10, 2001)/100.0
                 children.append(Termination(val if int(val) != 0 else 1, Types.float))
             root.children = children
             root.nums = children
@@ -336,14 +345,14 @@ def generate_termination(y_prob=80.0):
     '''
     Bernoulli Probability Distribution
     ''' 
-    return True if np.random.randint(0, 1000) < y_prob*10 else False 
+    return True if rand_int(0, 1000) < y_prob*10 else False 
 
 
 def generate_new_variable(y_prob=20.0):
     '''
     Bernoulli Probability Distribution
     '''
-    return True if np.random.randint(0, 1000) < y_prob*10 else False
+    return True if rand_int(0, 1000) < y_prob*10 else False
 
 
 def use_variable(variables, y_prob=20.0, types=Types.get_all()):
@@ -351,7 +360,7 @@ def use_variable(variables, y_prob=20.0, types=Types.get_all()):
     this function takes as input a <variables> array (from the VariablesRegistry) and a probability 
     of generating a new variable <y_prob>
     '''
-    use_variable = True if np.random.randint(0, 1000) < y_prob*10 else False
+    use_variable = True if rand_int(0, 1000) < y_prob*10 else False
     var = None
     found_compatible = False
     if use_variable:
