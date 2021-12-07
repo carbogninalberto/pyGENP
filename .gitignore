@@ -16,3 +16,6 @@ snapshots_pickles/*
 core/__pycache__
 utils/__pycache__
 generators/__pycache__
+
+tmp
+init

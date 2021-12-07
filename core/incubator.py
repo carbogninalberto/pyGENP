@@ -56,12 +56,23 @@ class Incubator:
         self.current_gen = []
     
     # @jit
-    def init_population(self, generator):
-        for i in range(self.pop_size):
+    def init_population(self, generator, pickles=[]):
+        loaded_pickle = 0
+        for idx, p in enumerate(pickles):
+            try:
+                with open(p, 'rb') as f:
+                    indiv = pickle.load(f)
+                    indiv.id = idx
+                    self.population.append(indiv)
+                    loaded_pickle += 1
+            except Exception as e:
+                print("Cannot load pickle, try next one")
+        
+        for i in range(self.pop_size-loaded_pickle):
             variables = copy.deepcopy(self.variables)
             # self.population.append(generator.generate_individual_from_seed(variables=variables))
             indiv = generator.generate_individual_from_seed(variables=variables, wildcard_codes=self.DefaultConfig.WILD_CARD_CODE)
-            indiv.id = i
+            indiv.id = i + loaded_pickle
             self.population.append(indiv)
 
     # @jit
@@ -209,25 +220,26 @@ class Incubator:
             os.makedirs(path_pickles)
         
         # output individuals
-        try:
-            for idx, individual in enumerate(self.population):
+        
+        for idx, individual in enumerate(self.population):
+            try:
                 # print("snapshot", path_folder + "/" + path_file.format(idx))
                 individual.save_to_file(folder=path_folder, file=path_file.format(idx))
-            print_formatted_text(HTML('<aaa fg="black" bg="ansigreen"><b>{} SNAPSHOTS EXPORTED TO: {}</b></aaa>'.format(len(self.population), path_folder)))
-        except Exception as e:
-            print("not exported individual, but still continuing")
+            except Exception as e:
+                print("not exported individual, but still continuing")
+        print_formatted_text(HTML('<aaa fg="black" bg="ansigreen"><b>{} SNAPSHOTS EXPORTED TO: {}</b></aaa>'.format(len(self.population), path_folder)))
 
         # output pickles
-        try:
-            for idx, individual in enumerate(self.population):
+        for idx, individual in enumerate(self.population):
+            try:
                 # print("pickle", path_pickles + "/" + path_file_pickles.format(idx))
                 path = os.path.join(path_pickles, path_file_pickles.format(idx))
                 with open(path, 'wb') as f:
                     pickle.dump(individual, f, protocol=pickle.HIGHEST_PROTOCOL)
                 f.close()
-            print_formatted_text(HTML('<aaa fg="black" bg="ansigreen"><b>{} PICKLES EXPORTED TO: {}</b></aaa>'.format(len(self.population), path_pickles)))
-        except Exception as e:
-            print("not exported individual pickle, but still continuing")
+            except Exception as e:
+                print("not exported individual pickle, but still continuing")
+        print_formatted_text(HTML('<aaa fg="black" bg="ansigreen"><b>{} PICKLES EXPORTED TO: {}</b></aaa>'.format(len(self.population), path_pickles)))
     
     def add_hall_of_fame(self, add_to_elite=False):
         self.population.sort(key=lambda x:x.fitness, reverse=True)
@@ -438,9 +450,9 @@ class Incubator:
                             
                     
 
-    def run(self, generator):
+    def run(self, generator, pickles=[]):
         # init population giving a generator
-        self.init_population(generator)
+        self.init_population(generator, pickles)
 
         for i in range(self.generations):
             # take snapshot of generated individuals
@@ -496,7 +508,7 @@ class Incubator:
             if len(selected) == 0:
                 print("GOT NOT AVAILABLE INDIVIDUALS")
                 self.population = []
-                self.init_population()
+                self.init_population(generator, pickles)
 
             if elite_individual is not None:
                 # print("[ELITE INDIVIDUAL] id:{}, fitness:{}".format(elite_individual.id, elite_individual.fitness))

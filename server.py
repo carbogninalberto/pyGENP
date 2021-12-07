@@ -9,10 +9,14 @@ from dotenv import load_dotenv
 from multiprocessing import Process
 from sim import SimThread
 from utils.fitness import tcp_variant_fitness_write_switch
+from pathlib import Path
+import time
+import base64
 
 load_dotenv()
 
 BASE_NS3_PATH = os.getenv('BASE_NS3_PATH')
+ROOT_DIR = os.path.abspath(os.curdir)
 
 app = Flask(__name__)
 
@@ -39,23 +43,13 @@ def hello():
 @app.route("/clean")
 def clean():
     try:
+        os.chdir(ROOT_DIR)
         # empty switch case
         tcp_variant_fitness_write_switch([''])
         subprocess.call('rm -rf *.out', shell=True)
         subprocess.call('rm -rf ./snapshots/current_gen.json', shell=True)
         subprocess.call('rm -rf ./snapshots/hall_of_fame.json', shell=True)
-        # print(worker.is_alive())
-        # print(worker.native_id)
-        # if worker.is_alive():
-        #     # worker.terminate()
-        #     worker.join()
-        #     worker.kill()
-        #     # subprocess.call(['kill', '-9', str(worker.native_id)])
-        #     # worker.terminate()
-        #     # worker.join()
-        #     worker.kill()
-        # print(worker.get_pid())
-        # worker.join()
+        subprocess.call('rm -rf ./init', shell=True)
         if worker.is_alive():
             print("{} is alive!".format(worker.get_pid()))
             worker.kill()
@@ -77,6 +71,7 @@ def clean():
 @app.route("/ns3reset")
 def ns3reset():
     try:
+        os.chdir(ROOT_DIR)
         dir_to_change = '{}/'.format(BASE_NS3_PATH)
         os.chdir(dir_to_change)
         subprocess.call(['./waf', 'clean'])
@@ -84,12 +79,115 @@ def ns3reset():
     except Exception as e:
         return {'mgs': 'Exception {} occured.'.format(e)}
 
+@app.route("/ns3baseline")
+def ns3baseline():
+    try:
+        os.chdir(ROOT_DIR)
+        baseline = 0
+        fname = 'baseline'
+        
+        if os.path.isfile(fname):
+            with open(fname, 'r') as b_file:
+                baseline = float(b_file.read())
+            return {'msg': 'Baseline Calculated!', 'baseline': baseline}
+
+        clean()
+        dir_to_change = '{}/'.format(BASE_NS3_PATH)
+        os.chdir(dir_to_change)
+        out = subprocess.check_output('./run.sh', shell=True, timeout=120, stderr=subprocess.DEVNULL)
+        values = out.decode("utf-8").replace("\n", " ").split()
+        values = [float(value) for value in values]
+        
+        if len(values) > 0:
+            baseline = sum(values) / len(values)
+        
+        os.chdir(ROOT_DIR)
+        with open(fname, 'w') as b_file:
+            b_file.write("{}".format(baseline))
+        
+        return {'msg': 'Baseline Calculated!', 'baseline': baseline}
+    except Exception as e:
+        return {'mgs': 'Exception {} occured.'.format(e)}
+
+@app.route("/autofix")
+def autofix():
+    try:
+        os.chdir(ROOT_DIR)
+        clean()
+        dir_to_change = '{}/'.format(BASE_NS3_PATH)
+        os.chdir(dir_to_change)
+        subprocess.call(['./waf', 'clean'])
+        subprocess.call(['./waf', 'build'])
+        return {'msg': 'Autofixing Completed!'}
+    except Exception as e:
+        return {'mgs': 'Exception {} occured.'.format(e)}
+
+@app.route("/snapshot")
+def snapshot():
+    try:
+        os.chdir(ROOT_DIR)
+        Path("tmp").mkdir(parents=True, exist_ok=True)
+        ts = int(time.time())
+        fname = 'tmp/{}_snapshot.zip'.format(ts)
+        subprocess.call(['zip', '-r', fname, 'snapshots', 'snapshots_pickles'])
+        with open(fname, 'rb') as fin:
+            bytes = fin.read()
+            encoded = base64.b64encode(bytes).decode("utf-8")
+        
+        return {'msg': 'Zipped Snapshot in Tmp!', 'zip': encoded, 'filename': '{}_snapshot.zip'.format(ts)}
+    except Exception as e:
+        return {'mgs': 'Exception {} occured.'.format(e)}
+
+@app.route("/snapshot/restore", methods=['POST'])
+def snapshot_restore():
+    try:
+        os.chdir(ROOT_DIR)
+        Path("tmp").mkdir(parents=True, exist_ok=True)
+        subprocess.call('rm -rf ./tmp/*', shell=True)
+        file = request.files['snapshot']
+        file.save('tmp/{}'.format(file.filename))
+        subprocess.call('rm -rf ./tmp/extract', shell=True)
+        subprocess.call(['unzip', 'tmp/{}'.format(file.filename), '-d', 'tmp/extract'])
+        subfolders = [ int(f.path.split('/')[-1:][0].replace('_gen', '')) for f in os.scandir('tmp/extract/snapshots_pickles') if f.is_dir() ]
+        subfolders.sort(reverse=True)
+
+        tot_pop = sum([len(files) for r, d, files in os.walk('tmp/extract/snapshots_pickles/{}_gen'.format(subfolders[0]))])
+        os.chdir(ROOT_DIR)
+        Path("init").mkdir(parents=True, exist_ok=True)
+        subprocess.call('rm -rf ./init/*', shell=True)
+        subprocess.call('mv ./tmp/extract/snapshots_pickles/{}_gen init'.format(subfolders[0]), shell=True)
+        subprocess.call('rm -rf ./tmp', shell=True)
+        path_final = os.path.join(ROOT_DIR, 'init', '{}_gen'.format(subfolders[0]))
+        files = os.listdir(path_final)
+        print(files)
+        with open('init/info', 'w', encoding='utf-8') as b_file:
+            json.dump({'pop_size': tot_pop, 'pickles': ['{}/{}'.format(path_final, f) for f in files]}, b_file)
+
+        # Path("tmp").mkdir(parents=True, exist_ok=True)
+        # ts = int(time.time())
+        # fname = 'tmp/{}_snapshot.zip'.format(ts)
+        # subprocess.call(['zip', '-r', fname, 'snapshots', 'snapshots_pickles'])
+        # with open(fname, 'rb') as fin:
+        #     bytes = fin.read()
+        #     encoded = base64.b64encode(bytes).decode("utf-8")
+        
+        return {'msg': 'Successfully setted initial population from Snapshot!'}
+    except Exception as e:
+        return {'mgs': 'Exception {} occured.'.format(e)}  
+
 @app.route("/run", methods=["POST"])
 def run():
     try:
+        os.chdir(ROOT_DIR)
         print(request)
         sim_data = request.get_json()
         print(sim_data)
+        pickles = []
+        if os.path.isdir('./init') and os.path.isfile('./init/info'):
+            with open('init/info', 'r') as f:
+                pickle_data = json.load(f)
+                if int(pickle_data['pop_size']) <= int(sim_data['pop']):
+                    pickles = pickle_data['pickles']
         global worker
         worker = SimThread(
             sim_data['pop'],
@@ -100,6 +198,7 @@ def run():
             sim_data['switch_branches'],
             sim_data['switch_exp'],
             sim_data['truncate_node'],
+            pickles
         )
         # sim_thread.setDaemon(True)
         worker.start()        
@@ -113,10 +212,8 @@ def run():
 @app.route("/gen/current")
 def gen_current():
     try:
-        # individuals = []
-        # if worker is not None:
-        #     individuals = worker.get_current_gen()
-        f = open('snapshots/current_gen.json')
+        os.chdir(ROOT_DIR)
+        f = open('./snapshots/current_gen.json')
         individuals = json.load(f)
         f.close()
         return {'msg': 'completed!', 'individuals': individuals}
@@ -126,10 +223,8 @@ def gen_current():
 @app.route("/hall")
 def hall():
     try:
-        # individuals = []
-        # if worker is not None:
-        #     individuals = worker.get_current_gen()
-        f = open('snapshots/hall_of_fame.json')
+        os.chdir(ROOT_DIR)
+        f = open('./snapshots/hall_of_fame.json')
         individuals = json.load(f)
         f.close()
         return {'msg': 'completed!', 'individuals': individuals}
@@ -139,6 +234,7 @@ def hall():
 @app.route("/log")
 def log():
     try:
+        os.chdir(ROOT_DIR)
         buffer = ""
         if worker.is_alive():
             pid = worker.get_pid()

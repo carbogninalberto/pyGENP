@@ -7,7 +7,7 @@ import os
 # sys.stdout = buffer = StringIO()
 
 class SimThread(Process):
-    def __init__(self, pop, gen, k, s, operator_flip, switch_branches, switch_exp, truncate_node):
+    def __init__(self, pop, gen, k, s, operator_flip, switch_branches, switch_exp, truncate_node, pickles):
         super(SimThread, self).__init__()
         self.pop = int(pop)
         self.gen = int(gen)
@@ -18,6 +18,7 @@ class SimThread(Process):
         self.switch_exp = int(switch_exp)
         self.truncate_node = int(truncate_node)
         self.incubator = None
+        self.pickles = pickles
         self.run_pid = str(os.getpid())
     
     def run(self):
@@ -63,7 +64,8 @@ class SimThread(Process):
 
         # evolve population
         self.incubator.run(
-            generator=genp.tree
+            generator=genp.tree,
+            pickles=self.pickles
         )
 
     def get_current_gen(self):
