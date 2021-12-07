@@ -67,10 +67,10 @@ button:focus {
 }
 
 
-.button {
+.button, button:disabled {
 	border-radius: 0.3rem;
     border: 0;
-    background: #222222;
+    background: #222222 !important;
     color: #adadad;
     padding: 0.6rem;
     cursor: pointer;
@@ -145,3 +145,9 @@ input {
 	height: 100px !important;
 	width: 176px !important;
 } */
+
+
+.span-value {
+	color: #ffeb00; 
+	font-weight: 800;
+}

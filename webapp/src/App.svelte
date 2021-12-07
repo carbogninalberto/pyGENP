@@ -1,5 +1,6 @@
 <script>
 	import { onMount } from 'svelte';
+	import { Rainbow, Moon, Diamonds } from 'svelte-loading-spinners';
 
 	// import { Terminal } from 'xterm';
 	// import { FitAddon } from 'xterm-addon-fit';
@@ -16,9 +17,12 @@
 	}
 
 	let current_gen = [];
-	let hallOfFame = []
+	let hallOfFame = [];
 	let generationNumber = null;
+	let baseline = null;
 	let currentBest = null;
+	let calculatingBaseline = false;
+	let autofixing = false;
 
 	let log = "";
 	let fullScreenTerminal = false;
@@ -70,12 +74,27 @@
 
 
 		// chart
-
 		fitnessChart = new Chart(
 			document.getElementById('fitnessChart'),
 			configChart
 		);
+
+		// call on start
+		getLog();
 	})
+
+	function resetDefaultParam() {
+		config = {
+			pop: 30,
+			gen: 20,
+			k: 30,
+			s: 20,
+			operator_flip: 60,
+			switch_branches: 30,
+			switch_exp: 70,
+			truncate_node: 25
+		}
+	}
 
 	async function saveConfig() {
 		let file = new Blob([JSON.stringify(config)], {type: 'text/plain'});
@@ -109,7 +128,7 @@
 			config = JSON.parse(contents);
 		};
 		reader.readAsText(file);
-		bulmaToast.toast({ message: "Imported!", type: 'is-primary' });
+		bulmaToast.toast({ message: "Imported!", type: 'is-success' });
 	}
 
 	async function cleanMemory() {
@@ -122,7 +141,7 @@
 		const json = await res.json();
 		let result = JSON.parse(JSON.stringify(json))
 		// alert(result.msg);
-		bulmaToast.toast({ message: result.msg, type: 'is-primary' });
+		bulmaToast.toast({ message: result.msg, type: 'is-success' });
 	}
 
 	async function cleanNS3() {
@@ -130,7 +149,7 @@
 		const json = await res.json();
 		let result = JSON.parse(JSON.stringify(json))
 		// alert(result.msg);
-		bulmaToast.toast({ message: result.msg, type: 'is-primary' });
+		bulmaToast.toast({ message: result.msg, type: 'is-success' });
 	}
 
 	async function run() {
@@ -147,7 +166,7 @@
 		const json = await res.json();
 		let result = JSON.parse(JSON.stringify(json))
 		// alert(result.msg);
-		bulmaToast.toast({ message: result.msg, type: 'is-primary' });
+		bulmaToast.toast({ message: result.msg, type: 'is-success' });
 
 		individualsPoller = setInterval(getCurrentGen, 3000);
 		logPoller = setInterval(getLog, 2000);
@@ -177,7 +196,7 @@
 			}
 		}
 		// alert(result.msg);
-		// bulmaToast.toast({ message: result.msg, type: 'is-primary' });
+		// bulmaToast.toast({ message: result.msg, type: 'is-success' });
 	}
 
 	async function getHallOfFame() {
@@ -224,8 +243,74 @@
         term.write(log);
 	}
 
+	async function restoreSnaphot(e) {
+		var file = e.target.files[0];
+		if (!file) return;
+
+		let formData = new FormData();     
+		formData.append("snapshot", file);
+
+		const res = await fetch('/snapshot/restore', {
+			method: 'POST',
+			body: formData
+		});
+		const json = await res.json();
+		let result = JSON.parse(JSON.stringify(json))
+		// alert(result.msg);
+		bulmaToast.toast({ message: result.msg, type: 'is-success' });		
+	}
+
+	async function snapshot() {
+		const res = await fetch('/snapshot');
+		const json = await res.json();
+		let result = JSON.parse(JSON.stringify(json))
+		download(result?.filename, result?.zip);
+		// alert(result.msg);
+		bulmaToast.toast({ message: result.msg, type: 'is-success' });
+	}
+
+	async function baselineNS3() {
+		calculatingBaseline = true;
+		const res = await fetch('/ns3baseline');
+		const json = await res.json();
+		let result = JSON.parse(JSON.stringify(json))
+		baseline = result.baseline;
+		// alert(result.msg);
+		bulmaToast.toast({ message: result.msg, type: 'is-success' });
+		calculatingBaseline = false;
+	}
+
+	async function autofix() {
+		autofixing = true;
+		const res = await fetch('/autofix');
+		const json = await res.json();
+		let result = JSON.parse(JSON.stringify(json))
+		bulmaToast.toast({ message: result.msg, type: 'is-success' });
+		autofixing = false;
+	}
+
+
+
+
+
+
+
+	// utils
+	function download(filename, data) {
+		var element = document.createElement('a');
+		element.setAttribute('href', 'data:text/plain;base64,' + data);
+		element.setAttribute('download', filename);
+
+		element.style.display = 'none';
+		document.body.appendChild(element);
+
+		element.click();
+
+		document.body.removeChild(element);
+	}
+
 	
-	getLog()
+	
 </script>
 
 
@@ -233,7 +318,7 @@
 
 <main>
 
-	<div class="nav-bar">
+	<div class="nav-bar" style="align-items: center;">
 		pyGENP
 	</div>
 
@@ -245,7 +330,7 @@
 		<button class="button" class:running={running} on:click={() => run()}>
 			<span class="material-icons">
 				{#if running}
-					pause
+					<Diamonds size="20" color="#FEFEFE" unit="px" duration="3s"></Diamonds>
 				{:else}
 					play_arrow
 				{/if}
@@ -267,6 +352,19 @@
 			</span>			
 			Current Gen
 		</button> -->
+		<label class="button">
+			<input type="file" accept=".zip" style="display: none;" on:change={(e) => restoreSnaphot(e)}>
+			<span class="material-icons">
+				alt_route
+			</span>			
+			From Snapshot
+		</label>
+		<button class="button" on:click={() => snapshot()} disabled={!running}>
+			<span class="material-icons">
+				history
+			</span>			
+			Take Snapshot
+		</button>
 		<button class="button" on:click={() => saveConfig()}>
 			<span class="material-icons">
 				save
@@ -292,13 +390,39 @@
 			</span>			
 			NS3 Clean
 		</button>
+		<button class="button" on:click={() => baselineNS3()}>
+			{#if !calculatingBaseline}
+			<span class="material-icons md-18">
+				flag
+			</span>
+			NS3 Baseline
+			{:else}
+			<Rainbow size="30" color="#FEFEFE" unit="px" duration="2s"></Rainbow>
+			{/if}
+		</button>
+		<button class="button" on:click={() => autofix()}>
+			{#if !autofixing}
+			<span class="material-icons md-18">
+				auto_fix_high
+			</span>
+			Autofix
+			{:else}
+			<Moon size="20" color="#FEFEFE" unit="px" duration="1s"></Moon>
+			<span style="padding-left:.5rem">Fixing</span>
+			{/if}
+		</button>
 	</div>
 
 	<div class="columns" style="text-align: left;">
 		<div class="column" style="min-width: 250px !important;">
-			<span style="padding: 1rem;">
-				Parameters
-			</span>
+			<div style="display: flex;justify-content:space-between;align-items: end;">
+				<span style="padding: 0 1rem;">
+					Parameters
+				</span>
+				<span style="padding: 0;font-size:1.2rem;cursor:pointer" class="material-icons md-24" on:click={() => resetDefaultParam()}>
+					restart_alt
+				</span>
+			</div>
 			<div style="padding: 1rem;padding-right: 0;font-size: .8rem">
 
 				<div style="padding-bottom: .2rem; font-weight: 800">General</div>
@@ -434,16 +558,33 @@
 	</div>
 
 	<div class="columns">
-		<div class="column" style="text-align: left;padding-left: 1.8rem;">
-			🧬 <b>Generation:</b> {generationNumber || 'n.a.'} / {config.gen} 
+		<div class="column" style="text-align: left;padding-left: 1.8rem;display:flex;justify-content:space-evenly">
+			
+			<span>🧬 <b>Generation:</b> 
+				<span class="span-value">{generationNumber || 'n.a.'}</span> 
+				/ {config.gen}</span>
+
+			{#if !calculatingBaseline}
+			<span>🏁 <b>Baseline:</b> 
+				<span class="span-value">
+					{baseline?.toFixed(2) || "n.a."}
+				</span> Mbit/s</span>
+			{:else}
+			<Rainbow size="30" color="#FEFEFE" unit="px" duration="2s"></Rainbow>
+			{/if}
+
+			<span>🥇 <b>Current Best:</b> 
+				<span class="span-value">{currentBest?.toFixed(2) || "n.a."}</span> 
+				Mbit/s</span>
+
+			<span style="padding-right: 1rem">💡 <b>Gain:</b> 
+				<span class="span-value">{((((currentBest ?? 0)/(baseline || 1))-1)*100).toFixed(2)}</span>
+				%</span>
 		</div>
-		<div class="column">
-			🥇 <b>Current Best:</b> {currentBest?.toFixed(2) || 0} Mbit/s
-		</div>
-		<div class="column is-half" style="margin: auto;">			
+		<div class="column is-two-fifths" style="margin: auto;">			
 			<div style="display: flex; align-items: center; justify-content: space-between;">
 				<div>{((current_gen.length/config.pop)*100).toFixed(0)}%</div>
-				<div class="progress-bar" style="width: 88%;">
+				<div class="progress-bar" style="width: 89%;">
 					<div class="progress-bar-thumb" style="width: {(current_gen.length/config.pop)*100}%;"></div>
 				</div>
 			</div>
@@ -461,9 +602,11 @@
 			</div>
 		</div>
 		<div class="column is-one-fourth">
-			<span style="padding: 1rem;padding-left:0;">
-				🏆 Hall of Fame Individuals 🏆
-			</span>
+			<div style="display: flex;justify-content:center;align-items:center;">
+				<span>
+					🏆 Hall of Fame Individuals 🏆
+				</span>
+			</div>
 			<div class="individual-container">
 				{#each hallOfFame as ind}
 					<div class="ind" style="background:#f1eb2e!important;color:#424242!important;">
@@ -491,16 +634,20 @@
 					document.getElementById('cons-container').style.height = "3rem";
 					fullScreenTerminal = false;
 				} else {
-					document.getElementById('cons-container').style.height = "26rem";
+					document.getElementById('cons-container').style.height = "27rem";
 					fullScreenTerminal = true;
 				}
 			}}>
-				<span class="material-icons">
-					aspect_ratio
-				</span>	
+				
 				{#if fullScreenTerminal}
+					<span class="material-icons">
+						close_fullscreen
+					</span>
 					Collapse
-				{:else}		
+				{:else}
+					<span class="material-icons">
+						open_in_full
+					</span>
 					Expand
 				{/if}
 			</button>
