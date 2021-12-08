@@ -13,7 +13,22 @@
 		operator_flip: 60,
 		switch_branches: 30,
 		switch_exp: 70,
-		truncate_node: 25
+		truncate_node: 25,
+		max_mutations: 10,
+		value_bottom_limit: -100,
+		value_top_limit: 100,
+		max_code_lines: 100,
+		max_depth: 10,
+		max_width: 10,
+		alpha_vars: 15,
+		max_branch_depth: 3,
+		payload_size: 1500,
+		simulation_time: 7,
+		multi_mtu: false,
+		mtu_bottom_limit: 100,
+		mtu_upper_limit: 1600,
+		mtu_step: 200,
+		wildcards: []
 	}
 
 	let current_gen = [];
@@ -23,11 +38,14 @@
 	let currentBest = null;
 	let calculatingBaseline = false;
 	let autofixing = false;
+	let wildcardModalIsOpen = false;
 
 	let log = "";
 	let fullScreenTerminal = false;
 
 	let running = false;
+
+	let settingsDisplay = "default"; // default, advanced, sim
 
 	let individualsPoller;
 	let logPoller;
@@ -49,11 +67,20 @@
 		type: 'line',
 		data: data,
 		options: {
-			responsive: true
+			responsive: true,
+			maintainAspectRatio: true,
+			scales: {
+				y: {
+					display: true,
+					text: 'Mbit/s'
+				}
+			}
 		}
 	};
 
 	let fitnessChart;
+
+	window.addEventListener("resize", () => {fitnessChart.resize()});
 
 	// const term = new Terminal({convertEol: true});
 	// const fitAddon = new FitAddon();
@@ -168,8 +195,8 @@
 		// alert(result.msg);
 		bulmaToast.toast({ message: result.msg, type: 'is-success' });
 
-		individualsPoller = setInterval(getCurrentGen, 3000);
-		logPoller = setInterval(getLog, 2000);
+		individualsPoller = setInterval(getCurrentGen, 15000);
+		logPoller = setInterval(getLog, 5000);
 	}
 
 	async function getCurrentGen() {
@@ -330,7 +357,7 @@
 		<button class="button" class:running={running} on:click={() => run()}>
 			<span class="material-icons">
 				{#if running}
-					<Diamonds size="20" color="#FEFEFE" unit="px" duration="3s"></Diamonds>
+					<Diamonds size="20" color="#FEFEFE" unit="px" duration="2s"></Diamonds>
 				{:else}
 					play_arrow
 				{/if}
@@ -423,128 +450,301 @@
 					restart_alt
 				</span>
 			</div>
-			<div style="padding: 1rem;padding-right: 0;font-size: .8rem">
+			<div style="padding: 1rem;padding-right: 0;padding-bottom: 0;font-size: .8rem;">
 
-				<div style="padding-bottom: .2rem; font-weight: 800">General</div>
+				<div style="height:23rem;background:#222222;border-radius: .35rem .35rem .35rem 0;padding:1rem;padding-bottom:.5rem">
+					{#if settingsDisplay == 'default'}
+					
+					<div style="padding-bottom: .2rem; font-weight: 800">General</div>
 
-				<div class="params">
-					<div>Population Size</div>
-					<input type="text" placeholder="eg. 30" bind:value={config.pop}>
-				</div>
+					<div class="params">
+						<div>Population Size</div>
+						<input type="text" placeholder="eg. 30" bind:value={config.pop}>
+					</div>
 
-				<div class="params">
-					<div>Generations</div>
-					<input type="text" placeholder="eg. 15" bind:value={config.gen}>
-				</div>
+					<div class="params">
+						<div>Generations</div>
+						<input type="text" placeholder="eg. 15" bind:value={config.gen}>
+					</div>
 
-				<div style="padding-bottom: .2rem; font-weight: 800">Tournament Selection</div>
+					<div style="padding-bottom: .2rem; font-weight: 800">Tournament Selection</div>
 
-				<div class="params">
-					<div class="dropdown is-hoverable">
-						<div class="dropdown-trigger" aria-haspopup="true" aria-controls="dropdown-ksample">
-							K Individuals
-						</div>
-						<div class="dropdown-menu" id="dropdown-ksample" role="menu">							
-							<div class="dropdown-content">
-							  <div class="dropdown-item">
-								how many individuals to randomly select from population.
-							  </div>
+					<div class="params">
+						<div class="dropdown is-hoverable">
+							<div class="dropdown-trigger" aria-haspopup="true" aria-controls="dropdown-ksample">
+								K Individuals
+							</div>
+							<div class="dropdown-menu" id="dropdown-ksample" role="menu">							
+								<div class="dropdown-content">
+								<div class="dropdown-item">
+									how many individuals to randomly select from population.
+								</div>
+								</div>
 							</div>
 						</div>
+						<input type="text" placeholder="eg. 20" bind:value={config.k}>
 					</div>
-					<input type="text" placeholder="eg. 20" bind:value={config.k}>
-				</div>
 
-				<div class="params">
-					<div class="dropdown is-hoverable">
-						<div class="dropdown-trigger" aria-haspopup="true" aria-controls="dropdown-ssample">
-							S Individuals
-						</div>
-						<div class="dropdown-menu" id="dropdown-ssample" role="menu">							
-							<div class="dropdown-content">
-							  <div class="dropdown-item">
-								how many individuals to select if minimum fitness requirement is met.
-							  </div>
+					<div class="params">
+						<div class="dropdown is-hoverable">
+							<div class="dropdown-trigger" aria-haspopup="true" aria-controls="dropdown-ssample">
+								S Individuals
+							</div>
+							<div class="dropdown-menu" id="dropdown-ssample" role="menu">							
+								<div class="dropdown-content">
+								<div class="dropdown-item">
+									how many individuals to select if minimum fitness requirement is met.
+								</div>
+								</div>
 							</div>
 						</div>
+						<input type="text" placeholder="eg. 15" bind:value={config.s}>
 					</div>
-					<input type="text" placeholder="eg. 15" bind:value={config.s}>
-				</div>
 
-				<div style="padding-bottom: .2rem; font-weight: 800">Mutation (in %)</div>
+					<div style="padding-bottom: .2rem; font-weight: 800">Mutation (in %)</div>
 
-				<div class="params">
-					<div class="dropdown is-hoverable">
-						<div class="dropdown-trigger" aria-haspopup="true" aria-controls="dropdown-box">
-							Operator Flip
-						</div>
-						<div class="dropdown-menu" id="dropdown-box" role="menu">							
-							<div class="dropdown-content">
-							  <div class="dropdown-item">
-								Probability to mutate an individual.
-							  </div>
+					<div class="params">
+						<div class="dropdown is-hoverable">
+							<div class="dropdown-trigger" aria-haspopup="true" aria-controls="dropdown-box">
+								Operator Flip
+							</div>
+							<div class="dropdown-menu" id="dropdown-box" role="menu">							
+								<div class="dropdown-content">
+								<div class="dropdown-item">
+									Probability to mutate an individual.
+								</div>
+								</div>
 							</div>
 						</div>
+						<input type="text" placeholder="eg. 20" bind:value={config.operator_flip}>
 					</div>
-					<input type="text" placeholder="eg. 20" bind:value={config.operator_flip}>
-				</div>
 
-				<div class="params">
-					<div class="dropdown is-hoverable">
-						<div class="dropdown-trigger" aria-haspopup="true" aria-controls="dropdown-box">
-							Switch Branches
-						</div>
-						<div class="dropdown-menu" id="dropdown-box" role="menu">							
-							<div class="dropdown-content">
-							  <div class="dropdown-item">
-								Probability to switch branches if it is a IfThenElse operator.
-							  </div>
+					<div class="params">
+						<div class="dropdown is-hoverable">
+							<div class="dropdown-trigger" aria-haspopup="true" aria-controls="dropdown-box">
+								Switch Branches
+							</div>
+							<div class="dropdown-menu" id="dropdown-box" role="menu">							
+								<div class="dropdown-content">
+								<div class="dropdown-item">
+									Probability to switch branches if it is a IfThenElse operator.
+								</div>
+								</div>
 							</div>
 						</div>
+						<input type="text" placeholder="eg. 20" bind:value={config.switch_branches}>
 					</div>
-					<input type="text" placeholder="eg. 20" bind:value={config.switch_branches}>
-				</div>
 
-				<div class="params">
-					<div class="dropdown is-hoverable">
-						<div class="dropdown-trigger" aria-haspopup="true" aria-controls="dropdown-box">
-							Switch Exp
-						</div>
-						<div class="dropdown-menu" id="dropdown-box" role="menu">							
-							<div class="dropdown-content">
-							  <div class="dropdown-item">
-								Probability to switch compatible expressions like sum and multiplication.
-							  </div>
+					<div class="params">
+						<div class="dropdown is-hoverable">
+							<div class="dropdown-trigger" aria-haspopup="true" aria-controls="dropdown-box">
+								Switch Exp
+							</div>
+							<div class="dropdown-menu" id="dropdown-box" role="menu">							
+								<div class="dropdown-content">
+								<div class="dropdown-item">
+									Probability to switch compatible expressions like sum and multiplication.
+								</div>
+								</div>
 							</div>
 						</div>
+						<input type="text" placeholder="eg. 20" bind:value={config.switch_exp}>
 					</div>
-					<input type="text" placeholder="eg. 20" bind:value={config.switch_exp}>
-				</div>
 
-				<div class="params">
-					<div class="dropdown is-hoverable">
-						<div class="dropdown-trigger" aria-haspopup="true" aria-controls="dropdown-box">
-							Truncate Node
-						</div>
-						<div class="dropdown-menu" id="dropdown-box" role="menu">							
-							<div class="dropdown-content">
-							  <div class="dropdown-item">
-								Probability to mutate with truncation an individual.
-							  </div>
+					<div class="params">
+						<div class="dropdown is-hoverable">
+							<div class="dropdown-trigger" aria-haspopup="true" aria-controls="dropdown-box">
+								Truncate Node
+							</div>
+							<div class="dropdown-menu" id="dropdown-box" role="menu">							
+								<div class="dropdown-content">
+								<div class="dropdown-item">
+									Probability to mutate with truncation an individual.
+								</div>
+								</div>
 							</div>
 						</div>
+						<input type="text" placeholder="eg. 20" bind:value={config.truncate_node}>
 					</div>
-					<input type="text" placeholder="eg. 20" bind:value={config.truncate_node}>
+
+					<div class="params">
+						<div class="dropdown is-hoverable">
+							<div class="dropdown-trigger" aria-haspopup="true" aria-controls="dropdown-box">
+								Max Mutations
+							</div>
+							<div class="dropdown-menu" id="dropdown-box" role="menu">							
+								<div class="dropdown-content">
+								<div class="dropdown-item">
+									Max number of mutations.
+								</div>
+								</div>
+							</div>
+						</div>
+						<input type="text" placeholder="eg. 20" bind:value={config.max_mutations}>
+					</div>
+					{:else if settingsDisplay == 'advanced'}
+					
+					<div style="padding-bottom: .2rem; font-weight: 800">Advanced</div>					
+					
+					<div class="params">
+						<div>Values Range</div>
+						<div>[</div>
+						<input style="width:3rem" type="text" placeholder="from" bind:value={config.value_bottom_limit}>
+						<div>,</div>
+						<input style="width:3rem" type="text" placeholder="to" bind:value={config.value_top_limit}>
+						<div>]</div>
+					</div>
+					<div class="params">
+						<div>Max Code Lines</div>
+						<input type="text" placeholder="eg. 30" bind:value={config.max_code_lines}>
+					</div>
+
+					<div style="padding-bottom: .2rem; font-weight: 800">Tree Generator</div>
+
+					<div class="params">
+						<div>Max Depth</div>
+						<input type="text" placeholder="eg. 30" bind:value={config.max_depth}>
+					</div>
+					<div class="params">
+						<div>Max Width</div>
+						<input type="text" placeholder="eg. 30" bind:value={config.max_width}>
+					</div>
+					<div class="params">
+						<div>Max Branch Depth</div>
+						<input type="text" placeholder="eg. 30" bind:value={config.max_branch_depth}>
+					</div>
+
+					<div class="params">
+						<div>Alpha Variables (%)</div>
+						<input type="text" placeholder="eg. 30" bind:value={config.alpha_vars}>
+					</div>
+
+					<div class="modal" class:is-active={wildcardModalIsOpen}>
+						<div class="modal-background"></div>
+						<div class="modal-card">
+							<header class="modal-card-head">
+								<p class="modal-card-title">Wildcard code</p>
+								<button class="delete" aria-label="close" on:click={() => wildcardModalIsOpen = false}></button>
+							</header>
+							<section class="modal-card-body">
+								<!-- Content ... -->
+								<div style="padding-bottom: 1rem;">All the edits are recorded.</div>
+								<!-- <div class="wildcard-container" contenteditable="true"></div> -->
+								
+								{#each config.wildcards as wildcard}
+								<div style="display: flex;justify-content: space-between;">
+									<input style="background:#2e2e2e;width: 95%;" type="text" placeholder="int a = 10;" bind:value={wildcard}>
+									<button style="margin-left: 0.5rem;" class="button" on:click={() => config.wildcards = config.wildcards.filter(code => code != wildcard)}>
+										<span class="material-icons md-18" style="padding: 0;">delete</span>										
+									</button>
+								</div>
+								{/each}
+							</section>
+							<footer class="modal-card-foot" style="justify-content: flex-end;">
+								
+								<button class="button" on:click={() => config.wildcards = [...config.wildcards, ""]}>
+									<span class="material-icons md-18">add</span>
+									Add Wildcard
+								</button>
+								<button class="button is-success" on:click={() => wildcardModalIsOpen = false}>Continue</button>
+							</footer>
+						</div>
+					</div>
+					<button style="float: right;" class="button" on:click={() => wildcardModalIsOpen = true}>
+						<span class="material-icons md-18">edit</span>
+						Edit Wildcards
+					</button>
+					{:else}
+					<div style="padding-bottom: .2rem; font-weight: 800">Simulator</div>
+
+					<div class="params">
+						<div class="dropdown is-hoverable">							
+							<div class="dropdown-trigger" aria-haspopup="true" aria-controls="dropdown-mtu">
+								Payload Size (bytes)
+							</div>
+							<div class="dropdown-menu" id="dropdown-mtu" role="menu">							
+								<div class="dropdown-content">
+								<div class="dropdown-item">
+									Payload Size (or MTU) is the maximum payload length for a particular transmission media.
+								</div>
+								</div>
+							</div>
+						</div>
+						<input type="text" placeholder="eg. 1500" bind:value={config.payload_size}>
+					</div>
+					<div class="params">
+						<div class="dropdown is-hoverable">							
+							<div class="dropdown-trigger" aria-haspopup="true" aria-controls="dropdown-mtu">
+								Simulation Time (s)
+							</div>
+							<div class="dropdown-menu" id="dropdown-mtu" role="menu">							
+								<div class="dropdown-content">
+								<div class="dropdown-item">
+									How many seconds simulation for a single individual should be evaluated.
+								</div>
+								</div>
+							</div>
+						</div>
+						<input type="text" placeholder="eg. 1500" bind:value={config.simulation_time}>
+					</div>
+					<div class="params">
+						<div class="dropdown is-hoverable">							
+							<div class="dropdown-trigger" aria-haspopup="true" aria-controls="dropdown-mtu">
+								Multiple MTU Evaluation
+							</div>
+							<div class="dropdown-menu" id="dropdown-mtu" role="menu">							
+								<div class="dropdown-content">
+								<div class="dropdown-item">
+									Evaluate Fitness as the sum of evaluation of multiple MTU sizes.
+								</div>
+								</div>
+							</div>
+						</div>
+						<div style="display: flex;width: 1rem;top: .2rem;position: relative;">
+							<input type="checkbox" placeholder="eg. 1500" bind:checked={config.multi_mtu}>
+						</div>
+					</div>
+
+					<div class:disabled={!config.multi_mtu} style="padding-top:.5rem;">
+						<div style="padding-bottom: .2rem; font-weight: 800">Multi MTU Settings</div>
+
+						<div class="params">
+							<div>MTU Range</div>
+							<div>[</div>
+							<input style="width:3rem" type="text" placeholder="from" bind:value={config.mtu_bottom_limit}>
+							<div>,</div>
+							<input style="width:3rem" type="text" placeholder="to" bind:value={config.mtu_upper_limit}>
+							<div>]</div>
+						</div>
+						<div class="params">
+							<div>MTU Step</div>
+							<input type="text" placeholder="eg. 100" bind:value={config.mtu_step}>
+						</div>
+
+					</div>
+					{/if}
+
 				</div>
+				
 
-
-			</div>
+				<div class="params" style="justify-content: flex-start;">
+					<span class="tab" class:tab-active={settingsDisplay == 'default'} 
+						on:click={() => settingsDisplay = 'default'}>
+						General</span>
+					<span class="tab" class:tab-active={settingsDisplay == 'advanced'}  
+						on:click={() => settingsDisplay = 'advanced'}>
+						Advanced</span>
+					<span class="tab"  class:tab-active={settingsDisplay == 'sim'} 
+						on:click={() => settingsDisplay = 'sim'}>
+						Sim</span>
+				</div>
+			</div>			
 		</div>
 		<div class="column is-four-fifths">
 			<span style="padding: 1rem;padding-left:0;">
 				🧬 Current Generation Individuals 🧬
 			</span>
-			<div class="individual-container">
+			<div class="individual-container" style="height:23rem;">
 				{#each current_gen as ind}
 					<div class="ind" style="text-align: left;">
 						<div style="width: 20%">{ind.id}</div>
@@ -593,9 +793,9 @@
 
 
 	<div class="columns">
-		<div class="column">
+		<div class="column is-half">
 			<span style="padding: 1rem;padding-left:0;">
-				📈 Chart Statistics
+				📈 Fitness Chart
 			</span>
 			<div style="padding: 2rem;padding-top:0.5rem;">
 				<canvas id="fitnessChart"></canvas>
@@ -668,6 +868,27 @@
 </main>
 
 <style>
+	.disabled {
+		opacity: 0.5;
+		pointer-events: none;
+	}
+	.tab {
+		padding: 0.25rem 1rem;
+		cursor: pointer;
+		background:#2a2a2a;
+		font-weight: 600;
+	}
+	.tab:hover {
+		background:#262626;
+		color: #fff;
+	}
+	.tab-active {
+		background:#262626;
+		color: #fff;
+	}
+	.tab-active:hover {
+		background:#2a2a2a;
+	}
 	.progress-bar {
 		background-color: #3c3c3c;
 		border-radius: 1rem;
@@ -716,8 +937,9 @@
 		align-items: baseline;
 	}
 	.params input {
-		width: 6rem;
+		width: 4.5rem;
 		text-align: right;
+		padding: 0.2rem 0.5rem;
 	}
 	.console-container {		
 		position: fixed;
@@ -753,9 +975,6 @@
 		/* margin-right: 2.5rem; */
 		height: 20rem;
 		overflow-y: auto;
-	}
-	p {
-		padding: 1rem;
 	}
 	.nav-bar {
 		display: flex;

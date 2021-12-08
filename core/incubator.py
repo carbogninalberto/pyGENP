@@ -38,8 +38,15 @@ class Incubator:
                     const_termination_range=[-20, 20],
                     fitness=None,
                     generator=generate_random_expression,
+                    max_depth=10,
+                    max_width=10,
+                    max_branch_depth=3,
+                    value_bottom=-100,
+                    value_upper=100,
+                    alpha_var=35,
                     save_individual=False,
-                    max_mutations=10
+                    max_mutations=10,
+                    max_code_lines=100
                 ):
         
         self.DefaultConfig = DefaultConfig
@@ -51,8 +58,15 @@ class Incubator:
         self.current_generation = 1
         self.hall_of_fame = []
         self.generator = generator
+        self.max_depth = max_depth
+        self.max_width = max_width
+        self.max_branch_depth = max_branch_depth
+        self.value_bottom = value_bottom
+        self.value_upper = value_upper
+        self.alpha_var = alpha_var
         self.save_individual=False
         self.max_mutations = max_mutations
+        self.max_code_lines = max_code_lines
         self.current_gen = []
     
     # @jit
@@ -71,7 +85,15 @@ class Incubator:
         for i in range(self.pop_size-loaded_pickle):
             variables = copy.deepcopy(self.variables)
             # self.population.append(generator.generate_individual_from_seed(variables=variables))
-            indiv = generator.generate_individual_from_seed(variables=variables, wildcard_codes=self.DefaultConfig.WILD_CARD_CODE)
+            indiv = generator.generate_individual_from_seed(
+                variables=variables, 
+                wildcard_codes=self.DefaultConfig.WILD_CARD_CODE,
+                max_depth=self.max_depth,
+                max_width=self.max_width,
+                alpha_var_gen=self.alpha_var,
+                value_bottom=self.value_bottom,
+                value_upper=self.value_upper
+            )
             indiv.id = i + loaded_pickle
             self.population.append(indiv)
 
@@ -111,7 +133,7 @@ class Incubator:
             print('building...')
             start = time.time()
             try:
-                out = subprocess.check_output(build_command, shell=True, timeout=120)
+                out = subprocess.check_output(build_command, shell=True, timeout=240)
             except Exception as e:
                 print("IMPOSSIBLE TO BUILD", e)
             end = time.time()
@@ -135,7 +157,7 @@ class Incubator:
             # print(">>>>>>>>>>>FITNESS>>>>>>>>>>>")
         # print("[{}] calculating...".format(idx))
         start = time.time()
-        fit = individual.max_fitness(idx, self.fitness)
+        fit = individual.max_fitness(idx, self.fitness, self.max_code_lines)
         print("[{}] \thas fitness\t {:.2f}".format(idx, fit), end='')        
         end = time.time()
         print(" calculated in {:.1f} \tseconds".format(end - start))
@@ -251,7 +273,7 @@ class Incubator:
         return None
 
     # @jit
-    def crossover(self, best_individuals, there_is_elite):
+    def crossover(self, best_individuals, there_is_elite, elite=None):
         # count how many offsprings to generate
         offsprings = self.DefaultConfig.TOURNAMENT['k'] - len(best_individuals)
         print("offsprings to generate are {}".format(offsprings))
@@ -259,6 +281,8 @@ class Incubator:
         self.population = best_individuals
         # create parent pool set
         parent_pool = set(best_individuals)
+        if there_is_elite and elite is not None:
+            parent_pool.add(elite)
         counter_idx = len(self.population)+1
 
         place_for_elite = 1 if there_is_elite else 0
@@ -267,7 +291,7 @@ class Incubator:
         while len(self.population) < self.pop_size-place_for_elite: # -1 because elite individual is added afterwards
             variables = copy.deepcopy(self.variables)
             # self.population.append(generator.generate_individual_from_seed(variables=variables))
-            indiv = self.generator(variables=variables)
+            indiv = self.generator(variables=variables, max_depth=self.max_depth, max_width=self.max_width)
             indiv.id = counter_idx
             counter_idx += 1
 
@@ -494,7 +518,7 @@ class Incubator:
             # self.population = []
             there_is_elite = elite_individual is not None
             if len(selected) >= 2:
-                self.crossover(selected, there_is_elite=there_is_elite)
+                self.crossover(selected, there_is_elite=there_is_elite, elite=elite_individual)
                 # self.fix_not_valid_crossover()
 
             self.mutation()

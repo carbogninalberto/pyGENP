@@ -42,9 +42,9 @@ def tcp_variant_fitness(idx):
     else:
         return 0
 
-def tcp_variant_fitness_wrapped(idx, lines=[]):
+def tcp_variant_fitness_wrapped(idx, lines=[], max_lines=100):
     #parser_wrapper(file='/mnt/c/Users/carbo/Desktop/Unitn/tesi/ns-allinone-3.32.2/ns-allinone-3.32/ns-3.32/src/internet/model/tcp-congestion-ops.cc', lines=lines)
-    if len(lines) < 2 or len(lines) > 200:
+    if len(lines) < 2 or len(lines) > max_lines:
         return -1
     else:
         return tcp_variant_fitness(idx)

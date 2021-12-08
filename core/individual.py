@@ -6,15 +6,18 @@ import copy
 from core.registers import Variable
 from core.types import Types
 from utils.operators import Assignment, Div, IfThenElse, Termination
+import random
 
 class Individual:
 
-    def __init__(self, root, variables, max_depth=3, max_width=10):
+    def __init__(self, root, variables, max_depth=3, max_width=10, value_bottom=-100, value_upper=100):
         self.id = None
         self.root = root
         self.variables = variables
         self.max_depth = max_depth
         self.max_width = max_width
+        self.value_bottom = value_bottom
+        self.value_upper = value_upper
         self.lang = "c++"
         self.fitness = 0
         self.is_elite = False
@@ -32,18 +35,6 @@ class Individual:
         for node in PreOrderIter(self.root):
             # print(node.children)
             if isinstance(node, Assignment):
-                # vars.append(node.var)
-                # to_move_up = []
-
-                # print("\033[92m\t {}".format(node.var.name))
-                # if node.declare == True:
-                #     print("\033[92m\t\t >changing also parent")
-                #     for c in node.children:
-                #         if c != node:
-                #             c.parent = node.parent
-                #     node.parent = self.root
-                    # to_move_up.append(node)
-                    
                 
                 if node.declare == False and node.var.name not in self.variables.variables_name():
                     # print("\t\t {} not in {}".format(node.var.name, self.variables.variables_name()))
@@ -57,7 +48,7 @@ class Individual:
                         if n_exp.value == node.var.name \
                             or n_exp.value not in self.variables.variables_name() \
                             or (node.declare == True and self.is_var(n_exp.value)):
-                            n_exp.value = np.random.randint(-20, 20)
+                            n_exp.value = self.generate_float()
                             if n_exp.value == 0:
                                 n_exp.value = 1
                         elif self.is_var(n_exp.value) and str(n_exp.value) not in self.variables.variables_name():
@@ -65,24 +56,6 @@ class Individual:
                             self.variables.register(new_var)
                             updated = True
                             vars.append(new_var)
-                
-                # for n in to_move_up:
-                #     n.parent = self.root
-                    # children = list(self.root.children)
-                    # try:
-                    #     children.remove(node)
-                    # except Exception as e:
-                    #     print("element not in children")
-                    # children.insert(0, n)
-                    # self.root.children = children
-                    # children = n.children
-                    # parent = n.parent
-                    # root_children = self.root.children
-                    # for r_c in self.root.children:
-                    #     n
-
-                    # for c in children:
-                    #     c.parent = parent
 
             elif isinstance(node, IfThenElse):
                 if node.condition.lf.name not in self.variables.variables_name():
@@ -126,18 +99,13 @@ class Individual:
         # print("[{}] VARS NOT DECLARED {}".format(self.id, [v.name for v in vars]))
         # declaring variables
         for var in vars:
-            exp = Termination(np.random.randint(10, 2001)/100.0, Types.float) #generate_random_expression(self.variables)
+            generated_number = self.generate_float()
+            if generated_number < 0.1:
+                generated_number *= -1
+            if generated_number == 0:
+                generated_number = 0.1
+            exp = Termination(generated_number, Types.float) #generate_random_expression(self.variables)
             Assignment(var, exp, parent=self.root)
-            # print(self.root.children)
-            
-            # children = list(self.root.children)
-            # try:
-            #     children.remove(var_node)
-            # except Exception as e:
-            #     print("element not in children")
-            # children.insert(0, var_node)
-            # self.root.children = children
-            # self.root.children.insert(0, var_node)
         
         to_move_up = []
         
@@ -203,13 +171,13 @@ class Individual:
                             if isinstance(n_exp_div, Termination):
                                 # and str(n_exp_div.value) not in seen_declarations
                                 if (self.is_var(n_exp_div.value)) or node.declare == True:
-                                    n_exp_div.value = np.random.randint(-20, 20)
+                                    n_exp_div.value = self.generate_float()
                                     if n_exp_div.value == 0:
                                         n_exp_div.value = 1
                     if isinstance(n_exp, Termination):
                         # and str(n_exp.value) not in seen_declarations
                         if (self.is_var(n_exp.value)) or node.declare == True:
-                            n_exp.value = np.random.randint(-20, 20)
+                            n_exp.value = self.generate_float()
                             if n_exp.value == 0:
                                 n_exp.value = 1
             
@@ -224,18 +192,19 @@ class Individual:
                     for n_exp in node.exp_t.exp.nums:
                         if isinstance(n_exp, Termination):
                             if self.is_var(n_exp.value) and str(n_exp.value) not in seen_declarations:
-                                n_exp.value = np.random.randint(-20, 20)
+                                n_exp.value = self.generate_float()
                                 if n_exp.value == 0:
                                     n_exp.value = 1
                     for n_to_check in PreOrderIter(node.exp_t):
-                        if n_to_check.var.name not in seen_declarations:
-                            to_remove.append(node)
-                        for n_exp in n_to_check.exp.nums:
-                            if isinstance(n_exp, Termination):
-                                if self.is_var(n_exp.value) and str(n_exp.value) not in seen_declarations:
-                                    n_exp.value = np.random.randint(-20, 20)
-                                    if n_exp.value == 0:
-                                        n_exp.value = 1
+                        if isinstance(n_to_check, Assignment):
+                            if n_to_check.var.name not in seen_declarations:
+                                to_remove.append(node)
+                            for n_exp in n_to_check.exp.nums:
+                                if isinstance(n_exp, Termination):
+                                    if self.is_var(n_exp.value) and str(n_exp.value) not in seen_declarations:
+                                        n_exp.value = self.generate_float()
+                                        if n_exp.value == 0:
+                                            n_exp.value = 1
 
                 if isinstance(node.exp_f, Assignment):
                     if node.exp_f.var.name not in seen_declarations:
@@ -243,63 +212,25 @@ class Individual:
                     for n_exp in node.exp_f.exp.nums:
                         if isinstance(n_exp, Termination):
                             if self.is_var(n_exp.value) and str(n_exp.value) not in seen_declarations:
-                                n_exp.value = np.random.randint(-20, 20)
+                                n_exp.value = self.generate_float()
                                 if n_exp.value == 0:
                                     n_exp.value = 1
                     for n_to_check in PreOrderIter(node.exp_f):
-                        if n_to_check.var.name not in seen_declarations:
-                            to_remove.append(node)
-                        for n_exp in n_to_check.exp.nums:
-                            if isinstance(n_exp, Termination):
-                                if self.is_var(n_exp.value) and str(n_exp.value) not in seen_declarations:
-                                    n_exp.value = np.random.randint(-20, 20)
-                                    if n_exp.value == 0:
-                                        n_exp.value = 1
+                        if isinstance(n_to_check, Assignment):
+                            if n_to_check.var.name not in seen_declarations:
+                                to_remove.append(node)
+                            for n_exp in n_to_check.exp.nums:
+                                if isinstance(n_exp, Termination):
+                                    if self.is_var(n_exp.value) and str(n_exp.value) not in seen_declarations:
+                                        n_exp.value = self.generate_float()
+                                        if n_exp.value == 0:
+                                            n_exp.value = 1
         
         # remove items
         for node in to_remove:
             for c in node.children:
                 c.parent = node.parent
             node.parent = None
-
-
-        # to_move_up = []
-        
-        # for node in PreOrderIter(self.root):
-        #     if isinstance(node, Assignment) and node.declare == True:
-        #         print("moving top {}".format(node.var.name))
-        #         to_move_up.append(node)
- 
-        
-        # # update tree
-        # for node in to_move_up:
-        #     for c in node.children:
-        #         c.parent = node.parent
-        #     node.parent = self.root
-
-        # children_root = list(self.root.children)[::-1]
-        # for idx, c in enumerate(children_root):
-        #     if idx > 0:
-        #         c.parent = children_root[idx-1]
-        #     else:
-        #         c.parent = self.root
-
-
-
-        # for node in PreOrderIter(self.root):
-
-        #     # fixing case more than one child
-        #     if len(list(node.children)) > 1:
-        #         children_root = list(node.children)[::-1]
-        #         for idx, c in enumerate(children_root):
-        #             if idx > 0:
-        #                 c.parent = children_root[idx-1]
-        #             else:
-        #                 c.parent = node
-
-
-        # print("\n\n\n\033[94m{}\n\n\n".format(RenderTree(self.root)))
-        # print("##############################################################")
 
         return updated
 
@@ -328,8 +259,8 @@ class Individual:
         except Exception as e:
             return True
 
-    def max_fitness(self, idx, fitness_function):
-        self.fitness = fitness_function(idx, lines=self.render_code())
+    def max_fitness(self, idx, fitness_function, max_code_lines):
+        self.fitness = fitness_function(idx, lines=self.render_code(), max_lines=max_code_lines)
         return self.fitness
 
     def save_to_file(self, folder="snapshot", file="file.cc"):
@@ -341,5 +272,7 @@ class Individual:
             f.writelines(lines)
         f.close()
 
+    def generate_float(self):
+        return round(random.uniform(self.value_bottom, self.value_upper), 3)
 
         

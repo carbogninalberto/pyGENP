@@ -198,6 +198,19 @@ def run():
             sim_data['switch_branches'],
             sim_data['switch_exp'],
             sim_data['truncate_node'],
+            sim_data['max_mutations'],
+            sim_data['value_bottom_limit'],
+            sim_data['value_top_limit'],
+            sim_data['max_code_lines'],
+            sim_data['max_depth'],
+            sim_data['max_width'],
+            sim_data['alpha_vars'],
+            sim_data['max_branch_depth'],
+            sim_data['payload_size'],
+            sim_data['simulation_time'],
+            sim_data['mtu_bottom_limit'],
+            sim_data['mtu_upper_limit'],
+            sim_data['mtu_step'],
             pickles
         )
         # sim_thread.setDaemon(True)

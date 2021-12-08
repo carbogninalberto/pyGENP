@@ -151,3 +151,39 @@ input {
 	color: #ffeb00; 
 	font-weight: 800;
 }
+
+.modal-card-head {
+	background: #3a3a3a;
+    border-bottom: 0.2rem solid #2c2c2c;
+}
+
+.modal-card-body {
+	background: #3a3a3a;
+}
+
+.wildcard-container {
+	background: #505050!important;
+    padding: 0.5rem;
+    margin-top: 1rem;
+    border-radius: 0.35rem;
+}
+.wildcard-container:focus, .wildcard-container:focus-visible {
+	outline: none;
+}
+
+.wildcard-container {
+	background: #3a3a3a;
+}
+
+.modal-card-foot {
+	background: #3a3a3a;
+	border-top: 0.2rem solid #2c2c2c;
+}
+
+.modal-card-title {
+    color: #ffffff;
+}
+
+.modal-background {
+    background-color: #00000057;
+}

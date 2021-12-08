@@ -30,17 +30,20 @@ def generate_individual_from_seed(
                                     seed=42422019,
                                     max_depth=10,
                                     max_width=10,
+                                    max_branch_depth=3,
                                     operators=OperatorRegistry(DefaultConfig.OPERATORS),
                                     variables=VariableRegistry([]),
                                     wildcard_codes=['cout << "OK" << endl;'],
                                     equality_operators=DefaultConfig.EQUALITY,
-                                    alpha_var_gen=15.0
+                                    alpha_var_gen=15.0,
+                                    value_bottom=-100,
+                                    value_upper=100
                                     ):
     '''
     this function generate a tree individual 
     '''
     
-    random.seed(seed)#int(quantumrandom.randint(0, 999999999)))
+    # random.seed(seed)#int(quantumrandom.randint(0, 999999999)))
 
     # create root node
     root = Node("main")    
@@ -102,28 +105,39 @@ def generate_individual_from_seed(
                     last_node_t = var_t_node
                     last_node_f = var_f_node
 
-                    for j in range(rand_int(0, 3)):
-                        tmp_vars_tmp = variables.get_random_var()
-                        
-                        # true branch subtree                        
-                        var_t_tmp = tmp_vars_tmp[rand_int(0, len(tmp_vars_tmp))] if isinstance(tmp_vars_tmp, list) else tmp_vars_tmp
-                        var_t_tmp.recall += 1
-                        node_exp_t = generate_random_expression(variables)
-                        var_t_node_tmp = Assignment(var_t_tmp, node_exp_t, declare=False)
-                        var_t_node_tmp.parent = last_node_t
-                        # last_node_t.children = var_t_node
-                        last_node_t = var_t_node_tmp
-                    
-                    for j in range(rand_int(0, 3)):
-                        tmp_vars_tmp = variables.get_random_var()
+                    for j in range(rand_int(0, max_branch_depth)):
 
+                        # true branch subtree                        
+                        if do_it(y_prob=33.33):
+                            rand_code = rand_int(0, len(wildcard_codes))
+                            var_t_node_tmp = ops['wildcardCode'](code=wildcard_codes[rand_code], parent=last_node_t)
+                            last_node_t = var_t_node_tmp
+                        # elif do_it(y_prob=33.33): generate if then else
+                        else:
+                            tmp_vars_tmp = variables.get_random_var()
+                            var_t_tmp = tmp_vars_tmp[rand_int(0, len(tmp_vars_tmp))] if isinstance(tmp_vars_tmp, list) else tmp_vars_tmp
+                            var_t_tmp.recall += 1
+                            node_exp_t = generate_random_expression(variables)
+                            var_t_node_tmp = Assignment(var_t_tmp, node_exp_t, declare=False)
+                            var_t_node_tmp.parent = last_node_t
+                            # last_node_t.children = var_t_node
+                            last_node_t = var_t_node_tmp
+                    
+                    for j in range(rand_int(0, max_branch_depth)):
                         # false branch subtree
-                        var_f_tmp = tmp_vars_tmp[rand_int(0, len(tmp_vars_tmp))] if isinstance(tmp_vars_tmp, list) else tmp_vars_tmp
-                        var_f_tmp.recall += 1
-                        node_exp_f = generate_random_expression(variables)
-                        var_f_node_tmp = Assignment(var_f_tmp, node_exp_f, declare=False)
-                        var_f_node_tmp.parent = last_node_f   
-                        last_node_f = var_f_node_tmp
+                        if do_it(y_prob=33.33):
+                            rand_code = rand_int(0, len(wildcard_codes))
+                            var_f_node_tmp = ops['wildcardCode'](code=wildcard_codes[rand_code], parent=last_node_f)
+                            last_node_f = var_f_node_tmp
+                        else:
+                            tmp_vars_tmp = variables.get_random_var()
+
+                            var_f_tmp = tmp_vars_tmp[rand_int(0, len(tmp_vars_tmp))] if isinstance(tmp_vars_tmp, list) else tmp_vars_tmp
+                            var_f_tmp.recall += 1
+                            node_exp_f = generate_random_expression(variables)
+                            var_f_node_tmp = Assignment(var_f_tmp, node_exp_f, declare=False)
+                            var_f_node_tmp.parent = last_node_f   
+                            last_node_f = var_f_node_tmp
 
                     # print("ops {} rand_operator {} pending_nodes {} <- getting {} index".format(ops, rand_operator, len(pending_nodes), i))
                     node = ops[rand_operator](condition, var_t_node, var_f_node, parent=pending_nodes[i])
@@ -194,7 +208,14 @@ def generate_individual_from_seed(
     # print(lines)
     # validity check requires => type check and variable scope accessibility
         # generate empty individual
-    individual = Individual(root, variables, max_depth=max_depth, max_width=max_width)
+    individual = Individual(
+                            root, 
+                            variables, 
+                            max_depth=max_depth, 
+                            max_width=max_width, 
+                            value_bottom=value_bottom,
+                            value_upper=value_upper
+                        )
     individual.id = uuid.uuid4().hex
 
     return individual
@@ -289,7 +310,7 @@ def generate_random_expression(variables, operators=DefaultConfig.MATH_OPERATORS
     return root
 
 
-def take_care_of_termination(root, variables, width=5, must_terminate=False):
+def take_care_of_termination(root, variables, width=5, must_terminate=False, value_bottom=-100, value_upper=100):
     '''
     this function appends termination Nodes (constants or variables) to a certain expression parent node.
     '''
@@ -309,7 +330,12 @@ def take_care_of_termination(root, variables, width=5, must_terminate=False):
             if use and var is not None:
                 children.append(Termination(var.name, var.tp))
             else:
-                children.append(Termination(rand_int(10, 2001)/100.0, Types.float))
+                generated_number = round(random.uniform(value_bottom, value_upper), 3)
+                if generated_number < 0.1:
+                    generated_number *= -1
+                if generated_number == 0:
+                    generated_number = 0.1
+                children.append(Termination(generated_number, Types.float))
             
             root.children = children
             root.nums = children
@@ -354,6 +380,8 @@ def generate_new_variable(y_prob=20.0):
     '''
     return True if rand_int(0, 1000) < y_prob*10 else False
 
+def do_it(y_prob=50.0):
+    return True if rand_int(0, 1000) < y_prob*10 else False
 
 def use_variable(variables, y_prob=20.0, types=Types.get_all()):
     '''
