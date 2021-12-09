@@ -262,8 +262,6 @@ class BaseDiv:
     
     def render_cpp(self):
         code_line = ""
-        # print("self.ndiv {}".format(self.ndiv))
-        # print(self.nums)
 
         if len(self.nums) == 0:
             return "1"
@@ -271,8 +269,7 @@ class BaseDiv:
         if self.ndiv > 2:
             code_line = "(("
             for idx, num in enumerate(self.nums):
-                
-                    if idx < self.ndiv-1:
+                    if idx < self.ndiv:
                         if idx > 0:
                             code_line += "+"
                         code_line += "({})".format(str(num))
@@ -282,7 +279,7 @@ class BaseDiv:
                         if idx > self.ndiv+1:
                             code_line += "+"
                         code_line += "({})".format(str(num))
-            code_line + "))"
+            code_line += "))"
         else:
             code_line = "({}/{})".format(str(self.nums[0]), str(self.nums[1]))
         return code_line
