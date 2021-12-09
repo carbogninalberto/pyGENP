@@ -5,7 +5,7 @@ import os
 import copy
 from core.registers import Variable
 from core.types import Types
-from utils.operators import Assignment, Div, IfThenElse, Termination
+from utils.operators import Assignment, Div, IfThenElse, Termination, Mul, Sub, Sum
 import random
 
 class Individual:
@@ -56,6 +56,26 @@ class Individual:
                             self.variables.register(new_var)
                             updated = True
                             vars.append(new_var)
+                
+                    if isinstance(node.exp, Div):
+                        if isinstance(n_exp, Sum) or \
+                            isinstance(n_exp, Mul) or \
+                            isinstance(n_exp, Sub):
+                             for n_exp_sub in n_exp.nums:
+                                if isinstance(n_exp_sub, Termination):
+                                    if n_exp_sub.value == node.var.name \
+                                        or n_exp_sub.value not in self.variables.variables_name() \
+                                        or (node.declare == True and self.is_var(n_exp_sub.value)):
+                                        n_exp_sub.value = self.generate_float()
+                                        if n_exp_sub.value == 0:
+                                            n_exp_sub.value = 1
+                                    elif self.is_var(n_exp_sub.value) and str(n_exp_sub.value) not in self.variables.variables_name():
+                                        new_var = Variable(n_exp_sub.value, n_exp_sub.tp)
+                                        self.variables.register(new_var)
+                                        updated = True
+                                        vars.append(new_var)
+
+
 
             elif isinstance(node, IfThenElse):
                 if node.condition.lf.name not in self.variables.variables_name():
