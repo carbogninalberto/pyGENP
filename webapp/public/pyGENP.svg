@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg viewBox="144.95 193.657 160.55 112.686" width="160.55" height="112.686" xmlns="http://www.w3.org/2000/svg" xmlns:bx="https://boxy-svg.com">
+  <path d="M 174.534 202.109 Q 177.103 193.658 185.849 202.109 L 284.973 297.892 Q 293.719 306.343 282.404 306.343 L 154.172 306.343 Q 142.857 306.343 145.425 297.892 Z" style="fill: rgb(34, 58, 94);" bx:shape="triangle 142.857 193.658 150.862 112.685 0.227 0.075 1@aa8314ee"/>
+  <path d="M 230.069 193.657 L 305.5 306.342 L 154.638 306.342 L 230.069 193.657 Z" style="paint-order: fill; fill: rgb(31, 125, 176);" bx:shape="triangle 154.638 193.657 150.862 112.685 0.5 0 1@c72aebb4"/>
+  <text style="fill: rgb(255, 255, 255); font-family: Arial, sans-serif; font-size: 31px; font-weight: 700; letter-spacing: 3.4px; word-spacing: 3.9px; white-space: pre;" x="181.651" y="294.952">GENP</text>
+</svg>

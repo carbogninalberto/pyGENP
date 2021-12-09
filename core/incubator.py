@@ -11,7 +11,7 @@ import copy
 import json
 import numpy as np
 from utils.operators import IfThenElse, Assignment, Mul, Sub, Sum, Termination
-from generators.tree import generate_random_expression
+from generators.tree import generate_operator_node, generate_random_expression
 from utils.fitness import tcp_variant_fitness_write_switch
 from multiprocessing.pool import ThreadPool as Pool
 from anytree import PreOrderIter
@@ -90,6 +90,7 @@ class Incubator:
                 wildcard_codes=self.DefaultConfig.WILD_CARD_CODE,
                 max_depth=self.max_depth,
                 max_width=self.max_width,
+                max_branch_depth=self.max_branch_depth,
                 alpha_var_gen=self.alpha_var,
                 value_bottom=self.value_bottom,
                 value_upper=self.value_upper
@@ -422,22 +423,39 @@ class Incubator:
                     counter = np.random.randint(1, self.max_mutations)
                     while counter > 0:
                         random_node = random.sample(individual.root.children, 1)[0]
-                        # random operator
-                        if isinstance(random_node, IfThenElse):
-                            tmp_vars = individual.variables.get_random_var()
-                            var_t = tmp_vars[np.random.randint(0, len(tmp_vars))] if isinstance(tmp_vars, list) else tmp_vars
-                            var_f = tmp_vars[np.random.randint(0, len(tmp_vars))] if isinstance(tmp_vars, list) else tmp_vars
 
-                            var_t.recall += 1
-                            var_f.recall += 1
+                        new_node = generate_operator_node(
+                                        random_node.parent,
+                                        variables=individual.variables, 
+                                        wildcard_codes=self.DefaultConfig.WILD_CARD_CODE,
+                                        max_depth=self.max_depth,
+                                        max_width=self.max_width,
+                                        max_branch_depth=self.max_branch_depth,
+                                        alpha_var_gen=self.alpha_var,
+                                        value_bottom=self.value_bottom,
+                                        value_upper=self.value_upper
+                                    )
+                        for child in random_node.children:
+                            child.parent = new_node
+                        random_node.parent = None
+                        random_node.children = []
+
+                        # # random operator
+                        # if isinstance(random_node, IfThenElse):
+                        #     tmp_vars = individual.variables.get_random_var()
+                        #     var_t = tmp_vars[np.random.randint(0, len(tmp_vars))] if isinstance(tmp_vars, list) else tmp_vars
+                        #     var_f = tmp_vars[np.random.randint(0, len(tmp_vars))] if isinstance(tmp_vars, list) else tmp_vars
+
+                        #     var_t.recall += 1
+                        #     var_f.recall += 1
                             
-                            exp_t = generate_random_expression(individual.variables)
-                            exp_f = generate_random_expression(individual.variables)  
+                        #     exp_t = generate_random_expression(individual.variables)
+                        #     exp_f = generate_random_expression(individual.variables)  
 
-                            random_node.exp_t = Assignment(var_t, exp_t, declare=False)
-                            random_node.exp_f = Assignment(var_f, exp_f, declare=False)
-                        elif isinstance(random_node, Assignment):
-                            random_node.exp = generate_random_expression(individual.variables)
+                        #     random_node.exp_t = Assignment(var_t, exp_t, declare=False)
+                        #     random_node.exp_f = Assignment(var_f, exp_f, declare=False)
+                        # elif isinstance(random_node, Assignment):
+                        #     random_node.exp = generate_random_expression(individual.variables)
                         counter -= 1
                 # switch branches
                 if self.mutate_switch_branches(y_prob=self.DefaultConfig.MUTATION['switch_branches']):
@@ -533,6 +551,10 @@ class Incubator:
                 print("GOT NOT AVAILABLE INDIVIDUALS")
                 self.population = []
                 self.init_population(generator, pickles)
+            
+            # cleaning ID
+            for idx, individual in enumerate(self.population):
+                individual.id = idx
 
             if elite_individual is not None:
                 # print("[ELITE INDIVIDUAL] id:{}, fitness:{}".format(elite_individual.id, elite_individual.fitness))
@@ -548,6 +570,12 @@ class Incubator:
         print([ind.fitness for ind in self.population])
         print("HALL OF FAME:")
         print([str(ind) for ind in self.hall_of_fame])
+
+        # write out the hall of fame
+        path_folder_hall = os.path.join(sys.path[0], "snapshots")
+        path_file_hall = "{}/hall_of_fame.json".format(path_folder_hall)
+        with open(path_file_hall, 'w') as out_hall:
+            json.dump(self.hall_of_fame, out_hall)
 
     def kill(self):
         sys.exit()

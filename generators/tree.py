@@ -11,7 +11,6 @@ from core.types import DefaultConfig, Types
 from core.registers import Variable, OperatorRegistry, VariableRegistry
 from utils.operators import Assignment, WildcardCode, Equality, \
     IfThenElse, Termination, Mul, Sum, Sub, Div
-import quantumrandom
 
 '''
 Append to every node the registry of suitable variables, where in the sub registry are also included
@@ -24,6 +23,135 @@ def rand_int(start, end):
     # return int(quantumrandom.randint(start, end))
     # return np.random.randint(start, end)
     return random.randint(start, end-1)
+
+
+def generate_operator_node(
+                            parent_node,
+                            max_depth=10,
+                            max_width=10,
+                            max_branch_depth=3,
+                            variables=VariableRegistry([]),
+                            wildcard_codes=[],
+                            equality_operators=DefaultConfig.EQUALITY,
+                            alpha_var_gen=15.0,
+                            value_bottom=-100,
+                            value_upper=100
+                        ):
+    ops = DefaultConfig.OPERATORS
+    node = None
+    if generate_new_variable(alpha_var_gen):
+        # generate new varianlr name
+        var_name = generate_var_name(variables.variables_name())
+        # generate a random expression by using Variables and Operator Registry
+        exp = generate_random_expression(variables, max_depth=max_depth, max_width=max_width, value_bottom=value_bottom, value_upper=value_upper)
+        # generate a new variable
+        var = Variable(var_name, Types.get_all()[rand_int(0, len(Types.get_all()))], scope=0)
+        # add variable to registry
+        variables.register(var)
+        # generate an assignment
+        node = Assignment(var, exp, parent=parent_node)
+    else:
+        # random operator
+        op_keys = list(DefaultConfig.OPERATORS.keys())
+        rand_operator = op_keys[rand_int(0, len(op_keys))]
+
+        if isinstance(ops[rand_operator](), IfThenElse):
+            condition = generate_condition(equality_operators, variables)
+
+            exp_t = generate_random_expression(variables, max_depth=max_depth, max_width=max_width, value_bottom=value_bottom, value_upper=value_upper)
+            exp_f = generate_random_expression(variables, max_depth=max_depth, max_width=max_width, value_bottom=value_bottom, value_upper=value_upper)                      
+
+            if len(variables.variables) > 0:
+                # some vars in the register 
+                tmp_vars = variables.get_random_var()
+                var_t = tmp_vars[rand_int(0, len(tmp_vars))] if isinstance(tmp_vars, list) else tmp_vars
+                var_f = tmp_vars[rand_int(0, len(tmp_vars))] if isinstance(tmp_vars, list) else tmp_vars
+
+                var_t.recall += 1
+                var_f.recall += 1
+
+                var_t_node = Assignment(var_t, exp_t, declare=False)
+                var_f_node = Assignment(var_f, exp_f, declare=False)
+                
+                last_node_t = var_t_node
+                last_node_f = var_f_node
+
+                for j in range(rand_int(0, max_branch_depth)):
+
+                    # true branch subtree                        
+                    if do_it(y_prob=33.33):
+                        rand_code = rand_int(0, len(wildcard_codes))
+                        var_t_node_tmp = ops['wildcardCode'](code=wildcard_codes[rand_code], parent=last_node_t)
+                        last_node_t = var_t_node_tmp
+                    # elif do_it(y_prob=33.33): generate if then else
+                    else:
+                        tmp_vars_tmp = variables.get_random_var()
+                        var_t_tmp = tmp_vars_tmp[rand_int(0, len(tmp_vars_tmp))] if isinstance(tmp_vars_tmp, list) else tmp_vars_tmp
+                        var_t_tmp.recall += 1
+                        node_exp_t = generate_random_expression(variables, max_depth=max_depth, max_width=max_width, value_bottom=value_bottom, value_upper=value_upper)
+                        var_t_node_tmp = Assignment(var_t_tmp, node_exp_t, declare=False)
+                        var_t_node_tmp.parent = last_node_t
+                        # last_node_t.children = var_t_node
+                        last_node_t = var_t_node_tmp
+                
+                for j in range(rand_int(0, max_branch_depth)):
+                    # false branch subtree
+                    if do_it(y_prob=33.33):
+                        rand_code = rand_int(0, len(wildcard_codes))
+                        var_f_node_tmp = ops['wildcardCode'](code=wildcard_codes[rand_code], parent=last_node_f)
+                        last_node_f = var_f_node_tmp
+                    else:
+                        tmp_vars_tmp = variables.get_random_var()
+
+                        var_f_tmp = tmp_vars_tmp[rand_int(0, len(tmp_vars_tmp))] if isinstance(tmp_vars_tmp, list) else tmp_vars_tmp
+                        var_f_tmp.recall += 1
+                        node_exp_f = generate_random_expression(variables, max_depth=max_depth, max_width=max_width, value_bottom=value_bottom, value_upper=value_upper)
+                        var_f_node_tmp = Assignment(var_f_tmp, node_exp_f, declare=False)
+                        var_f_node_tmp.parent = last_node_f   
+                        last_node_f = var_f_node_tmp
+
+                node = ops[rand_operator](condition, var_t_node, var_f_node, parent=parent_node)
+
+            else:
+                # empty register 
+                var_t_name = generate_var_name(variables.variables_name())
+                var_t = Variable(var_t_name, Types.get_all()[rand_int(0, len(Types.get_all()))])
+                variables.register(var_t)
+
+                var_f_name = generate_var_name(variables.variables_name())
+                var_f = Variable(var_f_name, Types.get_all()[rand_int(0, len(Types.get_all()))])
+                variables.register(var_f)
+
+                var_t_node = Assignment(var_t, exp_t, declare=True)
+                var_f_node = Assignment(var_f, exp_f, declare=True) # , parent=parent_node
+                
+                node = ops[rand_operator](condition, var_t_node, var_f_node, parent=parent_node)
+
+        elif isinstance(ops[rand_operator](), Assignment):
+            # generate expression
+            # choose valid var
+            if len(variables.variables) > 0:
+                tmp_vars = variables.get_random_var()
+                var = tmp_vars[rand_int(1, len(tmp_vars))] if isinstance(tmp_vars, list) else tmp_vars
+                var.recall += 1
+
+                exp = generate_random_expression(variables, max_depth=max_depth, max_width=max_width, value_bottom=value_bottom, value_upper=value_upper)
+
+                # update of existing variable
+                node = ops[rand_operator](var, exp, declare=False, parent=parent_node)
+            else:                    
+                # generate a new variable
+                var_name = generate_var_name(variables.variables_name())
+                var = Variable(var_name, Types.get_all()[rand_int(1, len(Types.get_all()))], scope=0)            
+                # add variable to registry
+                variables.register(var)
+                exp = generate_random_expression(variables, max_depth=max_depth, max_width=max_width, value_bottom=value_bottom, value_upper=value_upper)
+                node = ops[rand_operator](var, exp, parent=parent_node)
+
+        elif isinstance(ops[rand_operator](), WildcardCode):
+            rand_code = rand_int(0, len(wildcard_codes))
+            node = ops[rand_operator](code=wildcard_codes[rand_code], parent=parent_node)
+    return node
 
 
 def generate_individual_from_seed(
@@ -64,7 +192,7 @@ def generate_individual_from_seed(
             # generate new varianlr name
             var_name = generate_var_name(variables.variables_name())
             # generate a random expression by using Variables and Operator Registry
-            exp = generate_random_expression(variables)
+            exp = generate_random_expression(variables, max_depth=max_depth, max_width=max_width, value_bottom=value_bottom, value_upper=value_upper)
             # generate a new variable
             var = Variable(var_name, Types.get_all()[rand_int(0, len(Types.get_all()))], scope=i)
             # add variable to registry
@@ -87,8 +215,8 @@ def generate_individual_from_seed(
                 # generate branch2 (assignment) -> TODO: subtree generation
                 condition = generate_condition(equality_operators, variables)
 
-                exp_t = generate_random_expression(variables)
-                exp_f = generate_random_expression(variables)                      
+                exp_t = generate_random_expression(variables, max_depth=max_depth, max_width=max_width, value_bottom=value_bottom, value_upper=value_upper)
+                exp_f = generate_random_expression(variables, max_depth=max_depth, max_width=max_width, value_bottom=value_bottom, value_upper=value_upper)                      
 
                 if len(variables.variables) > 0:
                     # some vars in the register 
@@ -117,7 +245,7 @@ def generate_individual_from_seed(
                             tmp_vars_tmp = variables.get_random_var()
                             var_t_tmp = tmp_vars_tmp[rand_int(0, len(tmp_vars_tmp))] if isinstance(tmp_vars_tmp, list) else tmp_vars_tmp
                             var_t_tmp.recall += 1
-                            node_exp_t = generate_random_expression(variables)
+                            node_exp_t = generate_random_expression(variables, max_depth=max_depth, max_width=max_width, value_bottom=value_bottom, value_upper=value_upper)
                             var_t_node_tmp = Assignment(var_t_tmp, node_exp_t, declare=False)
                             var_t_node_tmp.parent = last_node_t
                             # last_node_t.children = var_t_node
@@ -134,7 +262,7 @@ def generate_individual_from_seed(
 
                             var_f_tmp = tmp_vars_tmp[rand_int(0, len(tmp_vars_tmp))] if isinstance(tmp_vars_tmp, list) else tmp_vars_tmp
                             var_f_tmp.recall += 1
-                            node_exp_f = generate_random_expression(variables)
+                            node_exp_f = generate_random_expression(variables, max_depth=max_depth, max_width=max_width, value_bottom=value_bottom, value_upper=value_upper)
                             var_f_node_tmp = Assignment(var_f_tmp, node_exp_f, declare=False)
                             var_f_node_tmp.parent = last_node_f   
                             last_node_f = var_f_node_tmp
@@ -168,7 +296,7 @@ def generate_individual_from_seed(
                     var = tmp_vars[rand_int(1, len(tmp_vars))] if isinstance(tmp_vars, list) else tmp_vars
                     var.recall += 1
 
-                    exp = generate_random_expression(variables)
+                    exp = generate_random_expression(variables, max_depth=max_depth, max_width=max_width, value_bottom=value_bottom, value_upper=value_upper)
 
                     # update of existing variable
                     node = ops[rand_operator](var, exp, declare=False, parent=pending_nodes[i])
@@ -179,7 +307,7 @@ def generate_individual_from_seed(
                     var = Variable(var_name, Types.get_all()[rand_int(1, len(Types.get_all()))], scope=i)            
                     # add variable to registry
                     variables.register(var)
-                    exp = generate_random_expression(variables)
+                    exp = generate_random_expression(variables, max_depth=max_depth, max_width=max_width, value_bottom=value_bottom, value_upper=value_upper)
                     node = ops[rand_operator](var, exp, parent=pending_nodes[i])
             
                     pending_nodes.append(node)
@@ -189,25 +317,7 @@ def generate_individual_from_seed(
                 node = ops[rand_operator](code=wildcard_codes[rand_code], parent=pending_nodes[i])
 
                 pending_nodes.append(node)
-
-            #print("pending nodes: ", pending_nodes)
-            # if isinstance(ops[rand_operator], IfThenElse):
-            #     rand_depth = np.random.randint(0, max_depth)
-            #     for j in range(rand_depth):
-            #         rand_operator = np.random.randint(0, len(operators))
     
-    # TODO: take care of termination and validity check
-    # for pending_node in pending_nodes[1:]:
-    #     print(str(pending_node))
-        #take_care_of_individual_termination(pending_node, variables, operators)
-
-    # individual.root = root
-    # lines = []
-    # for node in PreOrderIter(individual.root):
-    #     lines.append(str(node))
-    # print(lines)
-    # validity check requires => type check and variable scope accessibility
-        # generate empty individual
     individual = Individual(
                             root, 
                             variables, 
@@ -221,18 +331,18 @@ def generate_individual_from_seed(
     return individual
 
 
-def take_care_of_individual_termination(root, variables: VariableRegistry, operators, equality_operators):
+def take_care_of_individual_termination(root, variables: VariableRegistry, operators, equality_operators, value_bottom=-100, value_upper=100):
     '''
     this function appends termination Nodes () to a certain parent node.
     '''
     if isinstance(root, IfThenElse):
         root.condition = generate_condition(equality_operators, variables)
-        root.exp_t = generate_random_expression(variables)
-        root.exp_f = generate_random_expression(variables)
+        root.exp_t = generate_random_expression(variables, value_bottom=value_bottom, value_upper=value_upper)
+        root.exp_f = generate_random_expression(variables, value_bottom=value_bottom, value_upper=value_upper)
     elif isinstance(root, Assignment):
         root.var = variables.get_random_var()
         root.var.recall += 1
-        root.exp = generate_random_expression(variables)
+        root.exp = generate_random_expression(variables, value_bottom=value_bottom, value_upper=value_upper)
     else:
         raise Exception("Unknown Operator {}".format(type(root)))
 
@@ -259,7 +369,7 @@ def create_random_op(op_id):
     return ops[key], key
 
 
-def generate_random_expression(variables, operators=DefaultConfig.MATH_OPERATORS, max_depth=10, max_width=10):
+def generate_random_expression(variables, operators=DefaultConfig.MATH_OPERATORS, max_depth=10, max_width=10, value_bottom=-100, value_upper=100):
     '''
     this function generates a random expression tree using variables
     '''
@@ -268,7 +378,6 @@ def generate_random_expression(variables, operators=DefaultConfig.MATH_OPERATORS
     root_op, root_key = create_random_op(rand_op_id)
     root = root_op([])
 
-    rand_width = rand_int(2, max_width)
     pending_nodes = [root]
 
     if not generate_termination(y_prob=20):
@@ -278,35 +387,25 @@ def generate_random_expression(variables, operators=DefaultConfig.MATH_OPERATORS
         op, key = create_random_op(rand_op_id)
 
         node = op([])
-        rand_depth = rand_int(3, max_depth)
+        rand_depth = rand_int(1, max_depth)
 
         pending_nodes.append(node)
         tmp_nodes = [node]
         
         for j in range(rand_depth):
-            if not generate_termination(y_prob=30):
-                rand_op_id = rand_int(0, len(operators))
-                sub_op, sub_key = create_random_op(rand_op_id)
-                sub_node = sub_op([])
+            rand_op_id = rand_int(0, len(operators))
+            sub_op, sub_key = create_random_op(rand_op_id)
+            sub_node = sub_op([])
 
-                tmp_nodes.append(sub_node)
-                pending_nodes.append(sub_node)
-                #pending_nodes.append(node)
-            else:
-                break
-        
-        updated_nodes = []
+            tmp_nodes.append(sub_node)
+            pending_nodes.append(sub_node)
 
         # adding termination
         for i in range(len(pending_nodes)):
-            take_care_of_termination(pending_nodes[i], variables)
-        #     n = take_care_of_termination(pending_nodes[i], variables)
-        #     if i > 0:
-        #         n.parent = pending_nodes[i-1]
-        #     updated_nodes.append(n)
+            take_care_of_termination(pending_nodes[i], variables, width=max_width, value_bottom=value_bottom, value_upper=value_upper)
 
     else:
-        take_care_of_termination(root, variables)
+        take_care_of_termination(root, variables, width=max_width, value_bottom=value_bottom, value_upper=value_upper)
     return root
 
 
@@ -352,11 +451,11 @@ def take_care_of_termination(root, variables, width=5, must_terminate=False, val
                 rand_op_id = rand_int(0, len(operators)-1) # TODO: replace -1 with div replace, it just assumes that the last operator is div
                 sub_op, sub_key = create_random_op(rand_op_id)
                 sub_node = sub_op([])
-                take_care_of_termination(sub_node, variables, must_terminate=True)
+                take_care_of_termination(sub_node, variables, width=width, must_terminate=True, value_bottom=value_bottom, value_upper=value_upper)
                 children.append(sub_node)
             else:
-                val = rand_int(10, 2001)/100.0
-                children.append(Termination(val if int(val) != 0 else 1, Types.float))
+                val = round(random.uniform(value_bottom, value_upper), 3)
+                children.append(Termination(val if int(val) > 0 else 0.1, Types.float))
             root.children = children
             root.nums = children
         # root.num = children[0]

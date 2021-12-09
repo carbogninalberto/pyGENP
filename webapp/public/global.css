@@ -113,7 +113,7 @@ input {
 	padding: 0.2rem 1rem;
 }
 
-.material-icons { font-size: 1rem; padding-right: 0.25rem;}
+.material-icons { font-size: 1.2rem; padding-right: 0.25rem;}
 
 
 /* width */
@@ -185,5 +185,5 @@ input {
 }
 
 .modal-background {
-    background-color: #00000057;
+    background-color: #000000ab;
 }

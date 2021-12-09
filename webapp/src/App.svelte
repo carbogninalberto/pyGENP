@@ -28,7 +28,17 @@
 		mtu_bottom_limit: 100,
 		mtu_upper_limit: 1600,
 		mtu_step: 200,
-		wildcards: []
+		wildcards: [
+			"ReduceCwnd (tcb);",
+            "segmentsAcked = SlowStart (tcb, segmentsAcked);",
+            "CongestionAvoidance (tcb, segmentsAcked);",
+            "TcpLinuxCongestionAvoidance (tcb, segmentsAcked);"
+		],
+		variables: [
+			"tcb->m_segmentSize",
+			"tcb->m_cWnd",
+			"segmentsAcked"
+		]
 	}
 
 	let current_gen = [];
@@ -39,6 +49,7 @@
 	let calculatingBaseline = false;
 	let autofixing = false;
 	let wildcardModalIsOpen = false;
+	let variableModalIsOpen = false;
 
 	let log = "";
 	let fullScreenTerminal = false;
@@ -119,7 +130,32 @@
 			operator_flip: 60,
 			switch_branches: 30,
 			switch_exp: 70,
-			truncate_node: 25
+			truncate_node: 25,
+			max_mutations: 10,
+			value_bottom_limit: -100,
+			value_top_limit: 100,
+			max_code_lines: 100,
+			max_depth: 10,
+			max_width: 10,
+			alpha_vars: 15,
+			max_branch_depth: 3,
+			payload_size: 1500,
+			simulation_time: 7,
+			multi_mtu: false,
+			mtu_bottom_limit: 100,
+			mtu_upper_limit: 1600,
+			mtu_step: 200,
+			wildcards: [
+				"ReduceCwnd (tcb);",
+				"segmentsAcked = SlowStart (tcb, segmentsAcked);",
+				"CongestionAvoidance (tcb, segmentsAcked);",
+				"TcpLinuxCongestionAvoidance (tcb, segmentsAcked);"
+			],
+			variables: [
+				"tcb->m_segmentSize",
+				"tcb->m_cWnd",
+				"segmentsAcked"
+			]
 		}
 	}
 
@@ -164,6 +200,17 @@
 		current_gen = [];
 		generationNumber = null;
 		currentBest = null;
+		hallOfFame = [];
+		fitnessChart.data.datasets = [{
+			label: 'Fitness',
+			data: [],
+			borderColor: '#ccc',
+			fill: false,
+			cubicInterpolationMode: 'monotone',
+			tension: 0.4,
+		}];
+		fitnessChart.data.labels = [];
+		fitnessChart.update();
 		const res = await fetch('/clean');
 		const json = await res.json();
 		let result = JSON.parse(JSON.stringify(json))
@@ -283,12 +330,14 @@
 		});
 		const json = await res.json();
 		let result = JSON.parse(JSON.stringify(json))
+		if (result.config != null)
+			config = result.config
 		// alert(result.msg);
 		bulmaToast.toast({ message: result.msg, type: 'is-success' });		
 	}
 
 	async function snapshot() {
-		const res = await fetch('/snapshot');
+		const res = await fetch(`/snapshot?config=${JSON.stringify(config)}`);
 		const json = await res.json();
 		let result = JSON.parse(JSON.stringify(json))
 		download(result?.filename, result?.zip);
@@ -345,7 +394,8 @@
 
 <main>
 
-	<div class="nav-bar" style="align-items: center;">
+	<div class="nav-bar" style="align-items: flex-start;">
+		<img src="pyGENP.svg" alt="logo" style="height: 2.2rem; padding-right: .5rem;">
 		pyGENP
 	</div>
 
@@ -619,6 +669,19 @@
 						<input type="text" placeholder="eg. 30" bind:value={config.alpha_vars}>
 					</div>
 
+					<div style="padding-bottom: .2rem; font-weight: 800">Initial Knowledge</div>
+
+					<div class="params">
+						<button class="button" on:click={() => wildcardModalIsOpen = true}>
+							<span class="material-icons md-18">edit</span>
+							Wildcards
+						</button>
+						<button class="button" on:click={() => variableModalIsOpen = true}>
+							<span class="material-icons md-18">edit</span>
+							Variables
+						</button>
+					</div>
+
 					<div class="modal" class:is-active={wildcardModalIsOpen}>
 						<div class="modal-background"></div>
 						<div class="modal-card">
@@ -650,10 +713,37 @@
 							</footer>
 						</div>
 					</div>
-					<button style="float: right;" class="button" on:click={() => wildcardModalIsOpen = true}>
-						<span class="material-icons md-18">edit</span>
-						Edit Wildcards
-					</button>
+					<div class="modal" class:is-active={variableModalIsOpen}>
+						<div class="modal-background"></div>
+						<div class="modal-card">
+							<header class="modal-card-head">
+								<p class="modal-card-title">Initial Variables</p>
+								<button class="delete" aria-label="close" on:click={() => variableModalIsOpen = false}></button>
+							</header>
+							<section class="modal-card-body">
+								<!-- Content ... -->
+								<div style="padding-bottom: 1rem;">All the edits are recorded.</div>
+								<!-- <div class="wildcard-container" contenteditable="true"></div> -->
+								
+								{#each config.variables as variable}
+								<div style="display: flex;justify-content: space-between;">
+									<input style="background:#2e2e2e;width: 95%;" type="text" placeholder="eg. CongestionWnd" bind:value={variable}>
+									<button style="margin-left: 0.5rem;" class="button" on:click={() => config.variables = config.variables.filter(code => code != variable)}>
+										<span class="material-icons md-18" style="padding: 0;">delete</span>										
+									</button>
+								</div>
+								{/each}
+							</section>
+							<footer class="modal-card-foot" style="justify-content: flex-end;">
+								
+								<button class="button" on:click={() => config.variables = [...config.variables, ""]}>
+									<span class="material-icons md-18">add</span>
+									Add Variable
+								</button>
+								<button class="button is-success" on:click={() => variableModalIsOpen = false}>Continue</button>
+							</footer>
+						</div>
+					</div>
 					{:else}
 					<div style="padding-bottom: .2rem; font-weight: 800">Simulator</div>
 

@@ -10,7 +10,7 @@ class SimThread(Process):
     def __init__(self, pop, gen, k, s, operator_flip, switch_branches, switch_exp, truncate_node, 
                     max_mutations, value_bottom_limit, value_top_limit, max_code_lines, max_depth, 
                     max_width, alpha_vars, max_branch_depth, payload_size, simulation_time, mtu_bottom_limit, 
-                    mtu_upper_limit, mtu_step, pickles):
+                    mtu_upper_limit, mtu_step, wildcards, variables, pickles):
         super(SimThread, self).__init__()
         self.pop = int(pop)
         self.gen = int(gen)
@@ -33,6 +33,8 @@ class SimThread(Process):
         self.mtu_bottom_limit = int(mtu_bottom_limit)
         self.mtu_upper_limit = int(mtu_upper_limit)
         self.mtu_step = int(mtu_step)
+        self.wildcards = wildcards
+        self.variables = variables
         self.incubator = None
         self.pickles = pickles
         self.run_pid = str(os.getpid())
@@ -42,11 +44,29 @@ class SimThread(Process):
         sys.stdout = open(self.run_pid + ".out", "a", buffering=1)
         sys.stderr = open(self.run_pid + "_error.out", "a", buffering=1)
 
-        variables = genp.registers.VariableRegistry([
-            genp.registers.Variable("tcb->m_segmentSize", genp.types.Types.integer),
-            genp.registers.Variable("tcb->m_cWnd", genp.types.Types.integer),
-            genp.registers.Variable("segmentsAcked", genp.types.Types.integer)        
-        ])
+        print('''
+        
+            _____  __   __  ______ _______ __   _  _____ 
+            |_____]   \_/   |  ____ |______ | \  | |_____]
+            |          |    |_____| |______ |  \_| |      
+                                                        
+
+        ''')
+
+        print("VARIABLES")
+        print(self.variables)
+        variables_registry = []
+        for variable in self.variables:
+            variables_registry.append(
+                genp.registers.Variable(variable, genp.types.Types.integer)
+            )
+        variables = genp.registers.VariableRegistry(variables_registry)
+
+        # variables = genp.registers.VariableRegistry([
+        #     genp.registers.Variable("tcb->m_segmentSize", genp.types.Types.integer),
+        #     genp.registers.Variable("tcb->m_cWnd", genp.types.Types.integer),
+        #     genp.registers.Variable("segmentsAcked", genp.types.Types.integer)        
+        # ])
 
         custom_config = genp.types.DefaultConfig
         custom_config.TOURNAMENT = {
@@ -62,12 +82,15 @@ class SimThread(Process):
         }
 
         # custom_config.WILD_CARD_CODE = ['//empty line',]
-
-        custom_config.WILD_CARD_CODE = [
-            "segmentsAcked = SlowStart (tcb, segmentsAcked);",
-            "CongestionAvoidance (tcb, segmentsAcked);",
-            "TcpLinuxCongestionAvoidance (tcb, segmentsAcked);"
-        ]
+        print("WILDCARDS")
+        print(self.wildcards)
+        custom_config.WILD_CARD_CODE = self.wildcards
+        # custom_config.WILD_CARD_CODE = [
+        #     "ReduceCwnd (tcb);",
+        #     "segmentsAcked = SlowStart (tcb, segmentsAcked);",
+        #     "CongestionAvoidance (tcb, segmentsAcked);",
+        #     "TcpLinuxCongestionAvoidance (tcb, segmentsAcked);"
+        # ]
 
         # initialize Incubator
         self.incubator = genp.Incubator(

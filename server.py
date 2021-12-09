@@ -126,10 +126,15 @@ def autofix():
 def snapshot():
     try:
         os.chdir(ROOT_DIR)
+        config_data = request.args.get('config')
+        with open('./config.json', 'w') as b_file:
+            b_file.write("{}".format(config_data))
+        os.chdir(ROOT_DIR)
         Path("tmp").mkdir(parents=True, exist_ok=True)
         ts = int(time.time())
         fname = 'tmp/{}_snapshot.zip'.format(ts)
-        subprocess.call(['zip', '-r', fname, 'snapshots', 'snapshots_pickles'])
+        subprocess.call(['zip', '-r', fname, 'snapshots', 'snapshots_pickles', 'config.json'])
+        subprocess.call('rm -rf config.json', shell=True)
         with open(fname, 'rb') as fin:
             bytes = fin.read()
             encoded = base64.b64encode(bytes).decode("utf-8")
@@ -148,6 +153,12 @@ def snapshot_restore():
         file.save('tmp/{}'.format(file.filename))
         subprocess.call('rm -rf ./tmp/extract', shell=True)
         subprocess.call(['unzip', 'tmp/{}'.format(file.filename), '-d', 'tmp/extract'])
+
+        config = None
+        if os.path.isfile('tmp/extract/config.json'):
+            with open('tmp/extract/config.json', 'rb') as config_json:
+                config = json.load(config_json)
+
         subfolders = [ int(f.path.split('/')[-1:][0].replace('_gen', '')) for f in os.scandir('tmp/extract/snapshots_pickles') if f.is_dir() ]
         subfolders.sort(reverse=True)
 
@@ -171,7 +182,7 @@ def snapshot_restore():
         #     bytes = fin.read()
         #     encoded = base64.b64encode(bytes).decode("utf-8")
         
-        return {'msg': 'Successfully setted initial population from Snapshot!'}
+        return {'msg': 'Successfully setted initial population from Snapshot!', 'config': config}
     except Exception as e:
         return {'mgs': 'Exception {} occured.'.format(e)}  
 
@@ -211,6 +222,8 @@ def run():
             sim_data['mtu_bottom_limit'],
             sim_data['mtu_upper_limit'],
             sim_data['mtu_step'],
+            sim_data['wildcards'],
+            sim_data['variables'],
             pickles
         )
         # sim_thread.setDaemon(True)
