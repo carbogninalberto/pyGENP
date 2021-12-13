@@ -1,4 +1,5 @@
 <script>
+	import { fetchWithTimeout } from './utils.js';
 	import { onMount } from 'svelte';
 	import { Rainbow, Moon, Diamonds } from 'svelte-loading-spinners';
 
@@ -37,7 +38,8 @@
 		variables: [
 			"tcb->m_segmentSize",
 			"tcb->m_cWnd",
-			"segmentsAcked"
+			"segmentsAcked",
+			"tcb->m_ssThresh"
 		]
 	}
 
@@ -154,7 +156,8 @@
 			variables: [
 				"tcb->m_segmentSize",
 				"tcb->m_cWnd",
-				"segmentsAcked"
+				"segmentsAcked",
+				"tcb->m_ssThresh"
 			]
 		}
 	}
@@ -242,12 +245,12 @@
 		// alert(result.msg);
 		bulmaToast.toast({ message: result.msg, type: 'is-success' });
 
-		individualsPoller = setInterval(getCurrentGen, 15000);
+		individualsPoller = setInterval(getCurrentGen, 5000);
 		logPoller = setInterval(getLog, 5000);
 	}
 
 	async function getCurrentGen() {
-		const res = await fetch('/gen/current');
+		const res = await fetchWithTimeout('/gen/current');
 		const json = await res.json();
 		let result = JSON.parse(JSON.stringify(json))
 		if (result.individuals) {
@@ -303,7 +306,7 @@
 	}
 
 	async function getLog() {
-		const res = await fetch('/log');
+		const res = await fetchWithTimeout('/log');
 		const json = await res.json();
 		let result = JSON.parse(JSON.stringify(json))
 		log = result.buffer;
@@ -332,6 +335,27 @@
 		let result = JSON.parse(JSON.stringify(json))
 		if (result.config != null)
 			config = result.config
+		if (result.hall_of_fame != null) {
+			hallOfFame = result.hall_of_fame;
+
+			let xDataLabels = Array.from({length: hallOfFame.length}, (_, i) => i + 1);
+			let yData = [];
+			for (let i of hallOfFame) {
+				yData.push(i.fitness);
+			}
+
+			fitnessChart.data.datasets = [{
+				label: 'Fitness',
+				data: yData,
+				borderColor: '#ccc',
+				fill: false,
+				cubicInterpolationMode: 'monotone',
+				tension: 0.4,
+			}];
+			fitnessChart.data.labels = xDataLabels;
+			fitnessChart.update();
+		}
+
 		// alert(result.msg);
 		bulmaToast.toast({ message: result.msg, type: 'is-success' });		
 	}

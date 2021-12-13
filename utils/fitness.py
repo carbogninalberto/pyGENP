@@ -2,7 +2,6 @@ import os
 import subprocess
 from .parser import parser_wrapper
 from dotenv import load_dotenv
-from numba import jit
 
 load_dotenv()
 
@@ -24,7 +23,7 @@ def tcp_variant_fitness(idx):
     counter = 0
     while retry:
         try:
-            out = subprocess.check_output('range={} ./run.sh'.format(idx), shell=True, timeout=60, stderr=subprocess.DEVNULL)
+            out = subprocess.check_output('range={} ./run.sh'.format(idx), shell=True, timeout=120, stderr=subprocess.DEVNULL)
             retry = False
         except Exception as e:
             # print("EXCEPTION", e)
@@ -44,7 +43,7 @@ def tcp_variant_fitness(idx):
 
 def tcp_variant_fitness_wrapped(idx, lines=[], max_lines=100):
     #parser_wrapper(file='/mnt/c/Users/carbo/Desktop/Unitn/tesi/ns-allinone-3.32.2/ns-allinone-3.32/ns-3.32/src/internet/model/tcp-congestion-ops.cc', lines=lines)
-    if len(lines) < 2 or len(lines) > max_lines:
+    if len(lines) < 3 or len(lines) > max_lines:
         return -1
     else:
         return tcp_variant_fitness(idx)
