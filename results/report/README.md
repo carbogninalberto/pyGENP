@@ -51,15 +51,15 @@ go to: http://localhost:5000/ to use the tool.
 
 ### Tool
 
-<img src="https://github.com/carbogninalberto/pyGENP/blob/main/results/report/Images/TOOL_OPEN_TERMINAL.png">
-<img src="https://github.com/carbogninalberto/pyGENP/blob/main/results/report/Images/TOOL_CLOSED_TERMINAL.png">
+<img src="./Images/TOOL_OPEN_TERMINAL.png">
+<img src="./Images/TOOL_CLOSED_TERMINAL.png">
 
 ### HyperParameters
-<img src="https://github.com/carbogninalberto/pyGENP/blob/main/results/report/Images/PARAMS_1.png" width="48%">
-<img src="https://github.com/carbogninalberto/pyGENP/blob/main/results/report/Images/PARAMS_2.png" width="48%">
-<img src="https://github.com/carbogninalberto/pyGENP/blob/main/results/report/Images/PARAMS_2_1.png" width="48%">
-<img src="https://github.com/carbogninalberto/pyGENP/blob/main/results/report/Images/PARAMS_2_2.png" width="48%">
-<img src="https://github.com/carbogninalberto/pyGENP/blob/main/results/report/Images/PARAMS_3.png" width="48%">
+<img src="./Images/PARAMS_1.png" width="48%">
+<img src="./Images/PARAMS_2.png" width="48%">
+<img src="./Images/PARAMS_2_1.png" width="48%">
+<img src="./Images/PARAMS_2_2.png" width="48%">
+<img src="./Images/PARAMS_3.png" width="48%">
 
 ## THE STAGNATION PROBLEM
 One of the problems that I have noticed the most is the stagnation of the population after some improvements.
@@ -71,7 +71,7 @@ If generations are stagnant for `sdep_k` generations individuals are extincted w
 
 where `sdep_f` is defined as:
 
-![edited sigmoid](https://github.com/carbogninalberto/pyGENP/blob/main/results/report/Images/sdep_f.gif)
+![edited sigmoid](./Images/sdep_f.gif)
 
 The reason of the choice is because it grows less than an exponential function in the long run, but more than a logaritmic one.
 
@@ -86,26 +86,26 @@ A collection of the runs, and bug found.
 
 Before SDEP (the first one is reporting a bug that is solved):
 
-<img src="https://github.com/carbogninalberto/pyGENP/blob/main/results/report/Images/bug.png" width="48%" alt="bug">
-<img src="https://github.com/carbogninalberto/pyGENP/blob/main/results/report/Images/BEFORE_SDEP_TRIAL_GENERIC_0.png" width="48%" alt="BEFORE_SDEP_TRIAL_GENERIC_0">
-<img src="https://github.com/carbogninalberto/pyGENP/blob/main/results/report/Images/BEFORE_SDEP_TRIAL_GENERIC_1.png" width="48%" alt="BEFORE_SDEP_TRIAL_GENERIC_1">
-<img src="https://github.com/carbogninalberto/pyGENP/blob/main/results/report/Images/BEFORE_SDEP_TRIAL_GENERIC_2.png" width="48%" alt="BEFORE_SDEP_TRIAL_GENERIC_2">
-<img src="https://github.com/carbogninalberto/pyGENP/blob/main/results/report/Images/BEFORE_SDEP_TRIAL_GENERIC_3.png" width="48%" alt="BEFORE_SDEP_TRIAL_GENERIC_3">
-<img src="https://github.com/carbogninalberto/pyGENP/blob/main/results/report/Images/BEFORE_SDEP_TRIAL_GENERIC_4.png" width="48%" alt="BEFORE_SDEP_TRIAL_GENERIC_4">
-<img src="https://github.com/carbogninalberto/pyGENP/blob/main/results/report/Images/BEFORE_SDEP_TRIAL_GENERIC_5.png" width="48%" alt="BEFORE_SDEP_TRIAL_GENERIC_5">
-<img src="https://github.com/carbogninalberto/pyGENP/blob/main/results/report/Images/BEFORE_SDEP_TRIAL_GENERIC_6.png" width="48%" alt="BEFORE_SDEP_TRIAL_GENERIC_6">
+<img src="./Images/bug.png" width="48%" alt="bug">
+<img src="./Images/BEFORE_SDEP_TRIAL_GENERIC_0.png" width="48%" alt="BEFORE_SDEP_TRIAL_GENERIC_0">
+<img src="./Images/BEFORE_SDEP_TRIAL_GENERIC_1.png" width="48%" alt="BEFORE_SDEP_TRIAL_GENERIC_1">
+<img src="./Images/BEFORE_SDEP_TRIAL_GENERIC_2.png" width="48%" alt="BEFORE_SDEP_TRIAL_GENERIC_2">
+<img src="./Images/BEFORE_SDEP_TRIAL_GENERIC_3.png" width="48%" alt="BEFORE_SDEP_TRIAL_GENERIC_3">
+<img src="./Images/BEFORE_SDEP_TRIAL_GENERIC_4.png" width="48%" alt="BEFORE_SDEP_TRIAL_GENERIC_4">
+<img src="./Images/BEFORE_SDEP_TRIAL_GENERIC_5.png" width="48%" alt="BEFORE_SDEP_TRIAL_GENERIC_5">
+<img src="./Images/BEFORE_SDEP_TRIAL_GENERIC_6.png" width="48%" alt="BEFORE_SDEP_TRIAL_GENERIC_6">
 
 
 After implementing the SDEP technique:
 
-<img src="https://github.com/carbogninalberto/pyGENP/blob/main/results/report/Images/SDEP_TRIAL_BEST_THROUGHPUT_1.png" width="48%">
-<img src="https://github.com/carbogninalberto/pyGENP/blob/main/results/report/Images/SDEP_TRIAL_BEST_THROUGHPUT_2.png" width="48%">
-<img src="https://github.com/carbogninalberto/pyGENP/blob/main/results/report/Images/SDEP_TRIAL_GENERIC_0.png" width="48%">
-<img src="https://github.com/carbogninalberto/pyGENP/blob/main/results/report/Images/SDEP_TRIAL_NOT_WORKING.png" width="48%">
+<img src="./Images/SDEP_TRIAL_BEST_THROUGHPUT_1.png" width="48%">
+<img src="./Images/SDEP_TRIAL_BEST_THROUGHPUT_2.png" width="48%">
+<img src="./Images/SDEP_TRIAL_GENERIC_0.png" width="48%">
+<img src="./Images/SDEP_TRIAL_NOT_WORKING.png" width="48%">
 
 The best result:
 
-<img src="https://github.com/carbogninalberto/pyGENP/blob/main/results/report/Images/SDEP_BEST_RESULT.png" width="98%">
+<img src="./Images/SDEP_BEST_RESULT.png" width="98%">
 
 
 
