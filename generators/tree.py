@@ -18,12 +18,10 @@ variable found elsewhere
 '''
 
 
-
 def rand_int(start, end):
     # return int(quantumrandom.randint(start, end))
     # return np.random.randint(start, end)
     return random.randint(start, end-1)
-
 
 def generate_operator_node(
                             parent_node,
@@ -152,7 +150,6 @@ def generate_operator_node(
             rand_code = rand_int(0, len(wildcard_codes))
             node = ops[rand_operator](code=wildcard_codes[rand_code], parent=parent_node)
     return node
-
 
 def generate_individual_from_seed(
                                     seed=42422019,
@@ -329,7 +326,6 @@ def generate_individual_from_seed(
     individual.id = uuid.uuid4().hex
 
     return individual
-
 
 def take_care_of_individual_termination(root, variables: VariableRegistry, operators, equality_operators, value_bottom=-100, value_upper=100):
     '''

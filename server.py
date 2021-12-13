@@ -133,7 +133,9 @@ def snapshot():
         Path("tmp").mkdir(parents=True, exist_ok=True)
         ts = int(time.time())
         fname = 'tmp/{}_snapshot.zip'.format(ts)
-        subprocess.call(['zip', '-r', fname, 'snapshots', 'snapshots_pickles', 'config.json'])
+        # out = '{}.out'.format(worker.get_pid())
+        command = 'zip -r {} snapshots snapshots_pickles config.json *.out'.format(fname)
+        subprocess.call(command, shell=True)
         subprocess.call('rm -rf config.json', shell=True)
         with open(fname, 'rb') as fin:
             bytes = fin.read()
@@ -159,6 +161,12 @@ def snapshot_restore():
             with open('tmp/extract/config.json', 'rb') as config_json:
                 config = json.load(config_json)
 
+        hall_of_fame = None
+        if os.path.isfile('tmp/extract/snapshots/hall_of_fame.json'):
+            with open('tmp/extract/snapshots/hall_of_fame.json', 'rb') as hf_json:
+                hall_of_fame = json.load(hf_json)
+
+
         subfolders = [ int(f.path.split('/')[-1:][0].replace('_gen', '')) for f in os.scandir('tmp/extract/snapshots_pickles') if f.is_dir() ]
         subfolders.sort(reverse=True)
 
@@ -167,12 +175,15 @@ def snapshot_restore():
         Path("init").mkdir(parents=True, exist_ok=True)
         subprocess.call('rm -rf ./init/*', shell=True)
         subprocess.call('mv ./tmp/extract/snapshots_pickles/{}_gen init'.format(subfolders[0]), shell=True)
+        subprocess.call('mv ./tmp/extract/snapshots/hall_of_fame.json init', shell=True)
         subprocess.call('rm -rf ./tmp', shell=True)
         path_final = os.path.join(ROOT_DIR, 'init', '{}_gen'.format(subfolders[0]))
         files = os.listdir(path_final)
         print(files)
         with open('init/info', 'w', encoding='utf-8') as b_file:
-            json.dump({'pop_size': tot_pop, 'pickles': ['{}/{}'.format(path_final, f) for f in files]}, b_file)
+            json.dump({'pop_size': tot_pop, 
+                        'hall_of_fame': hall_of_fame, 
+                        'pickles': ['{}/{}'.format(path_final, f) for f in files]}, b_file)
 
         # Path("tmp").mkdir(parents=True, exist_ok=True)
         # ts = int(time.time())
@@ -182,7 +193,7 @@ def snapshot_restore():
         #     bytes = fin.read()
         #     encoded = base64.b64encode(bytes).decode("utf-8")
         
-        return {'msg': 'Successfully setted initial population from Snapshot!', 'config': config}
+        return {'msg': 'Successfully setted initial population from Snapshot!', 'config': config, 'hall_of_fame': hall_of_fame}
     except Exception as e:
         return {'mgs': 'Exception {} occured.'.format(e)}  
 
@@ -264,7 +275,7 @@ def log():
         buffer = ""
         if worker.is_alive():
             pid = worker.get_pid()
-            print("pid is {}".format(pid))
+            # print("pid is {}".format(pid))
             buffer = subprocess.check_output(["cat", "{}.out".format(str(pid))])
             buffer = buffer.decode("utf-8") #.replace("\n", "<br>")
 
@@ -275,5 +286,5 @@ def log():
 
 
 # if __name__ == "__main__":
-app.run(debug=True)
+app.run(debug=False, threaded=True)
 

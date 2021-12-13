@@ -26,7 +26,8 @@ class VariableRegistry:
             self.variables.append(var)
     
     def variables_name(self):
-        return [v.name for v in self.variables]
+        # print("GETTING {}".format(self.variables))
+        return [v.name if not isinstance(v, str) else v for v in self.variables]
 
     def get_random_var(self):
         #print("vars", self.variables)

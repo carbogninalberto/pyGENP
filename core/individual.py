@@ -5,7 +5,7 @@ import os
 import copy
 from core.registers import Variable
 from core.types import Types
-from utils.operators import Assignment, Div, IfThenElse, Termination, Mul, Sub, Sum
+from utils.operators import Assignment, Div, IfThenElse, Termination, Mul, Sub, Sum, WildcardCode
 import random
 
 class Individual:
@@ -25,13 +25,16 @@ class Individual:
     def add_variable(self, variables=None):
         if variables:
             self.variables.add(variables)
-
-    def update_variable_registry(self, generate_random_expression):
+    
+    def update_variable_registry(self, default_registry):
         updated = False
         vars = []
         already_declared = [] #self.variables.variables_name()
         # print("\033[92m[{}] checking for program issues".format(self.id))
-        # finding undeclared variables        
+        # finding undeclared variables 
+        self.variables = copy.deepcopy(default_registry)
+        # print("UPDATE_VARIABLE_REGISTRY. VARIABLES EQUAL {} | typ: {}".format(self.variables, type(self.variables)))
+        # print("REGISTRY VALUES {}".format(self.variables.variables_name()))
         for node in PreOrderIter(self.root):
             # print(node.children)
             if isinstance(node, Assignment):
@@ -41,80 +44,88 @@ class Individual:
                     self.variables.register(node.var)
                     updated = True
                     vars.append(node.var)
-                
-                for n_exp in node.exp.nums:
-                    if isinstance(n_exp, Termination):
-                        # print("\t\t\t {} vars è {}".format(n_exp, self.variables.variables_name()))
-                        if n_exp.value == node.var.name \
-                            or n_exp.value not in self.variables.variables_name() \
-                            or (node.declare == True and self.is_var(n_exp.value)):
-                            n_exp.value = self.generate_float()
-                            if n_exp.value == 0:
-                                n_exp.value = 1
-                        elif self.is_var(n_exp.value) and str(n_exp.value) not in self.variables.variables_name():
-                            new_var = Variable(n_exp.value, n_exp.tp)
-                            self.variables.register(new_var)
-                            updated = True
-                            vars.append(new_var)
-                
-                    if isinstance(node.exp, Div):
-                        if isinstance(n_exp, Sum) or \
-                            isinstance(n_exp, Mul) or \
-                            isinstance(n_exp, Sub):
-                             for n_exp_sub in n_exp.nums:
-                                if isinstance(n_exp_sub, Termination):
-                                    if n_exp_sub.value == node.var.name \
-                                        or n_exp_sub.value not in self.variables.variables_name() \
-                                        or (node.declare == True and self.is_var(n_exp_sub.value)):
-                                        n_exp_sub.value = self.generate_float()
-                                        if n_exp_sub.value == 0:
-                                            n_exp_sub.value = 1
-                                    elif self.is_var(n_exp_sub.value) and str(n_exp_sub.value) not in self.variables.variables_name():
-                                        new_var = Variable(n_exp_sub.value, n_exp_sub.tp)
-                                        self.variables.register(new_var)
-                                        updated = True
-                                        vars.append(new_var)
 
-
+                if not isinstance(node.exp, Termination):
+                    for n_exp in node.exp.nums:
+                        if isinstance(n_exp, Termination):
+                            # print("\t\t\t {} vars è {}".format(n_exp, self.variables.variables_name()))
+                            if n_exp.value == node.var.name \
+                                or n_exp.value not in self.variables.variables_name() \
+                                or (node.declare == True and self.is_var(n_exp.value)):
+                                n_exp.value = self.generate_float()
+                                if n_exp.value == 0:
+                                    n_exp.value = 1
+                            elif self.is_var(n_exp.value) and str(n_exp.value) not in self.variables.variables_name():
+                                new_var = Variable(n_exp.value, n_exp.tp)
+                                self.variables.register(new_var)
+                                updated = True
+                                vars.append(new_var)
+                    
+                        if isinstance(node.exp, Div):
+                            if isinstance(n_exp, Sum) or \
+                                isinstance(n_exp, Mul) or \
+                                isinstance(n_exp, Sub):
+                                for n_exp_sub in n_exp.nums:
+                                    if isinstance(n_exp_sub, Termination):
+                                        if n_exp_sub.value == node.var.name \
+                                            or n_exp_sub.value not in self.variables.variables_name() \
+                                            or (node.declare == True and self.is_var(n_exp_sub.value)):
+                                            n_exp_sub.value = self.generate_float()
+                                            if n_exp_sub.value == 0:
+                                                n_exp_sub.value = 1
+                                        elif self.is_var(n_exp_sub.value) and str(n_exp_sub.value) not in self.variables.variables_name():
+                                            new_var = Variable(n_exp_sub.value, n_exp_sub.tp)
+                                            self.variables.register(new_var)
+                                            updated = True
+                                            vars.append(new_var)
 
             elif isinstance(node, IfThenElse):
                 if node.condition.lf.name not in self.variables.variables_name():
-                    self.variables.register(node.condition.lf.name)
+                    self.variables.register(node.condition.lf)
                     updated = True
-                    vars.append(node.condition.lf.name)
+                    vars.append(node.condition.lf)
                 if node.condition.rg.name not in self.variables.variables_name():
-                    self.variables.register(node.condition.rg.name)
+                    self.variables.register(node.condition.rg)
                     updated = True
-                    vars.append(node.condition.rg.name)
-                if isinstance(node.exp_t, Assignment):
-                    if node.exp_t.declare == False and node.exp_t.var.name not in self.variables.variables_name():
-                        self.variables.register(node.exp_t.var)
-                        updated = True
-                        vars.append(node.exp_t.var)
+                    vars.append(node.condition.rg)
+
+                # true branch variables
+                for node_branch_t in PreOrderIter(node.exp_t):
+
+                    if isinstance(node_branch_t, Assignment):
+                        if node_branch_t.declare == False and node_branch_t.var.name not in self.variables.variables_name():
+                            self.variables.register(node_branch_t.var)
+                            updated = True
+                            vars.append(node_branch_t.var)
                         
-                    for n_exp in node.exp_t.exp.nums:
-                        if isinstance(n_exp, Termination):
-                            # print("\t\t\t {} vars è {}".format(n_exp, self.variables.variables_name()))
-                            if self.is_var(n_exp.value) and str(n_exp.value) not in self.variables.variables_name():
-                                new_var = Variable(n_exp.value, n_exp.tp)
-                                self.variables.register(new_var)
-                                updated = True
-                                vars.append(new_var)
-                if isinstance(node.exp_f, Assignment):
-                    if node.exp_f.declare == False and node.exp_f.var.name not in self.variables.variables_name():
-                        # print("\t\t {} not in {}".format(node.exp_f.var.name, self.variables.variables_name()))
-                        self.variables.register(node.exp_f.var)
-                        updated = True
-                        vars.append(node.exp_f.var)
+                        if not isinstance(node_branch_t.exp, Termination):
+                            for n_exp in node_branch_t.exp.nums:
+                                if isinstance(n_exp, Termination):
+                                    # print("\t\t\t {} vars è {}".format(n_exp, self.variables.variables_name()))
+                                    if self.is_var(n_exp.value) and str(n_exp.value) not in self.variables.variables_name():
+                                        new_var = Variable(n_exp.value, n_exp.tp)
+                                        self.variables.register(new_var)
+                                        updated = True
+                                        vars.append(new_var)                    
                 
-                    for n_exp in node.exp_f.exp.nums:
-                        if isinstance(n_exp, Termination):
-                            # print("\t\t\t {} vars è {}".format(n_exp, self.variables.variables_name()))
-                            if self.is_var(n_exp.value) and str(n_exp.value) not in self.variables.variables_name():
-                                new_var = Variable(n_exp.value, n_exp.tp)
-                                self.variables.register(new_var)
-                                updated = True
-                                vars.append(new_var)
+                # false branch variables
+                for node_branch_f in PreOrderIter(node.exp_f):
+                    if isinstance(node_branch_f, Assignment):
+                        if node_branch_f.declare == False and node_branch_f.var.name not in self.variables.variables_name():
+                            # print("\t\t {} not in {}".format(node_branch_f.var.name, self.variables.variables_name()))
+                            self.variables.register(node_branch_f.var)
+                            updated = True
+                            vars.append(node_branch_f.var)
+                        
+                        if not isinstance(node_branch_f.exp, Termination):
+                            for n_exp in node_branch_f.exp.nums:
+                                if isinstance(n_exp, Termination):
+                                    # print("\t\t\t {} vars è {}".format(n_exp, self.variables.variables_name()))
+                                    if self.is_var(n_exp.value) and str(n_exp.value) not in self.variables.variables_name():
+                                        new_var = Variable(n_exp.value, n_exp.tp)
+                                        self.variables.register(new_var)
+                                        updated = True
+                                        vars.append(new_var)
         
         # print("[{}] VARS NOT DECLARED {}".format(self.id, [v.name for v in vars]))
         # declaring variables
@@ -125,7 +136,10 @@ class Individual:
             if generated_number == 0:
                 generated_number = 0.1
             exp = Termination(generated_number, Types.float) #generate_random_expression(self.variables)
-            Assignment(var, exp, parent=self.root)
+            new_declare_node = Assignment(var, exp, declare=True)
+            for c in self.root.children:
+                c.parent = new_declare_node
+            new_declare_node.parent = self.root
         
         to_move_up = []
         
@@ -176,7 +190,7 @@ class Individual:
                     
         seen_declarations = ['tcb->m_segmentSize', 'tcb->m_cWnd', 'segmentsAcked']
         to_remove = []
-        for node in PreOrderIter(self.root):
+        for idx, node in enumerate(PreOrderIter(self.root)):
             if isinstance(node, Assignment):
                 if node.declare == True and node.var.name not in seen_declarations:
                     seen_declarations.append(node.var.name)
@@ -185,66 +199,70 @@ class Individual:
                 elif node.declare == True and node.var.name in seen_declarations:
                     to_remove.append(node)
                 # fixing not already declare vars
-                for n_exp in node.exp.nums:
-                    if isinstance(n_exp, Div):
-                        for n_exp_div in n_exp.nums:
-                            if isinstance(n_exp_div, Termination):
-                                # and str(n_exp_div.value) not in seen_declarations
-                                if (self.is_var(n_exp_div.value)) or node.declare == True:
-                                    n_exp_div.value = self.generate_float()
-                                    if n_exp_div.value == 0:
-                                        n_exp_div.value = 1
-                    if isinstance(n_exp, Termination):
-                        # and str(n_exp.value) not in seen_declarations
-                        if (self.is_var(n_exp.value)) or node.declare == True:
-                            n_exp.value = self.generate_float()
-                            if n_exp.value == 0:
-                                n_exp.value = 1
+                if not isinstance(node.exp, Termination):
+                    for n_exp in node.exp.nums:
+                        if isinstance(n_exp, Div):
+                            for n_exp_div in n_exp.nums:
+                                if isinstance(n_exp_div, Termination):
+                                    # and str(n_exp_div.value) not in seen_declarations
+                                    if (self.is_var(n_exp_div.value)) or node.declare == True:
+                                        n_exp_div.value = self.generate_float()
+                                        if n_exp_div.value == 0:
+                                            n_exp_div.value = 1
+                        if isinstance(n_exp, Termination):
+                            # and str(n_exp.value) not in seen_declarations
+                            if (self.is_var(n_exp.value)) or node.declare == True:
+                                n_exp.value = self.generate_float()
+                                if n_exp.value == 0:
+                                    n_exp.value = 1
             
             elif isinstance(node, IfThenElse):
-                if node.condition.lf.name not in seen_declarations:
+                if idx == 0:
                     to_remove.append(node)
-                if node.condition.rg.name not in seen_declarations:
-                    to_remove.append(node)
-                if isinstance(node.exp_t, Assignment):
-                    if node.exp_t.var.name not in seen_declarations:
+                else:
+                    if node.condition.lf.name not in seen_declarations:
                         to_remove.append(node)
-                    for n_exp in node.exp_t.exp.nums:
-                        if isinstance(n_exp, Termination):
-                            if self.is_var(n_exp.value) and str(n_exp.value) not in seen_declarations:
-                                n_exp.value = self.generate_float()
-                                if n_exp.value == 0:
-                                    n_exp.value = 1
-                    for n_to_check in PreOrderIter(node.exp_t):
-                        if isinstance(n_to_check, Assignment):
-                            if n_to_check.var.name not in seen_declarations:
-                                to_remove.append(node)
-                            for n_exp in n_to_check.exp.nums:
-                                if isinstance(n_exp, Termination):
-                                    if self.is_var(n_exp.value) and str(n_exp.value) not in seen_declarations:
-                                        n_exp.value = self.generate_float()
-                                        if n_exp.value == 0:
-                                            n_exp.value = 1
+                    if node.condition.rg.name not in seen_declarations:
+                        to_remove.append(node)
+                    if isinstance(node.exp_t, Assignment):
+                        if node.exp_t.var.name not in seen_declarations:
+                            to_remove.append(node)
+                        for n_exp in node.exp_t.exp.nums:
+                            if isinstance(n_exp, Termination):
+                                if self.is_var(n_exp.value) and str(n_exp.value) not in seen_declarations:
+                                    n_exp.value = self.generate_float()
+                                    if n_exp.value == 0:
+                                        n_exp.value = 1
+                        for n_to_check in PreOrderIter(node.exp_t):
+                            if isinstance(n_to_check, Assignment):
+                                if n_to_check.var.name not in seen_declarations:
+                                    to_remove.append(node)
+                                for n_exp in n_to_check.exp.nums:
+                                    if isinstance(n_exp, Termination):
+                                        if self.is_var(n_exp.value) and str(n_exp.value) not in seen_declarations:
+                                            n_exp.value = self.generate_float()
+                                            if n_exp.value == 0:
+                                                n_exp.value = 1
 
-                if isinstance(node.exp_f, Assignment):
-                    if node.exp_f.var.name not in seen_declarations:
-                        to_remove.append(node)
-                    for n_exp in node.exp_f.exp.nums:
-                        if isinstance(n_exp, Termination):
-                            if self.is_var(n_exp.value) and str(n_exp.value) not in seen_declarations:
-                                n_exp.value = self.generate_float()
-                                if n_exp.value == 0:
-                                    n_exp.value = 1
-                    for n_to_check in PreOrderIter(node.exp_f):
-                        if isinstance(n_to_check, Assignment):
-                            if n_to_check.var.name not in seen_declarations:
-                                to_remove.append(node)
-                            for n_exp in n_to_check.exp.nums:
-                                if isinstance(n_exp, Termination):
-                                    if self.is_var(n_exp.value) and str(n_exp.value) not in seen_declarations:
-                                        n_exp.value = self.generate_float()
-                                        if n_exp.value == 0:
-                                            n_exp.value = 1
+                    if isinstance(node.exp_f, Assignment):
+                        if node.exp_f.var.name not in seen_declarations:
+                            to_remove.append(node)
+                        for n_exp in node.exp_f.exp.nums:
+                            if isinstance(n_exp, Termination):
+                                if self.is_var(n_exp.value) and str(n_exp.value) not in seen_declarations:
+                                    n_exp.value = self.generate_float()
+                                    if n_exp.value == 0:
+                                        n_exp.value = 1
+                        for n_to_check in PreOrderIter(node.exp_f):
+                            if isinstance(n_to_check, Assignment):
+                                if n_to_check.var.name not in seen_declarations:
+                                    to_remove.append(node)
+                                for n_exp in n_to_check.exp.nums:
+                                    if isinstance(n_exp, Termination):
+                                        if self.is_var(n_exp.value) and str(n_exp.value) not in seen_declarations:
+                                            n_exp.value = self.generate_float()
+                                            if n_exp.value == 0:
+                                                n_exp.value = 1
         
         # remove items
         for node in to_remove:
@@ -290,7 +308,6 @@ class Individual:
         lines = self.render_code()
         with open(path, 'w') as f:
             f.writelines(lines)
-        f.close()
 
     def generate_float(self):
         return round(random.uniform(self.value_bottom, self.value_upper), 3)
