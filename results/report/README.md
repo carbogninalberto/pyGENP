@@ -51,15 +51,15 @@ go to: http://localhost:5000/ to use the tool.
 
 ### Tool
 
-<img src="images/TOOL_OPEN_TERMINAL.png">
-<img src="images/TOOL_CLOSED_TERMINAL.png">
+<img src="./images/TOOL_OPEN_TERMINAL.png">
+<img src="./images/TOOL_CLOSED_TERMINAL.png">
 
 ### HyperParameters
-<img src="images/PARAMS_1.png" width="48%">
-<img src="images/PARAMS_2.png" width="48%">
-<img src="images/PARAMS_2_1.png" width="48%">
-<img src="images/PARAMS_2_2.png" width="48%">
-<img src="images/PARAMS_3.png" width="48%">
+<img src="./images/PARAMS_1.png" width="48%">
+<img src="./images/PARAMS_2.png" width="48%">
+<img src="./images/PARAMS_2_1.png" width="48%">
+<img src="./images/PARAMS_2_2.png" width="48%">
+<img src="./images/PARAMS_3.png" width="48%">
 
 ## THE STAGNATION PROBLEM
 One of the problems that I have noticed the most is the stagnation of the population after some improvements.
@@ -71,7 +71,7 @@ If generations are stagnant for `sdep_k` generations individuals are extincted w
 
 where `sdep_f` is defined as:
 
-![edited sigmoid](images/sdep_f.gif)
+![edited sigmoid](./images/sdep_f.gif)
 
 The reason of the choice is because it grows less than an exponential function in the long run, but more than a logaritmic one.
 
@@ -86,26 +86,26 @@ A collection of the runs, and bug found.
 
 Before SDEP (the first one is reporting a bug that is solved):
 
-<img src="images/bug.png" width="48%" alt="bug">
-<img src="images/BEFORE_SDEP_TRIAL_GENERIC_0.png" width="48%" alt="BEFORE_SDEP_TRIAL_GENERIC_0">
-<img src="images/BEFORE_SDEP_TRIAL_GENERIC_1.png" width="48%" alt="BEFORE_SDEP_TRIAL_GENERIC_1">
-<img src="images/BEFORE_SDEP_TRIAL_GENERIC_2.png" width="48%" alt="BEFORE_SDEP_TRIAL_GENERIC_2">
-<img src="images/BEFORE_SDEP_TRIAL_GENERIC_3.png" width="48%" alt="BEFORE_SDEP_TRIAL_GENERIC_3">
-<img src="images/BEFORE_SDEP_TRIAL_GENERIC_4.png" width="48%" alt="BEFORE_SDEP_TRIAL_GENERIC_4">
-<img src="images/BEFORE_SDEP_TRIAL_GENERIC_5.png" width="48%" alt="BEFORE_SDEP_TRIAL_GENERIC_5">
-<img src="images/BEFORE_SDEP_TRIAL_GENERIC_6.png" width="48%" alt="BEFORE_SDEP_TRIAL_GENERIC_6">
+<img src="./images/bug.png" width="48%" alt="bug">
+<img src="./images/BEFORE_SDEP_TRIAL_GENERIC_0.png" width="48%" alt="BEFORE_SDEP_TRIAL_GENERIC_0">
+<img src="./images/BEFORE_SDEP_TRIAL_GENERIC_1.png" width="48%" alt="BEFORE_SDEP_TRIAL_GENERIC_1">
+<img src="./images/BEFORE_SDEP_TRIAL_GENERIC_2.png" width="48%" alt="BEFORE_SDEP_TRIAL_GENERIC_2">
+<img src="./images/BEFORE_SDEP_TRIAL_GENERIC_3.png" width="48%" alt="BEFORE_SDEP_TRIAL_GENERIC_3">
+<img src="./images/BEFORE_SDEP_TRIAL_GENERIC_4.png" width="48%" alt="BEFORE_SDEP_TRIAL_GENERIC_4">
+<img src="./images/BEFORE_SDEP_TRIAL_GENERIC_5.png" width="48%" alt="BEFORE_SDEP_TRIAL_GENERIC_5">
+<img src="./images/BEFORE_SDEP_TRIAL_GENERIC_6.png" width="48%" alt="BEFORE_SDEP_TRIAL_GENERIC_6">
 
 
 After implementing the SDEP technique:
 
-<img src="images/SDEP_TRIAL_BEST_THROUGHPUT_1.png" width="48%">
-<img src="images/SDEP_TRIAL_BEST_THROUGHPUT_2.png" width="48%">
-<img src="images/SDEP_TRIAL_GENERIC_0.png" width="48%">
-<img src="images/SDEP_TRIAL_NOT_WORKING.png" width="48%">
+<img src="./images/SDEP_TRIAL_BEST_THROUGHPUT_1.png" width="48%">
+<img src="./images/SDEP_TRIAL_BEST_THROUGHPUT_2.png" width="48%">
+<img src="./images/SDEP_TRIAL_GENERIC_0.png" width="48%">
+<img src="./images/SDEP_TRIAL_NOT_WORKING.png" width="48%">
 
 The best result:
 
-<img src="images/SDEP_BEST_RESULT.png" width="98%">
+<img src="./images/SDEP_BEST_RESULT.png" width="98%">
 
 
 
