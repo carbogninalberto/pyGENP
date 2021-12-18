@@ -136,7 +136,7 @@ class Incubator:
         configure_command = 'CXXFLAGS="-Wno-error -Wno-unused-variable" ./waf configure --disable-python'
         build_command = 'CXXFLAGS="-Wno-error -Wno-unused-variable" ./waf build'
 
-        retry_counter = 3
+        retry_counter = 1
         while retry_counter >= 0:
             try:
                 print('configuring...')
@@ -148,7 +148,7 @@ class Incubator:
                 print('building...')
                 start = time.time()
                 try:
-                    out = subprocess.check_output(build_command, shell=True, timeout=240)
+                    out = subprocess.check_output(build_command, shell=True, timeout=500)
                 except Exception as e:
                     print("IMPOSSIBLE TO BUILD", e)
                     retry_counter -= 1
@@ -558,7 +558,7 @@ class Incubator:
         configure_command = 'CXXFLAGS="-Wno-error -Wno-unused-variable" ./waf configure --disable-python'
         build_command = 'CXXFLAGS="-Wno-error -Wno-unused-variable" ./waf build'
 
-        retry_counter = 3
+        retry_counter = 1
         while retry_counter >= 0:
             try:
                 print('configuring...')
@@ -570,7 +570,7 @@ class Incubator:
                 print('building...')
                 start = time.time()
                 try:
-                    out = subprocess.check_output(build_command, shell=True, timeout=240)
+                    out = subprocess.check_output(build_command, shell=True, timeout=500)
                 except Exception as e:
                     print("IMPOSSIBLE TO BUILD", e)
                     retry_counter -= 1
