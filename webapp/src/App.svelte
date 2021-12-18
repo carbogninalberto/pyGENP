@@ -460,7 +460,8 @@
 			</span>			
 			From Snapshot
 		</label>
-		<button class="button" on:click={() => snapshot()} disabled={!running}>
+		<!-- disabled={!running} -->
+		<button class="button" on:click={() => snapshot()}>
 			<span class="material-icons">
 				history
 			</span>			

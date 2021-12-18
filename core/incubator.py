@@ -79,6 +79,7 @@ class Incubator:
         self.sdep_last_best_fitness = 0
         self.sdep_current_stagnation = 0
         self.sdep_fresh_counter = 0
+        self.ROOT_DIR = os.path.abspath(os.curdir)
 
     # @jit
     def init_population(self, generator, pickles=[]):
@@ -110,7 +111,7 @@ class Incubator:
             self.population.append(indiv)
 
     # @jit
-    def calculate_fitness(self):
+    def calculate_fitness(self, generator):
         codes = []
         for idx, individual in enumerate(self.population):
             codes.append(individual.render_code())
@@ -161,7 +162,18 @@ class Incubator:
                 continue
         
         if retry_counter == -1:
-            sys.exit("CRITICAL ERROR! CANNOT CONTINUE THE PROCESS, EXPORT A SNAPSHOT TO NOT LOSE THE PROGRESS")
+            # sys.exit("CRITICAL ERROR! CANNOT CONTINUE THE PROCESS, EXPORT A SNAPSHOT TO NOT LOSE THE PROGRESS")
+            print("CRITICAL ERROR! CANNOT CONTINUE THE PROCESS, RETRY GENERATION")
+            os.chdir(self.ROOT_DIR) # changing current directory
+            subprocess.call('rm -Rf ./snapshots_pickles/{self.current_generation}_gen', shell=True)
+            subprocess.call('rm -Rf ./snapshots/{self.current_generation}_gen', shell=True)
+            self.hall_of_fame = self.hall_of_fame[:-1]
+            self.current_generation -= 1
+            os.chdir(self.ROOT_DIR)
+            pickles = [f.path for f in os.scandir('./snapshots_pickles/{}_gen/'.format(self.current_generation))]
+            self.init_population(generator, pickles)
+            self.check_config_build()
+            # subprocess.call('mv ./tmp/extract/snapshots/{}_gen.json init', shell=True)
 
         # print("calculating fitness...")
         #print("[{}] has fitness {}".format(0, self.population[0].max_fitness(0, self.fitness)))
@@ -521,15 +533,68 @@ class Incubator:
                                                 extinction_probability
                                             ))
 
-        # self.sdep_last_best_fitness = 0
-        # self.sdep_current_stagnation = 0 
+    def check_config_build(self):
+        codes = []
+        for idx, individual in enumerate(self.population):
+            codes.append(individual.render_code())
 
-        # self.sdep_k = sdep_k # how many generation ind are not improving
-        # self.sdep_p = sdep_p # probability of individual is extincted
-        # self.sdep_t = sdep_t # threshold regarding elite member
+        #print("codes", codes)
 
+        switch_case_lines = []
+        for idx, code in enumerate(codes):
+            switch_case_lines.append("case {}:\n{{".format(idx))
+
+            for line in code:
+                switch_case_lines.append(line)
+
+            switch_case_lines.append("\n\tbreak;}")
+
+        #print("switch", switch_case_lines)
+
+        tcp_variant_fitness_write_switch(switch_case_lines)
+
+        os.chdir(BASE_NS3_PATH)
+
+        configure_command = 'CXXFLAGS="-Wno-error -Wno-unused-variable" ./waf configure --disable-python'
+        build_command = 'CXXFLAGS="-Wno-error -Wno-unused-variable" ./waf build'
+
+        retry_counter = 3
+        while retry_counter >= 0:
+            try:
+                print('configuring...')
+                start = time.time()
+                out = subprocess.check_output(configure_command, shell=True, timeout=20)
+                end = time.time()
+                print("configured in {:.3f} seconds".format(end - start))
+
+                print('building...')
+                start = time.time()
+                try:
+                    out = subprocess.check_output(build_command, shell=True, timeout=240)
+                except Exception as e:
+                    print("IMPOSSIBLE TO BUILD", e)
+                    retry_counter -= 1
+                    continue
+                end = time.time()
+                print("built in {:.3f} seconds".format(end - start))
+                break
+            except:
+                print('error on configuring or building...')
+                retry_counter -= 1
+                continue
+        
+        if retry_counter == -1:
+            print("CRITICAL ERROR! CANNOT CONTINUE THE PROCESS, RETRY GENERATION")
+            os.chdir(self.ROOT_DIR) # changing current directory
+            subprocess.call('rm -Rf ./snapshots_pickles/{self.current_generation}_gen', shell=True)
+            subprocess.call('rm -Rf ./snapshots/{self.current_generation}_gen', shell=True)
+            self.hall_of_fame = self.hall_of_fame[:-1]
+            print("Retry generating population...")
+            return False
+        return True
 
     def run(self, generator, pickles=[]):
+        self.ROOT_DIR = os.path.abspath(os.curdir)
         # init population giving a generator
         self.init_population(generator, pickles)
 
@@ -540,7 +605,7 @@ class Incubator:
             #self.mutation()
             #break
 
-            self.calculate_fitness()
+            self.calculate_fitness(generator)
 
             elite_individual = copy.deepcopy(self.add_hall_of_fame(add_to_elite=True))
 
