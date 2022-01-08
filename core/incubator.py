@@ -604,6 +604,11 @@ class Incubator:
         return True
 
     def run(self, generator, pickles=[]):
+        # writing that simulation is running
+        path_termination_flag = os.path.join(sys.path[0], 'termination_flag')
+        with open(path_termination_flag, 'w') as termination_flag:
+            termination_flag.write('RUNNING')
+        
         self.ROOT_DIR = os.path.abspath(os.curdir)
         # init population giving a generator
         self.init_population(generator, pickles)
@@ -730,6 +735,9 @@ class Incubator:
         path_file_hall = "{}/hall_of_fame.json".format(path_folder_hall)
         with open(path_file_hall, 'w') as out_hall:
             json.dump(self.hall_of_fame, out_hall)
+        # writing that simulation has stopped
+        with open(path_termination_flag, 'w') as termination_flag:
+            termination_flag.write('STOP')
 
     def kill(self):
         sys.exit()
