@@ -20,6 +20,9 @@ from anytree import PreOrderIter
 import time
 from dotenv import load_dotenv
 from prompt_toolkit import print_formatted_text, HTML
+import psutil
+
+PROCWIFITCP = "wifi-tcp"
 
 load_dotenv()
 
@@ -79,6 +82,8 @@ class Incubator:
         self.sdep_last_best_fitness = 0
         self.sdep_current_stagnation = 0
         self.sdep_fresh_counter = 0
+        self.last_best_individual_info = None
+        self.last_best_individual = None
         self.ROOT_DIR = os.path.abspath(os.curdir)
 
     # @jit
@@ -185,6 +190,7 @@ class Incubator:
 
         pool.close()
         pool.join()
+        # subprocess.call(['killall', '-r', 'my_pattern'])
 
     def multiprocessing_fitness(self, idx, individual):
         #for idx, individual in enumerate(self.population):
@@ -306,7 +312,11 @@ class Incubator:
             self.hall_of_fame.append({"id": self.population[0].id, "fitness": self.population[0].fitness, "gen": self.current_generation})
             if add_to_elite == True:
                 self.population[0].is_elite = True
+            self.last_best_individual_info = {"id": self.population[0].id, "fitness": self.population[0].fitness, "gen": self.current_generation}
+            self.last_best_individual = copy.deepcopy(self.population[0])
             return self.population[0] # return best individual
+        elif self.current_gen > 1:
+            return self.last_best_individual
         return None
 
     # @jit
@@ -704,6 +714,11 @@ class Incubator:
             self.current_generation += 1
             self.current_gen = []
             gc.collect()
+
+            for proc in psutil.process_iter():
+                # check whether the process name matches
+                if proc.name() == PROCWIFITCP:
+                    proc.kill()
 
         print("FINAL POPULATION")
         print([ind.fitness for ind in self.population])
