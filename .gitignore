@@ -7,6 +7,7 @@ misc
 *.cpp
 
 a.out
+*.out
 
 snapshots/*
 snapshots_pickles/*
@@ -19,3 +20,6 @@ generators/__pycache__
 
 tmp
 init
+
+results/report/*_snapshot/*
+results/report/*.zip
