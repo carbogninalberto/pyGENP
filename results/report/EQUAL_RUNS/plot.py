@@ -3,17 +3,17 @@ import os
 import matplotlib.pyplot as plt
 import statistics
 
-baselineY = [52.639411764706 for i in range(20)]
-baselineX = [i+1 for i in range(20)]
+baselineY = [52.639411764706 for i in range(50)]
+baselineX = [i+1 for i in range(50)]
 
 
 runs = []
-files = os.listdir('json')
+files = os.listdir('json50')
 n_files = len(files)
 
 for json_file in files:
     run = []
-    with open(os.path.join('json', json_file), 'r') as f:
+    with open(os.path.join('json50', json_file), 'r') as f:
         j = json.load(f)
         for fit in j:
             run.append(fit['fitness'])
@@ -27,7 +27,7 @@ average = []
 y1 = []
 y2 = []
 
-for x in range(20):
+for x in range(50):
     sample = []
     sum = 0
     for run in runs:
@@ -40,6 +40,7 @@ for x in range(20):
     y1.append((sum/n_files)+std)
     y2.append((sum/n_files)-std)
 
+
 plt.plot(baselineX, average)
 plt.xlabel("Generation")
 plt.ylabel("Throughput (Mbit/s)")
@@ -51,9 +52,11 @@ plt.fill_between(baselineX, y1, y2,
                  alpha=0.1)          # Transparency of the fill
 plt.xticks(baselineX)
 
-plt.text(17.5, 54.9, 'fitness')
+plt.text(45.5, 54.9, 'fitness')
 
-plt.text(17.5, 52.75, 'baseline', color='red')
+plt.text(45.5, 52.75, 'baseline', color='red')
 # Show the plot
 # plt.show()
-plt.savefig('plot.png', dpi=92)
+figure = plt.gcf()
+figure.set_size_inches(14, 8)
+plt.savefig('plot.png', dpi=72)
