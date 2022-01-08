@@ -99,7 +99,7 @@
 	// const fitAddon = new FitAddon();
 	// term.loadAddon(fitAddon);
 
-	onMount(() => {
+	onMount(async () => {
 		// document.getElementById('terminal').innerHTML = "";
 
 		
@@ -118,6 +118,8 @@
 			document.getElementById('fitnessChart'),
 			configChart
 		);
+
+		await check_status();
 
 		// call on start
 		getLog();
@@ -229,8 +231,42 @@
 		bulmaToast.toast({ message: result.msg, type: 'is-success' });
 	}
 
+	async function check_status() {
+		const res = await fetch('/check_status');
+		const json = await res.json();
+		let result = JSON.parse(JSON.stringify(json));
+
+		if (result.status == 'RUNNING' && result.running) {
+			running = true;
+			config = result.config
+			individualsPoller = setInterval(getCurrentGen, 15000);
+			logPoller = setInterval(getLog, 60000);
+			if (result.hall_of_fame != null) {
+				hallOfFame = result.hall_of_fame;
+
+				let xDataLabels = Array.from({length: hallOfFame.length}, (_, i) => i + 1);
+				let yData = [];
+				for (let i of hallOfFame) {
+					yData.push(i.fitness);
+				}
+
+				fitnessChart.data.datasets = [{
+					label: 'Fitness',
+					data: yData,
+					borderColor: '#ccc',
+					fill: false,
+					cubicInterpolationMode: 'monotone',
+					tension: 0.4,
+				}];
+				fitnessChart.data.labels = xDataLabels;
+				fitnessChart.update();
+			}
+		}
+		bulmaToast.toast({ message: result.msg, type: 'is-success' });
+	}
+
 	async function run() {
-		const res = await fetch('/run', {
+		const res = await fetch(`/run?config=${JSON.stringify(config)}`, {
 			method: 'POST',
 			headers: {
 				'Accept': 'application/json',
@@ -245,8 +281,8 @@
 		// alert(result.msg);
 		bulmaToast.toast({ message: result.msg, type: 'is-success' });
 
-		individualsPoller = setInterval(getCurrentGen, 5000);
-		logPoller = setInterval(getLog, 5000);
+		individualsPoller = setInterval(getCurrentGen, 15000);
+		logPoller = setInterval(getLog, 60000);
 	}
 
 	async function getCurrentGen() {

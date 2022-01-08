@@ -64,6 +64,7 @@ def clean():
         subprocess.call(['pkill' ,'-f', 'wifi-tcp'])
         subprocess.call('rm -rf ./snapshots/*', shell=True)        
         subprocess.call('rm -rf ./snapshots_pickles/*', shell=True)
+        subprocess.call('rm termination_flag', shell=True)
         return {'msg': 'completed!'}
     except Exception as e:
         return {'mgs': 'Exception {} occured.'.format(e)}
@@ -197,12 +198,52 @@ def snapshot_restore():
     except Exception as e:
         return {'mgs': 'Exception {} occured.'.format(e)}  
 
+
+@app.route('/check_status', methods=["GET"])
+def check_status():
+    try:
+        simulation_running = False
+        status = None
+        if os.path.exists("./termination_flag"):
+            with open('./termination_flag', 'r') as f:
+                status = f.readline()
+                if status == "STOP":
+                    simulation_running = False
+                elif status == "RUNNING":
+                    simulation_running = True
+        
+        config = {}
+        if os.path.exists("./config.json"):
+            with open('./config.json', 'r') as b_file:
+                config = json.load(b_file)
+
+        hall_of_fame = None
+        if os.path.isfile('./snapshots/hall_of_fame.json'):
+            with open('./snapshots/hall_of_fame.json', 'rb') as hf_json:
+                hall_of_fame = json.load(hf_json)
+
+        return {
+            'msg': 'Current Status information.',
+            "running": simulation_running,
+            "config": config,
+            'hall_of_fame': hall_of_fame,
+            "status": status
+        }
+
+    except Exception as e:
+        return {'mgs': 'Exception {} occured.'.format(e)}            
+
+
 @app.route("/run", methods=["POST"])
 def run():
     try:
         os.chdir(ROOT_DIR)
         print(request)
         sim_data = request.get_json()
+        config_data = request.args.get('config')
+        with open('./config.json', 'w') as b_file:
+            b_file.write("{}".format(config_data))
+        os.chdir(ROOT_DIR)
         print(sim_data)
         pickles = []
         if os.path.isdir('./init') and os.path.isfile('./init/info'):
