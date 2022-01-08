@@ -50,4 +50,5 @@ def tcp_variant_fitness_wrapped(idx, lines=[], max_lines=100):
 
 
 def tcp_variant_fitness_write_switch(lines=[]):
-    parser_wrapper(file='{}/src/internet/model/tcp-congestion-ops.cc'.format(BASE_NS3_PATH), lines=lines)
+    # parser_wrapper(file='{}/src/internet/model/tcp-congestion-ops.cc'.format(BASE_NS3_PATH), lines=lines)
+    parser_wrapper(file='{}/src/internet/model/tcp-bic.cc'.format(BASE_NS3_PATH), lines=lines)
