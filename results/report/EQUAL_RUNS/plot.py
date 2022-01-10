@@ -8,12 +8,12 @@ baselineX = [i+1 for i in range(50)]
 
 
 runs = []
-files = os.listdir('json50')
+files = os.listdir('json50bic')
 n_files = len(files)
 
 for json_file in files:
     run = []
-    with open(os.path.join('json50', json_file), 'r') as f:
+    with open(os.path.join('json50bic', json_file), 'r') as f:
         j = json.load(f)
         for fit in j:
             run.append(fit['fitness'])
