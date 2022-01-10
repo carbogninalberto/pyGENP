@@ -315,7 +315,7 @@ class Incubator:
             self.last_best_individual_info = {"id": self.population[0].id, "fitness": self.population[0].fitness, "gen": self.current_generation}
             self.last_best_individual = copy.deepcopy(self.population[0])
             return self.population[0] # return best individual
-        elif self.current_gen > 1:
+        elif self.current_generation > 1:
             return self.last_best_individual
         return None
 
