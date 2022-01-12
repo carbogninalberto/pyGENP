@@ -1,0 +1,1 @@
+ssh root@runner-1 -L 5001:localhost:5000 -C './run.sh' | ssh root@runner-2 -L 5002:localhost:5000 -C './run.sh' | ssh root@runner-3 -L 5003:localhost:5000 -C './run.sh' | ssh root@runner-4 -L 5004:localhost:5000 -C './run.sh' | ssh root@runner-5 -L 5005:localhost:5000 -C './run.sh' | ssh root@runner-6 -L 5006:localhost:5000 -C './run.sh'
