@@ -36,16 +36,6 @@ segmentsAcked = (int) (14.163*(1.548)*(90.037)*(31.269));
 
 }
 
-for (int i = 0; i < 4; i++) { 
-	segmentsAcked = SlowStart (tcb, segmentsAcked);
-}
-
-
-
-for (int i = 0; i < 2; i++) { 
-	segmentsAcked = SlowStart (tcb, segmentsAcked);
-}
-
-for (int i = 0; i < 5; i++) { 
+for (int i = 0; i < 11; i++) { 
 	segmentsAcked = SlowStart (tcb, segmentsAcked);
 }
