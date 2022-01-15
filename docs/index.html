@@ -9,38 +9,58 @@
                 justify-content: center;
                 font-family: sans-serif;
             }
-            #container {
+            #container pre {
                 background: #171c24;
                 padding: 1rem;
                 margin: 0rem 1rem;
                 border-radius: 0.25rem;
+                font-family: monospace;
                 color: #b7bec9;
+                white-space: pre-wrap;       /* Since CSS 2.1 */
+                white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
+                white-space: -pre-wrap;      /* Opera 4-6 */
+                white-space: -o-pre-wrap;    /* Opera 7 */
+                word-wrap: break-word;       /* Internet Explorer 5.5+ */
+            }
+            h2, h3 {
+                justify-content: center;
+                display: flex;
             }
         </style>
         <script>
-            async function get_bic_runs() {
-                let res = await fetch('https://carbogninalberto.github.io/pyGENP/code/50_GEN_RUNS_BIC.json');
+            async function getRuns(file) {
+                let res = await fetch(`https://carbogninalberto.github.io/pyGENP/code/${file}.json`);
                 let data = await res.json();
                 console.log(data);
                 let container = document.getElementById('container');
-                let resNode = document.createElement('pre')
-                resNode.innerHTML = data;
-                container.append(resNode)
+                let title = document.createElement('h2');
+                title.innerHTML = file.toUpperCase();
+                container.append(title);
+                Object.keys(data).forEach(key => {
+                    let runContainer = document.createElement('div');
+                    let runTitle = document.createElement('h3');
+                    runTitle.innerHTML = key.toUpperCase();
+                    runContainer.append(runTitle);
+                    let resNode = document.createElement('pre');
+                    resNode.innerHTML = data[key];
+                    runContainer.append(resNode);
+                    container.append(runContainer);
+                })
             }
 
 
 
-            get_bic_runs();
+            getRuns('50_GEN_RUNS_BIC');
+            getRuns('50_GEN_RUNS');
             
         </script>
     </head>
 
     <body>
-
-
-        <h1>50 GEN RUNS BIC</h1>
         <div id="container">
-
+            <div>
+                
+            </div>
         </div>
     </body>
 </html>
