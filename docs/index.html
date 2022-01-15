@@ -10,7 +10,7 @@
         </style>
         <script>
             async function get_bic_runs() {
-                let res = await fetch('https://github.com/carbogninalberto/pyGENP/blob/main/docs/code/50_GEN_RUNS_BIC.json');
+                let res = await fetch('pyGENP/code/50_GEN_RUNS_BIC.json');
                 let data = await res.json();
                 console.log(data);
                 let container = document.getElementById('container');
