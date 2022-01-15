@@ -6,11 +6,20 @@
             body {
                 background-color: #22272e;
                 color: #fefefe;
+                justify-content: center;
+                font-family: sans-serif;
+            }
+            #container {
+                background: #171c24;
+                padding: 1rem;
+                margin: 0rem 1rem;
+                border-radius: 0.25rem;
+                color: #b7bec9;
             }
         </style>
         <script>
             async function get_bic_runs() {
-                let res = await fetch('pyGENP/code/50_GEN_RUNS_BIC.json');
+                let res = await fetch('https://carbogninalberto.github.io/pyGENP/code/50_GEN_RUNS_BIC.json');
                 let data = await res.json();
                 console.log(data);
                 let container = document.getElementById('container');
