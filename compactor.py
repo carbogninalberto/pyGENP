@@ -17,7 +17,11 @@ REGEX_USAGE_IF_THEN_ELSE = 'if\s\(.*({})'
 REGEX_IS_IF = '^if\s\(.*.*\).*$'
 REGEX_EXPRESSION = '\((\(?\d+.?\d*\)*(\*|\+|\-|\/)?)+'
 REGEX_MATH_EXP = '[[\(]?[-]?\d[\.\d]*[\)]?[\+\-\/\*]?'
-REGEX_MATCH_THE_EXPRESSION = '[[\(]?[-]?\d[\.\d]*[\)]?[[\(]?[-]?[a-zA-Z\d\-\+\*\/\(\)\.\_\>]*[\)]?[\+\-\/\*]?'
+REGEX_MATCH_THE_EXPRESSION = '[\(]*[-]?\d[\.\d]*[\)]?[\(]?[-]?[a-zA-Z\d\-\+\*\/\(\)\.\_\>]*[\)]?[\+\-\/\*]?'
+
+# old regex just for ref.
+#'[\(]*[-]?\d[\.\d]*[\)]?[\+\-\/\*]*[\(]?[-]?[a-zA-Z\d\-\+\*\/\(\)\.\_\>]*[\)]*[\+\-\/\*]?'
+#'[[\(]?[-]?\d[\.\d]*[\)]?[[\(]?[-]?[a-zA-Z\d\-\+\*\/\(\)\.\_\>]*[\)]?[\+\-\/\*]?'
 
 lines = []
 output_lines = []
@@ -130,7 +134,7 @@ with open(os.path.join(ROOT_FOLDER,FILE), 'r') as file:
                 if match[-1:] == ')' and match.count('(') < match.count(')'):
                     match = match[:-1]
                     
-                line_tmp = line_tmp.replace(str(match), str(eval(match)))
+                line_tmp = line_tmp.replace(str(match), str(round(eval(match), 3)))
             except Exception as e:
                 print("CANNOT SIMPLIFY EXPRESSIONS WITH VARIABLES")
             output_lines_tmp.append(line_tmp)
