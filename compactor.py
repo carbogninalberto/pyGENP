@@ -87,7 +87,8 @@ with open(os.path.join(ROOT_FOLDER,FILE), 'r') as file:
     prev = None
     for idx, line in enumerate(output_lines):
         # print("prev -> {}".format(prev))
-        if re.match(REGEX_IS_IF, line.strip()) and idx < len(output_lines)-1 and output_lines[idx+1].strip() == '} else {':
+        if re.match(REGEX_IS_IF, line.strip()) and idx < len(output_lines)-1 and output_lines[idx+1].strip() == '} else {' \
+            and line.strip().count('{') == 1 and line.strip().count('}') != 1:
             # output_lines_tmp.append(prev)
             if prev is not None:
                 output_lines_tmp.append(prev)
