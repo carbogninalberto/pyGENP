@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>RESULTS</title>
+        <style>
+            body {
+                background-color: #22272e;
+                color: #fefefe;
+            }
+        </style>
+        <script>
+            async function get_bic_runs() {
+                let res = await fetch('/code/50_GEN_RUNS_BIC.json');
+                let data = await res.json();
+                console.log(data);
+                let container = document.getElementById('container');
+                let resNode = document.createElement('pre')
+                resNode.innerHTML = data;
+                container.append(resNode)
+            }
+
+
+
+            get_bic_runs();
+            
+        </script>
+    </head>
+
+    <body>
+
+
+        <h1>50 GEN RUNS BIC</h1>
+        <div id="container">
+
+        </div>
+    </body>
+</html>
