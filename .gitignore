@@ -29,3 +29,5 @@ results/report/*.zip
 
 config.json
 termination_flag
+
+tmp_compactor

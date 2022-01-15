@@ -1,5 +1,12 @@
 import os
 import re
+import sys
+
+print(sys.argv)
+
+ROOT_FOLDER = sys.argv[1] if len(sys.argv) > 1 else './results/compactor_tests'
+FILE = "{}.cc".format(sys.argv[2] if len(sys.argv) > 2 else '29')
+FILE_COMPACTED = "{}_compacted.cc".format(sys.argv[2] if len(sys.argv) > 2 else '29')
 
 
 REGEX_DECLARE_INT = r'(?<=int\s)(.*)(?=\s=\s.*;)'
@@ -15,7 +22,7 @@ REGEX_MATCH_THE_EXPRESSION = '[[\(]?[-]?\d[\.\d]*[\)]?[[\(]?[-]?[a-zA-Z\d\-\+\*\
 lines = []
 output_lines = []
 
-with open(os.path.join('./results/compactor_tests','1.cc'), 'r') as file:
+with open(os.path.join(ROOT_FOLDER,FILE), 'r') as file:
     lines = file.readlines();
 
     #### REMOVING EMPTY LINES
@@ -50,7 +57,7 @@ with open(os.path.join('./results/compactor_tests','1.cc'), 'r') as file:
     for var in variables:
         for line in output_lines_tmp:
             usage_assignment = re.search(REGEX_USAGE_ASSIGNMENT_LINE.format(var), line)
-            print("usage_assignment -> {}".format(usage_assignment))
+            # print("usage_assignment -> {}".format(usage_assignment))
             if usage_assignment and var not in variables_to_use:
                 variables_to_use.append(var)
                 continue
@@ -157,5 +164,5 @@ with open(os.path.join('./results/compactor_tests','1.cc'), 'r') as file:
         output_lines.append("""\nfor (int i = 0; i < {0}; i++) {{ \n\t{1}\n}}\n\n""".format(len(loop_lines)+1, loop_lines[0]))
 
 
-with open(os.path.join('./results/compactor_tests','1_compacted.cc'), 'w+') as file:
+with open(os.path.join(ROOT_FOLDER,FILE_COMPACTED), 'w+') as file:
     file.writelines(output_lines)
