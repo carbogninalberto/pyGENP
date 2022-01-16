@@ -30,7 +30,7 @@
                         let runTitle = document.createElement('h3');
                         runTitle.innerHTML = key.toUpperCase();
                         let showButton = document.createElement('button');
-                        showButton.innerHTML = 'Hide Code';
+                        showButton.innerHTML = 'Show Code';
                         showButton.addEventListener('click', (e) => {
                             console.log(e.target)
                             let codeDiv = document.getElementById(`${file}_${key}`);
@@ -47,7 +47,9 @@
                         runContainer.append(headerContainer);
 
                         let codeContainer = document.createElement('div');
-                        codeContainer.setAttribute('id', `${file}_${key}`)
+                        codeContainer.setAttribute('id', `${file}_${key}`);
+                        codeContainer.classList.add('pre-container');
+                        codeContainer.classList.add('hidden');
                         
                         let resNodeOriginal = document.createElement('pre');
                         resNodeOriginal.classList.add('language-cpp');

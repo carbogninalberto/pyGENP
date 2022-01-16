@@ -47,7 +47,7 @@ body {
 #container pre {
   background: #171c24;
   /* padding: 1rem; */
-  margin: 0rem 2rem;
+  /* margin: 0rem 2rem; */
   border-radius: 0.25rem;
   font-family: monospace;
   color: #b7bec9;
@@ -56,6 +56,8 @@ body {
   white-space: -pre-wrap;      /* Opera 4-6 */
   white-space: -o-pre-wrap;    /* Opera 7 */
   word-wrap: break-word;       /* Internet Explorer 5.5+ */
+  margin-bottom: 0.5rem;
+  flex: 1 1 0px;
 }
 h2, h3 {
   justify-content: center;
@@ -107,7 +109,7 @@ pre.line-numbers > code {
   text-align: right;
 }
 .hidden {
-  display: none;
+  display: none !important;
 }
 
 button {
@@ -132,4 +134,13 @@ button:hover {
   padding: 0 1rem;
   border-radius: 1rem 1rem 0rem 0;
   background: #2c313a;
+  margin-bottom: 1rem;
+}
+
+.pre-container {
+  display: flex;
+  margin: 0 2rem;
+}
+.pre-container:first-child {
+  width: 50%;
 }
