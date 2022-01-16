@@ -2,65 +2,97 @@
 <html>
     <head>
         <title>RESULTS</title>
-        <style>
-            body {
-                background-color: #22272e;
-                color: #fefefe;
-                justify-content: center;
-                font-family: sans-serif;
-            }
-            #container pre {
-                background: #171c24;
-                padding: 1rem;
-                margin: 0rem 1rem;
-                border-radius: 0.25rem;
-                font-family: monospace;
-                color: #b7bec9;
-                white-space: pre-wrap;       /* Since CSS 2.1 */
-                white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
-                white-space: -pre-wrap;      /* Opera 4-6 */
-                white-space: -o-pre-wrap;    /* Opera 7 */
-                word-wrap: break-word;       /* Internet Explorer 5.5+ */
-            }
-            h2, h3 {
-                justify-content: center;
-                display: flex;
-            }
-        </style>
-        <script>
-            async function getRuns(file) {
-                let res = await fetch(`https://carbogninalberto.github.io/pyGENP/code/${file}.json`);
-                let data = await res.json();
-                console.log(data);
-                let container = document.getElementById('container');
-                let title = document.createElement('h2');
-                title.innerHTML = file.toUpperCase();
-                container.append(title);
-                Object.keys(data).forEach(key => {
-                    let runContainer = document.createElement('div');
-                    let runTitle = document.createElement('h3');
-                    runTitle.innerHTML = key.toUpperCase();
-                    runContainer.append(runTitle);
-                    let resNode = document.createElement('pre');
-                    resNode.innerHTML = data[key];
-                    runContainer.append(resNode);
-                    container.append(runContainer);
-                })
-            }
-
-
-
-            getRuns('50_GEN_RUNS_BIC');
-            getRuns('50_GEN_RUNS');
-            
-        </script>
+        <link href="assets/prism.css" rel="stylesheet" />
+        <link href="assets/global.css" rel="stylesheet" />
+        
     </head>
 
-    <body>
+    <body data-simplebar>
         <div id="container">
             <div>
                 
             </div>
         </div>
+
+        <script async="false">
+            async function getRuns(file) {
+                let res = await fetch(`https://carbogninalberto.github.io/pyGENP/code/${file}.json`);
+                let data = await res.json();
+                let container = document.getElementById('container');
+                let title = document.createElement('h2');
+                title.innerHTML = file.toUpperCase();
+                container.append(title);
+                Object.keys(data).forEach(key => {
+                    if (!key.includes('original')) {
+                        let runContainer = document.createElement('div');
+                        let runTitle = document.createElement('h3');
+                        runTitle.innerHTML = key.toUpperCase();
+                        runContainer.append(runTitle);
+                        let codeContainer = document.createElement('div');
+                        
+                        let resNodeOriginal = document.createElement('pre');
+                        resNodeOriginal.classList.add('language-cpp');
+                        resNodeOriginal.classList.add('line-numbers');
+                        let codeNode = document.createElement('code');
+                        codeNode.classList.add('language-cpp');
+                        codeNode.classList.add('line-numbers');
+                        codeNode.innerHTML = data[`${key}_original`];
+                        resNodeOriginal.append(codeNode);
+
+                        // compacted
+                        let resNode = document.createElement('pre');
+                        resNode.classList.add('language-cpp');
+                        resNode.classList.add('line-numbers');
+                        let codeNode = document.createElement('code');
+                        codeNode.classList.add('language-cpp');
+                        codeNode.classList.add('line-numbers');
+                        codeNode.innerHTML = data[key];
+                        resNode.append(codeNode);
+
+                        codeContainer.append(resNodeOriginal);
+                        codeContainer.append(resNode);
+
+                        runContainer.append(codeContainer);
+                        container.append(runContainer);
+                    }
+                   
+                })
+            }
+
+
+            window.addEventListener('DOMContentLoaded', async () => {
+                await getRuns('50_GEN_RUNS_BIC');
+                await getRuns('50_GEN_RUNS');
+
+                Prism.hooks.add('after-highlight', function (env) {
+                    // works only for <code> wrapped inside <pre data-line-numbers> (not inline)
+                    var pre = env.element.parentNode;
+                    if (!pre || !/pre/i.test(pre.nodeName) || pre.className.indexOf('line-numbers') === -1) {
+                        return;
+                    }
+
+                    var linesNum = (1 + env.code.split('\n').length);
+                    var lineNumbersWrapper;
+
+                    lines = new Array(linesNum);
+                    lines = lines.join('<span></span>');
+
+                    lineNumbersWrapper = document.createElement('span');
+                    lineNumbersWrapper.className = 'line-numbers-rows';
+                    lineNumbersWrapper.innerHTML = lines;
+
+                    if (pre.hasAttribute('data-start')) {
+                        pre.style.counterReset = 'linenumber ' + (parseInt(pre.getAttribute('data-start'), 10) - 1);
+                    }
+
+                    env.element.appendChild(lineNumbersWrapper);
+
+                });
+                Prism.highlightAll();
+            });
+            
+            
+        </script>
+        <script src="assets/prism.js" defer></script>
     </body>
 </html>

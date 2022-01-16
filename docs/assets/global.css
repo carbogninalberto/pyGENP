@@ -1,0 +1,108 @@
+/* width */
+pre::-webkit-scrollbar {
+  width: .35rem;
+}
+
+/* Track */
+pre::-webkit-scrollbar-track {
+  background: #1c1f24; 
+}
+ 
+/* Handle */
+pre::-webkit-scrollbar-thumb {
+  background: #2c313a;
+}
+
+/* Handle on hover */
+pre::-webkit-scrollbar-thumb:hover {
+  background: #373d48; 
+}
+
+/* width */
+body::-webkit-scrollbar {
+  width: .8rem;
+}
+
+/* Track */
+body::-webkit-scrollbar-track {
+  background: #22272e; 
+}
+ 
+/* Handle */
+body::-webkit-scrollbar-thumb {
+  background: #676c76;
+}
+
+/* Handle on hover */
+body::-webkit-scrollbar-thumb:hover {
+  background: #838893; 
+}
+
+body {
+  background-color: #22272e;
+  color: #fefefe;
+  justify-content: center;
+  font-family: sans-serif;
+}
+#container pre {
+  background: #171c24;
+  /* padding: 1rem; */
+  margin: 0rem 2rem;
+  border-radius: 0.25rem;
+  font-family: monospace;
+  color: #b7bec9;
+  white-space: pre-wrap;       /* Since CSS 2.1 */
+  white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
+  white-space: -pre-wrap;      /* Opera 4-6 */
+  white-space: -o-pre-wrap;    /* Opera 7 */
+  word-wrap: break-word;       /* Internet Explorer 5.5+ */
+}
+h2, h3 {
+  justify-content: center;
+  display: flex;
+}
+
+:not(pre)>code[class*=language-], pre[class*=language-] {
+  background: #171c24;
+}
+
+pre.line-numbers {
+  position: relative;
+  padding-left: 3.8em;
+  counter-reset: linenumber;
+}
+
+pre.line-numbers > code {
+  position: relative;
+}
+
+.line-numbers .line-numbers-rows {
+  position: absolute;
+  pointer-events: none;
+  top: 0;
+  font-size: 100%;
+  left: -3.8em;
+  width: 3em; /* works for line-numbers below 1000 lines */
+  letter-spacing: -1px;
+  border-right: 1px solid #999;
+
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+
+}
+
+.line-numbers-rows > span {
+  pointer-events: none;
+  display: block;
+  counter-increment: linenumber;
+}
+
+.line-numbers-rows > span:before {
+  content: counter(linenumber);
+  color: #999;
+  display: block;
+  padding-right: 0.8em;
+  text-align: right;
+}
