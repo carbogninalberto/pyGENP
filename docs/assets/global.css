@@ -140,6 +140,7 @@ button:hover {
 .pre-container {
   display: flex;
   margin: 0 2rem;
+  font-size: .75rem;
 }
 .pre-container:first-child {
   width: 50%;
