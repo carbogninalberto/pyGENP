@@ -106,3 +106,30 @@ pre.line-numbers > code {
   padding-right: 0.8em;
   text-align: right;
 }
+.hidden {
+  display: none;
+}
+
+button {
+  color: #fff;
+  padding: 0.5rem 1rem;
+  border-radius: 0.25rem;
+  background: #3e454e;
+  border: 0;
+  cursor: pointer;
+  margin: 1rem 0;
+}
+
+button:hover {
+  background: #58616c;
+}
+
+.code-header {
+  display: flex;
+  justify-content: space-between;
+  margin: 0rem 2rem;
+  border: 0.125rem solid #2c313a;
+  padding: 0 1rem;
+  border-radius: 1rem 1rem 0rem 0;
+  background: #2c313a;
+}

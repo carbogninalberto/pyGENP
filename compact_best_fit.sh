@@ -15,7 +15,7 @@ do
     source venv/bin/activate
     python compactor.py "./tmp_compactor/run_$RUN" 29
     cd tmp_compactor/run_$RUN
-    clang-format -i -style=WebKit *_compacted.cc
+    clang-format -i -style=WebKit *.cc
     cd ../../
     python compactor_doc.py "./tmp_compactor/run_$RUN" 29 "$2.json" "run_$RUN"
 done

@@ -25,19 +25,39 @@
                 Object.keys(data).forEach(key => {
                     if (!key.includes('original')) {
                         let runContainer = document.createElement('div');
+                        let headerContainer = document.createElement('div');
+                        headerContainer.classList.add('code-header');
                         let runTitle = document.createElement('h3');
                         runTitle.innerHTML = key.toUpperCase();
-                        runContainer.append(runTitle);
+                        let showButton = document.createElement('button');
+                        showButton.innerHTML = 'Hide Code';
+                        showButton.addEventListener('click', (e) => {
+                            console.log(e.target)
+                            let codeDiv = document.getElementById(`${file}_${key}`);
+                            if (codeDiv.classList.contains('hidden')) {
+                                codeDiv.classList.remove('hidden');
+                                e.target.innerHTML = 'Hide Code';
+                            } else {
+                                codeDiv.classList.add('hidden')
+                                e.target.innerHTML = 'Show Code';
+                            }
+                        })
+                        headerContainer.append(runTitle);
+                        headerContainer.append(showButton);
+                        runContainer.append(headerContainer);
+
                         let codeContainer = document.createElement('div');
+                        codeContainer.setAttribute('id', `${file}_${key}`)
                         
                         let resNodeOriginal = document.createElement('pre');
                         resNodeOriginal.classList.add('language-cpp');
                         resNodeOriginal.classList.add('line-numbers');
-                        let codeNode = document.createElement('code');
-                        codeNode.classList.add('language-cpp');
-                        codeNode.classList.add('line-numbers');
-                        codeNode.innerHTML = data[`${key}_original`];
-                        resNodeOriginal.append(codeNode);
+                        let codeNodeOriginal = document.createElement('code');
+                        codeNodeOriginal.classList.add('language-cpp');
+                        codeNodeOriginal.classList.add('line-numbers');
+                        console.log("getting", `${key}_original`)
+                        codeNodeOriginal.innerHTML = data[`${key}_original`];
+                        resNodeOriginal.append(codeNodeOriginal);
 
                         // compacted
                         let resNode = document.createElement('pre');
