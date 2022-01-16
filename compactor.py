@@ -13,6 +13,7 @@ REGEX_DECLARE_INT = r'(?<=int\s)(.*)(?=\s=\s.*;)'
 REGEX_DECLARE_FLOAT = r'(?<=float\s)(.*)(?=\s=\s.*;)'
 REGEX_USAGE_ASSIGNMENT = '.*(?<=\s=\s)({})(?=.*;)'
 REGEX_USAGE_ASSIGNMENT_LINE = '.*\s=\s.*({})(?=.*;)' #'[.*\s=\s.*]*({})(?=.*;)'
+REGEX_ASSIGN_TO = '^.*{}\s=\s'
 REGEX_USAGE_IF_THEN_ELSE = 'if\s\(.*({})'
 REGEX_IS_IF = '^if\s\(.*.*\).*$'
 REGEX_EXPRESSION = '\((\(?\d+.?\d*\)*(\*|\+|\-|\/)?)+'
@@ -61,8 +62,9 @@ with open(os.path.join(ROOT_FOLDER,FILE), 'r') as file:
     for var in variables:
         for line in output_lines_tmp:
             usage_assignment = re.search(REGEX_USAGE_ASSIGNMENT_LINE.format(var), line)
+            assign_to = re.search(REGEX_ASSIGN_TO.format(var), line)
             # print("usage_assignment -> {}".format(usage_assignment))
-            if usage_assignment and var not in variables_to_use:
+            if usage_assignment and var not in variables_to_use and not assign_to:
                 variables_to_use.append(var)
                 continue
             

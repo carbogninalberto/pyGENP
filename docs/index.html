@@ -25,6 +25,7 @@
                 Object.keys(data).forEach(key => {
                     if (!key.includes('original')) {
                         let runContainer = document.createElement('div');
+                        runContainer.setAttribute('id', `${file}_${key}_tab`);
                         let headerContainer = document.createElement('div');
                         headerContainer.classList.add('code-header');
                         let runTitle = document.createElement('h3');
@@ -83,8 +84,8 @@
 
 
             window.addEventListener('DOMContentLoaded', async () => {
-                await getRuns('50_GEN_RUNS_BIC');
                 await getRuns('50_GEN_RUNS');
+                await getRuns('50_GEN_RUNS_BIC');
 
                 Prism.hooks.add('after-highlight', function (env) {
                     // works only for <code> wrapped inside <pre data-line-numbers> (not inline)
