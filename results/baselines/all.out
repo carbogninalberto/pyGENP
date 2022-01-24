@@ -42,3 +42,24 @@ algorithm            throughput (250 B)      throughput (1500 B)     throughput 
 ------------------------------------------------------------------------------------------------------------------------------------------------------------
 TcpNewReno           14.061 Mbit/s           55.246 Mbit/s           53.840 Mbit/s           54.854 Mbit/s           55.252 Mbit/s
 ------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+CONFIGURATION GaussMarkovMobilityModel
+Simulation Duration: 5s
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+algorithm            throughput (250 B)      throughput (1500 B)     throughput (3000 B)     throughput (7500 B)     throughput (15000 B)
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+TcpNewReno           34.800 Mbit/s           52.410 Mbit/s           52.805 Mbit/s           54.063 Mbit/s           55.225 Mbit/s
+TcpBic               34.800 Mbit/s           52.410 Mbit/s           52.805 Mbit/s           54.063 Mbit/s           55.225 Mbit/s
+TcpHybla             34.800 Mbit/s           52.410 Mbit/s           52.805 Mbit/s           54.063 Mbit/s           55.225 Mbit/s
+TcpHighSpeed         34.800 Mbit/s           52.410 Mbit/s           52.805 Mbit/s           54.063 Mbit/s           55.225 Mbit/s
+TcpHtcp              34.800 Mbit/s           52.410 Mbit/s           52.805 Mbit/s           54.063 Mbit/s           55.225 Mbit/s
+TcpVegas             34.868 Mbit/s           55.235 Mbit/s           55.710 Mbit/s           54.863 Mbit/s           55.225 Mbit/s
+TcpScalable          34.800 Mbit/s           52.410 Mbit/s           52.805 Mbit/s           54.063 Mbit/s           55.225 Mbit/s
+TcpVeno              34.800 Mbit/s           52.410 Mbit/s           52.805 Mbit/s           54.063 Mbit/s           55.225 Mbit/s
+TcpYeah              35.158 Mbit/s           51.913 Mbit/s           52.805 Mbit/s           54.063 Mbit/s           55.225 Mbit/s
+TcpIllinois          34.800 Mbit/s           52.410 Mbit/s           52.805 Mbit/s           54.063 Mbit/s           55.225 Mbit/s
+TcpWestwood          34.800 Mbit/s           52.410 Mbit/s           52.805 Mbit/s           54.063 Mbit/s           55.225 Mbit/s
+TcpWestwoodPlus      34.800 Mbit/s           52.410 Mbit/s           52.805 Mbit/s           54.063 Mbit/s           55.225 Mbit/s
+TcpLedbat            34.800 Mbit/s           52.410 Mbit/s           52.805 Mbit/s           54.063 Mbit/s           55.225 Mbit/s
+------------------------------------------------------------------------------------------------------------------------------------------------------------
