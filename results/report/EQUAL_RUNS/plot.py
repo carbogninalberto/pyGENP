@@ -3,7 +3,7 @@ import os
 import matplotlib.pyplot as plt
 import statistics
 
-baselineY = [52.639411764706 for i in range(50)]
+baselineY = [52.337 for i in range(50)]
 baselineX = [i+1 for i in range(50)]
 
 
@@ -52,9 +52,11 @@ plt.fill_between(baselineX, y1, y2,
                  alpha=0.1)          # Transparency of the fill
 plt.xticks(baselineX)
 
-plt.text(45.5, 54.9, 'fitness')
+# plt.text(47.6, 55.1, 'fitness')
+plt.text(47.6, 54.82, 'fitness')
 
-plt.text(45.5, 52.75, 'baseline', color='red')
+# plt.text(45.3, 52.10, 'TCP NewReno', color='red')
+plt.text(47.5, 52.40, 'TCP Bic', color='red')
 # Show the plot
 # plt.show()
 figure = plt.gcf()
