@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 BASE_NS3_PATH = os.getenv('BASE_NS3_PATH')
+TCP_CONGESTION = os.getenv('TCP_CONGESTION')
 
 # @jit
 def tcp_variant_fitness(idx):
@@ -51,4 +52,4 @@ def tcp_variant_fitness_wrapped(idx, lines=[], max_lines=100):
 
 def tcp_variant_fitness_write_switch(lines=[]):
     # parser_wrapper(file='{}/src/internet/model/tcp-congestion-ops.cc'.format(BASE_NS3_PATH), lines=lines)
-    parser_wrapper(file='{}/src/internet/model/tcp-bic.cc'.format(BASE_NS3_PATH), lines=lines)
+    parser_wrapper(file='{}/src/internet/model/{}.cc'.format(BASE_NS3_PATH, TCP_CONGESTION), lines=lines)

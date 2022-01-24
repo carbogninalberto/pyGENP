@@ -60,8 +60,8 @@ def output_parsed_file(file='prova_parsed.cc', lines=[]):
     f.close()
 
 
-def parser_wrapper(file='', lines=[]):
-    out = parser(file=file, substitute_lines=lines)
+def parser_wrapper(file='', lines=[], tag="//REPLACE"):
+    out = parser(file=file, substitute_lines=lines, tag=tag)
     output_parsed_file(file=file, lines=out)
 
 
