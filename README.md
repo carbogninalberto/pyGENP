@@ -1,3 +1,13 @@
+# DISCLAMER
+The current library is highly coupled to the project work done for my TCP algorithms optimization thesis. The reason behind this is the strict time required to do both jobs at the same time. Said this, the library is not usable standalone yet. 
+
+`Don't worry, there are good news!`
+
+In the branch `road-to-lib-release` the milestone is to refactor the library to be standalone. A very very brief roadmap is the following:
+
+- version 2: decouple the project
+- version 2.1: remove `anytree` and reimplement trees manipulation with `rust`
+
 # PYGENP Genetic Programming library
 A (very) essential Genetic Programming library in Python. 
 
