@@ -2,18 +2,21 @@ import json
 import os
 import matplotlib.pyplot as plt
 import statistics
+import numpy as np
 
 baselineY = [52.337 for i in range(50)]
 baselineX = [i+1 for i in range(50)]
 
+# ALGO = "json50bic"
+ALGO = "json50"
 
 runs = []
-files = os.listdir('json50bic')
+files = os.listdir(ALGO)
 n_files = len(files)
 
 for json_file in files:
     run = []
-    with open(os.path.join('json50bic', json_file), 'r') as f:
+    with open(os.path.join(ALGO, json_file), 'r') as f:
         j = json.load(f)
         for fit in j:
             run.append(fit['fitness'])
@@ -50,7 +53,7 @@ plt.fill_between(baselineX, y1, y2,
                  facecolor="orange", # The fill color
                  color='blue',       # The outline color
                  alpha=0.1)          # Transparency of the fill
-plt.xticks(baselineX)
+plt.xticks(np.arange(min(baselineX)-1, max(baselineX)+1, 5))
 
 # plt.text(47.6, 55.1, 'fitness')
 plt.text(47.6, 54.82, 'fitness')
@@ -61,4 +64,4 @@ plt.text(47.5, 52.40, 'TCP Bic', color='red')
 # plt.show()
 figure = plt.gcf()
 figure.set_size_inches(14, 8)
-plt.savefig('plot.png', dpi=72)
+plt.savefig(ALGO+'_results/plot.svg', dpi=72)
