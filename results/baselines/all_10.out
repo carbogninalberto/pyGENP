@@ -1,0 +1,145 @@
+CONFIGURATION
+Simulation Duration: 5s
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+algorithm            throughput (250 B)      throughput (1500 B)     throughput (3000 B)     throughput (7500 B)     throughput (15000 B)
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+TcpNewReno           35.400 Mbit/s           52.278 Mbit/s           53.735 Mbit/s           55.388 Mbit/s           55.625 Mbit/s
+TcpBic               35.029 Mbit/s           53.572 Mbit/s           54.305 Mbit/s           54.262 Mbit/s           55.100 Mbit/s
+TcpHybla             35.056 Mbit/s           52.855 Mbit/s           53.420 Mbit/s           54.937 Mbit/s           55.550 Mbit/s
+TcpHighSpeed         35.339 Mbit/s           52.843 Mbit/s           52.700 Mbit/s           55.375 Mbit/s           54.550 Mbit/s
+TcpHtcp              35.150 Mbit/s           51.798 Mbit/s           53.115 Mbit/s           54.325 Mbit/s           55.175 Mbit/s
+TcpVegas             28.494 Mbit/s           54.002 Mbit/s           55.500 Mbit/s           56.613 Mbit/s           55.325 Mbit/s
+TcpScalable          35.238 Mbit/s           51.620 Mbit/s           53.220 Mbit/s           53.637 Mbit/s           55.125 Mbit/s
+TcpVeno              35.020 Mbit/s           52.842 Mbit/s           53.955 Mbit/s           56.037 Mbit/s           55.550 Mbit/s
+TcpYeah              35.847 Mbit/s           52.355 Mbit/s           53.925 Mbit/s           54.462 Mbit/s           55.650 Mbit/s
+TcpIllinois          35.056 Mbit/s           52.365 Mbit/s           53.855 Mbit/s           54.963 Mbit/s           55.100 Mbit/s
+TcpWestwood          35.267 Mbit/s           52.452 Mbit/s           53.585 Mbit/s           54.512 Mbit/s           55.825 Mbit/s
+TcpWestwoodPlus      35.135 Mbit/s           53.540 Mbit/s           54.215 Mbit/s           54.312 Mbit/s           55.450 Mbit/s
+TcpLedbat            35.418 Mbit/s           52.827 Mbit/s           53.500 Mbit/s           55.262 Mbit/s           54.925 Mbit/s
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+TcpNewReno           35.390 Mbit/s           52.812 Mbit/s           54.170 Mbit/s           54.425 Mbit/s           55.150 Mbit/s
+TcpBic               35.564 Mbit/s           52.655 Mbit/s           53.130 Mbit/s           55.525 Mbit/s           56.275 Mbit/s
+TcpHybla             35.506 Mbit/s           52.437 Mbit/s           53.835 Mbit/s           54.575 Mbit/s           54.925 Mbit/s
+TcpHighSpeed         35.089 Mbit/s           53.178 Mbit/s           53.500 Mbit/s           55.987 Mbit/s           54.575 Mbit/s
+TcpHtcp              34.803 Mbit/s           53.298 Mbit/s           53.600 Mbit/s           55.325 Mbit/s           55.600 Mbit/s
+TcpVegas             28.559 Mbit/s           54.837 Mbit/s           55.890 Mbit/s           55.038 Mbit/s           55.625 Mbit/s
+TcpScalable          35.497 Mbit/s           52.237 Mbit/s           53.660 Mbit/s           54.625 Mbit/s           55.175 Mbit/s
+TcpVeno              35.544 Mbit/s           53.110 Mbit/s           52.780 Mbit/s           55.375 Mbit/s           55.150 Mbit/s
+TcpYeah              35.651 Mbit/s           53.013 Mbit/s           53.325 Mbit/s           54.350 Mbit/s           54.775 Mbit/s
+TcpIllinois          35.220 Mbit/s           51.922 Mbit/s           54.015 Mbit/s           54.362 Mbit/s           54.825 Mbit/s
+TcpWestwood          35.411 Mbit/s           52.913 Mbit/s           54.350 Mbit/s           55.075 Mbit/s           55.500 Mbit/s
+TcpWestwoodPlus      34.870 Mbit/s           52.070 Mbit/s           54.805 Mbit/s           55.213 Mbit/s           55.200 Mbit/s
+TcpLedbat            34.999 Mbit/s           53.073 Mbit/s           54.220 Mbit/s           54.712 Mbit/s           56.050 Mbit/s
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+TcpNewReno           34.764 Mbit/s           53.175 Mbit/s           53.645 Mbit/s           54.462 Mbit/s           54.975 Mbit/s
+TcpBic               35.660 Mbit/s           52.070 Mbit/s           53.420 Mbit/s           54.450 Mbit/s           55.550 Mbit/s
+TcpHybla             35.400 Mbit/s           51.490 Mbit/s           53.080 Mbit/s           54.950 Mbit/s           54.800 Mbit/s
+TcpHighSpeed         35.574 Mbit/s           52.852 Mbit/s           53.050 Mbit/s           55.312 Mbit/s           55.150 Mbit/s
+TcpHtcp              34.979 Mbit/s           52.285 Mbit/s           54.530 Mbit/s           55.087 Mbit/s           55.600 Mbit/s
+TcpVegas             28.618 Mbit/s           54.100 Mbit/s           55.875 Mbit/s           56.475 Mbit/s           54.725 Mbit/s
+TcpScalable          35.447 Mbit/s           52.667 Mbit/s           52.715 Mbit/s           55.238 Mbit/s           55.700 Mbit/s
+TcpVeno              35.615 Mbit/s           52.340 Mbit/s           53.615 Mbit/s           54.825 Mbit/s           54.200 Mbit/s
+TcpYeah              35.471 Mbit/s           52.375 Mbit/s           51.905 Mbit/s           54.250 Mbit/s           54.650 Mbit/s
+TcpIllinois          35.003 Mbit/s           52.495 Mbit/s           54.185 Mbit/s           54.613 Mbit/s           55.325 Mbit/s
+TcpWestwood          35.124 Mbit/s           52.195 Mbit/s           53.355 Mbit/s           55.037 Mbit/s           55.525 Mbit/s
+TcpWestwoodPlus      35.070 Mbit/s           52.560 Mbit/s           53.650 Mbit/s           54.462 Mbit/s           55.025 Mbit/s
+TcpLedbat            35.050 Mbit/s           52.087 Mbit/s           54.405 Mbit/s           54.675 Mbit/s           54.550 Mbit/s
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+TcpNewReno           35.251 Mbit/s           52.213 Mbit/s           52.625 Mbit/s           54.875 Mbit/s           55.325 Mbit/s
+TcpBic               35.719 Mbit/s           51.518 Mbit/s           54.155 Mbit/s           54.625 Mbit/s           55.400 Mbit/s
+TcpHybla             35.172 Mbit/s           51.755 Mbit/s           53.395 Mbit/s           54.762 Mbit/s           55.050 Mbit/s
+TcpHighSpeed         35.141 Mbit/s           51.883 Mbit/s           53.610 Mbit/s           55.150 Mbit/s           55.250 Mbit/s
+TcpHtcp              35.264 Mbit/s           51.865 Mbit/s           53.570 Mbit/s           55.275 Mbit/s           56.125 Mbit/s
+TcpVegas             28.526 Mbit/s           54.095 Mbit/s           55.545 Mbit/s           55.675 Mbit/s           55.100 Mbit/s
+TcpScalable          34.854 Mbit/s           52.133 Mbit/s           53.415 Mbit/s           54.175 Mbit/s           54.900 Mbit/s
+TcpVeno              35.264 Mbit/s           52.265 Mbit/s           53.610 Mbit/s           53.587 Mbit/s           55.525 Mbit/s
+TcpYeah              35.296 Mbit/s           53.155 Mbit/s           52.410 Mbit/s           54.650 Mbit/s           55.000 Mbit/s
+TcpIllinois          35.373 Mbit/s           51.587 Mbit/s           53.755 Mbit/s           54.963 Mbit/s           54.950 Mbit/s
+TcpWestwood          35.023 Mbit/s           53.162 Mbit/s           53.280 Mbit/s           54.512 Mbit/s           54.225 Mbit/s
+TcpWestwoodPlus      35.228 Mbit/s           52.782 Mbit/s           53.755 Mbit/s           55.038 Mbit/s           55.375 Mbit/s
+TcpLedbat            35.054 Mbit/s           52.785 Mbit/s           53.925 Mbit/s           55.162 Mbit/s           55.175 Mbit/s
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+TcpNewReno           35.179 Mbit/s           51.547 Mbit/s           53.825 Mbit/s           54.663 Mbit/s           55.250 Mbit/s
+TcpBic               35.204 Mbit/s           52.220 Mbit/s           53.460 Mbit/s           55.287 Mbit/s           54.325 Mbit/s
+TcpHybla             35.319 Mbit/s           52.388 Mbit/s           54.065 Mbit/s           54.825 Mbit/s           54.750 Mbit/s
+TcpHighSpeed         35.398 Mbit/s           52.510 Mbit/s           53.350 Mbit/s           55.250 Mbit/s           55.450 Mbit/s
+TcpHtcp              34.682 Mbit/s           52.838 Mbit/s           54.380 Mbit/s           56.000 Mbit/s           55.875 Mbit/s
+TcpVegas             34.908 Mbit/s           53.690 Mbit/s           55.840 Mbit/s           57.025 Mbit/s           55.150 Mbit/s
+TcpScalable          34.690 Mbit/s           52.223 Mbit/s           53.540 Mbit/s           54.650 Mbit/s           55.450 Mbit/s
+TcpVeno              35.620 Mbit/s           52.623 Mbit/s           53.625 Mbit/s           54.412 Mbit/s           54.525 Mbit/s
+TcpYeah              35.487 Mbit/s           52.610 Mbit/s           54.170 Mbit/s           55.075 Mbit/s           54.775 Mbit/s
+TcpIllinois          35.163 Mbit/s           52.702 Mbit/s           54.795 Mbit/s           53.788 Mbit/s           55.075 Mbit/s
+TcpWestwood          35.005 Mbit/s           52.993 Mbit/s           53.620 Mbit/s           54.062 Mbit/s           54.575 Mbit/s
+TcpWestwoodPlus      35.447 Mbit/s           52.393 Mbit/s           53.240 Mbit/s           54.800 Mbit/s           55.525 Mbit/s
+TcpLedbat            34.949 Mbit/s           52.138 Mbit/s           53.225 Mbit/s           54.475 Mbit/s           55.100 Mbit/s
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+TcpNewReno           35.496 Mbit/s           52.275 Mbit/s           53.055 Mbit/s           55.012 Mbit/s           55.675 Mbit/s
+TcpBic               35.339 Mbit/s           52.840 Mbit/s           52.805 Mbit/s           54.550 Mbit/s           55.150 Mbit/s
+TcpHybla             35.329 Mbit/s           52.313 Mbit/s           54.295 Mbit/s           54.187 Mbit/s           54.875 Mbit/s
+TcpHighSpeed         35.197 Mbit/s           51.760 Mbit/s           53.500 Mbit/s           54.562 Mbit/s           54.775 Mbit/s
+TcpHtcp              35.033 Mbit/s           52.818 Mbit/s           52.790 Mbit/s           55.300 Mbit/s           54.925 Mbit/s
+TcpVegas             28.548 Mbit/s           54.725 Mbit/s           55.575 Mbit/s           55.800 Mbit/s           55.925 Mbit/s
+TcpScalable          35.635 Mbit/s           51.560 Mbit/s           54.430 Mbit/s           55.225 Mbit/s           55.275 Mbit/s
+TcpVeno              35.102 Mbit/s           52.090 Mbit/s           53.575 Mbit/s           54.500 Mbit/s           55.400 Mbit/s
+TcpYeah              35.044 Mbit/s           52.193 Mbit/s           54.605 Mbit/s           54.713 Mbit/s           54.750 Mbit/s
+TcpIllinois          35.076 Mbit/s           52.867 Mbit/s           54.995 Mbit/s           54.400 Mbit/s           55.400 Mbit/s
+TcpWestwood          35.138 Mbit/s           53.210 Mbit/s           54.075 Mbit/s           54.662 Mbit/s           55.500 Mbit/s
+TcpWestwoodPlus      34.908 Mbit/s           52.355 Mbit/s           54.635 Mbit/s           54.887 Mbit/s           54.525 Mbit/s
+TcpLedbat            35.233 Mbit/s           52.050 Mbit/s           54.360 Mbit/s           54.125 Mbit/s           54.525 Mbit/s
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+TcpNewReno           35.055 Mbit/s           52.137 Mbit/s           53.290 Mbit/s           54.850 Mbit/s           54.400 Mbit/s
+TcpBic               35.229 Mbit/s           51.895 Mbit/s           53.655 Mbit/s           54.812 Mbit/s           54.725 Mbit/s
+TcpHybla             35.678 Mbit/s           52.542 Mbit/s           54.625 Mbit/s           54.400 Mbit/s           54.800 Mbit/s
+TcpHighSpeed         35.455 Mbit/s           52.807 Mbit/s           53.865 Mbit/s           55.700 Mbit/s           55.000 Mbit/s
+TcpHtcp              35.571 Mbit/s           52.470 Mbit/s           53.995 Mbit/s           55.337 Mbit/s           54.975 Mbit/s
+TcpVegas             28.711 Mbit/s           53.645 Mbit/s           55.435 Mbit/s           56.050 Mbit/s           56.125 Mbit/s
+TcpScalable          35.501 Mbit/s           52.488 Mbit/s           54.655 Mbit/s           54.850 Mbit/s           54.775 Mbit/s
+TcpVeno              35.633 Mbit/s           53.415 Mbit/s           54.160 Mbit/s           54.787 Mbit/s           55.250 Mbit/s
+TcpYeah              35.533 Mbit/s           52.395 Mbit/s           53.965 Mbit/s           54.662 Mbit/s           54.775 Mbit/s
+TcpIllinois          35.050 Mbit/s           53.345 Mbit/s           53.340 Mbit/s           54.525 Mbit/s           54.775 Mbit/s
+TcpWestwood          35.110 Mbit/s           52.908 Mbit/s           53.860 Mbit/s           54.525 Mbit/s           54.675 Mbit/s
+TcpWestwoodPlus      35.212 Mbit/s           52.530 Mbit/s           52.920 Mbit/s           54.375 Mbit/s           55.075 Mbit/s
+TcpLedbat            35.088 Mbit/s           51.627 Mbit/s           53.930 Mbit/s           55.750 Mbit/s           55.250 Mbit/s
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+TcpNewReno           35.194 Mbit/s           52.558 Mbit/s           53.750 Mbit/s           53.950 Mbit/s           54.700 Mbit/s
+TcpBic               35.598 Mbit/s           52.940 Mbit/s           52.865 Mbit/s           54.225 Mbit/s           55.550 Mbit/s
+TcpHybla             35.098 Mbit/s           54.748 Mbit/s           53.390 Mbit/s           54.700 Mbit/s           55.450 Mbit/s
+TcpHighSpeed         35.135 Mbit/s           53.345 Mbit/s           53.425 Mbit/s           53.900 Mbit/s           54.925 Mbit/s
+TcpHtcp              35.235 Mbit/s           52.800 Mbit/s           52.815 Mbit/s           55.375 Mbit/s           55.350 Mbit/s
+TcpVegas             28.644 Mbit/s           49.869 Mbit/s           55.835 Mbit/s           56.212 Mbit/s           55.425 Mbit/s
+TcpScalable          35.161 Mbit/s           52.640 Mbit/s           53.775 Mbit/s           55.300 Mbit/s           55.950 Mbit/s
+TcpVeno              35.544 Mbit/s           52.840 Mbit/s           53.640 Mbit/s           54.275 Mbit/s           55.525 Mbit/s
+TcpYeah              35.616 Mbit/s           52.362 Mbit/s           53.460 Mbit/s           54.825 Mbit/s           55.275 Mbit/s
+TcpIllinois          35.399 Mbit/s           52.513 Mbit/s           52.535 Mbit/s           54.175 Mbit/s           55.050 Mbit/s
+TcpWestwood          35.330 Mbit/s           52.705 Mbit/s           54.550 Mbit/s           54.950 Mbit/s           55.125 Mbit/s
+TcpWestwoodPlus      35.334 Mbit/s           52.600 Mbit/s           53.540 Mbit/s           55.437 Mbit/s           55.725 Mbit/s
+TcpLedbat            34.975 Mbit/s           52.792 Mbit/s           53.020 Mbit/s           54.487 Mbit/s           54.950 Mbit/s
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+TcpNewReno           34.686 Mbit/s           52.570 Mbit/s           53.060 Mbit/s           55.025 Mbit/s           55.525 Mbit/s
+TcpBic               35.154 Mbit/s           53.075 Mbit/s           53.345 Mbit/s           55.775 Mbit/s           55.650 Mbit/s
+TcpHybla             35.199 Mbit/s           53.568 Mbit/s           53.315 Mbit/s           54.600 Mbit/s           55.175 Mbit/s
+TcpHighSpeed         35.349 Mbit/s           53.613 Mbit/s           53.740 Mbit/s           54.425 Mbit/s           55.475 Mbit/s
+TcpHtcp              35.097 Mbit/s           52.578 Mbit/s           53.820 Mbit/s           55.075 Mbit/s           54.900 Mbit/s
+TcpVegas             34.942 Mbit/s           55.157 Mbit/s           55.650 Mbit/s           54.837 Mbit/s           56.075 Mbit/s
+TcpScalable          34.778 Mbit/s           52.140 Mbit/s           54.570 Mbit/s           54.225 Mbit/s           55.350 Mbit/s
+TcpVeno              35.300 Mbit/s           52.213 Mbit/s           54.095 Mbit/s           54.537 Mbit/s           55.375 Mbit/s
+TcpYeah              35.212 Mbit/s           52.607 Mbit/s           53.035 Mbit/s           54.962 Mbit/s           55.000 Mbit/s
+TcpIllinois          35.133 Mbit/s           52.562 Mbit/s           52.875 Mbit/s           54.850 Mbit/s           54.925 Mbit/s
+TcpWestwood          34.436 Mbit/s           52.735 Mbit/s           53.095 Mbit/s           55.362 Mbit/s           55.575 Mbit/s
+TcpWestwoodPlus      35.294 Mbit/s           52.545 Mbit/s           54.175 Mbit/s           55.050 Mbit/s           55.775 Mbit/s
+TcpLedbat            35.334 Mbit/s           52.390 Mbit/s           54.030 Mbit/s           54.238 Mbit/s           55.325 Mbit/s
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+TcpNewReno           35.238 Mbit/s           52.235 Mbit/s           53.230 Mbit/s           54.375 Mbit/s           55.400 Mbit/s
+TcpBic               35.097 Mbit/s           52.640 Mbit/s           52.715 Mbit/s           55.075 Mbit/s           54.800 Mbit/s
+TcpHybla             35.003 Mbit/s           51.727 Mbit/s           53.080 Mbit/s           54.562 Mbit/s           55.400 Mbit/s
+TcpHighSpeed         35.281 Mbit/s           52.315 Mbit/s           53.725 Mbit/s           54.287 Mbit/s           55.000 Mbit/s
+TcpHtcp              34.795 Mbit/s           52.568 Mbit/s           54.110 Mbit/s           54.225 Mbit/s           55.750 Mbit/s
+TcpVegas             34.926 Mbit/s           54.762 Mbit/s           55.665 Mbit/s           55.837 Mbit/s           54.175 Mbit/s
+TcpScalable          35.434 Mbit/s           53.025 Mbit/s           53.075 Mbit/s           54.975 Mbit/s           54.400 Mbit/s
+TcpVeno              35.100 Mbit/s           51.593 Mbit/s           53.720 Mbit/s           54.350 Mbit/s           54.925 Mbit/s
+TcpYeah              35.511 Mbit/s           52.755 Mbit/s           53.075 Mbit/s           55.287 Mbit/s           54.200 Mbit/s
+TcpIllinois          35.146 Mbit/s           52.615 Mbit/s           53.555 Mbit/s           55.437 Mbit/s           55.325 Mbit/s
+TcpWestwood          35.310 Mbit/s           52.423 Mbit/s           53.220 Mbit/s           54.725 Mbit/s           55.300 Mbit/s
+TcpWestwoodPlus      35.238 Mbit/s           52.508 Mbit/s           52.825 Mbit/s           54.675 Mbit/s           55.375 Mbit/s
+TcpLedbat            35.233 Mbit/s           52.747 Mbit/s           53.505 Mbit/s           54.938 Mbit/s           55.650 Mbit/s
+------------------------------------------------------------------------------------------------------------------------------------------------------------

@@ -7,8 +7,16 @@ import numpy as np
 baselineY = [52.337 for i in range(50)]
 baselineX = [i+1 for i in range(50)]
 
-# ALGO = "json50bic"
-ALGO = "json50"
+ALGO = "json50bic"
+# ALGO = "json50"
+
+BASELINES = {}
+# ALGORITHM = "TcpNewReno" # "TcpBic"
+ALGORITHM = "TcpBic"
+PAYLOAD_SIZE = "1500"
+
+with open('baselines.json', 'r') as baselines:
+    BASELINES = json.load(baselines)
 
 runs = []
 files = os.listdir(ALGO)
@@ -22,9 +30,20 @@ for json_file in files:
             run.append(fit['fitness'])
     runs.append(run)
 
-plt.plot(baselineX,baselineY, '--',
+
+
+
+plt.plot(baselineX,
+    [BASELINES[ALGORITHM][PAYLOAD_SIZE]["mean"] for i in range(50)], '--',
     color='red'
 )
+
+plt.fill_between(baselineX, 
+                    [BASELINES[ALGORITHM][PAYLOAD_SIZE]["top"] for i in range(50)], 
+                    [BASELINES[ALGORITHM][PAYLOAD_SIZE]["bottom"] for i in range(50)],
+                    facecolor="orange", # The fill color
+                    color='red',       # The outline color
+                    alpha=0.1)          # Transparency of the fill
 
 average = []
 y1 = []
@@ -55,13 +74,13 @@ plt.fill_between(baselineX, y1, y2,
                  alpha=0.1)          # Transparency of the fill
 plt.xticks(np.arange(min(baselineX)-1, max(baselineX)+1, 5))
 
-# plt.text(47.6, 55.1, 'fitness')
-plt.text(47.6, 54.82, 'fitness')
+plt.text(44.6, 54.92, 'fitness')
+# plt.text(43.3, 54.82, 'fitness')
 
-# plt.text(45.3, 52.10, 'TCP NewReno', color='red')
-plt.text(47.5, 52.40, 'TCP Bic', color='red')
+# plt.text(38.3, 52.10, 'TCP NewReno', color='red')
+plt.text(44, 52.2, 'TCP Bic', color='red')
 # Show the plot
 # plt.show()
 figure = plt.gcf()
-figure.set_size_inches(14, 8)
-plt.savefig(ALGO+'_results/plot.svg', dpi=72)
+figure.set_size_inches(7, 4)
+plt.savefig(ALGO+'_results/plot.svg', dpi=30)

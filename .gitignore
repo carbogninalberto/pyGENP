@@ -31,3 +31,5 @@ config.json
 termination_flag
 
 tmp_compactor
+
+results/report/50_GEN_RUNS/RUN_1/*
