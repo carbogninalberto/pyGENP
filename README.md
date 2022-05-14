@@ -22,7 +22,7 @@ docker run -p 5000:5000 -d pygenp
 
 run container using pre-built image
 ```
-
+docker run -p 5000:5000 -d bakney/pygenp
 ```
 
 # PYGENP Genetic Programming library
