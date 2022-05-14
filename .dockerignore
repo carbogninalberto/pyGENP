@@ -1,0 +1,35 @@
+# environment
+venv/*
+
+# misc
+misc
+
+*.cpp
+
+a.out
+*.out
+
+snapshots/*
+snapshots_pickles/*
+
+*.pyc
+
+core/__pycache__
+utils/__pycache__
+generators/__pycache__
+
+tmp
+init
+
+results/report/EQUAL_RUNS/cpp50
+
+results/report/cloud
+results/report/*_snapshot/*
+results/report/*.zip
+
+config.json
+termination_flag
+
+tmp_compactor
+
+results/report/50_GEN_RUNS/RUN_1/*

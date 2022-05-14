@@ -8,6 +8,23 @@ In the branch `road-to-lib-release` the milestone is to refactor the library to 
 - version 2: decouple the project
 - version 2.1: remove `anytree` and reimplement trees manipulation with `rust`
 
+# Docker image
+
+build docker image from repo
+```
+docker build --progress=plain --no-cache -t pygenp .
+```
+
+run container in local
+```
+docker run -p 5000:5000 -d pygenp
+```
+
+run container using pre-built image
+```
+
+```
+
 # PYGENP Genetic Programming library
 A (very) essential Genetic Programming library in Python. 
 
